@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Card Game Test</string>
+    <string name="cards">
+		》name=ATTACK
+		》info=+2
+		》cost=-2
+		》lives=0, -2
+		;
+		》name=ATTACK
+		》info=+2
+		》cost=-2
+		》lives=0, -2
+		;
+		》name=REST
+		》info=⚡+3
+		》cost=0
+		》energy=+3, 0
+		;
+		》name=HEAL
+		》info=❤+2
+		》cost=-2
+		》lives=+2, 0
+		</string>
+    <string name="you_lose">YOU LOSE!</string>
+	<string name="you_win">YOU WIN!</string>
+
+</resources>
