@@ -7,11 +7,11 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.*;
 
 public class MainActivity extends Activity 
 {
@@ -22,6 +22,7 @@ public class MainActivity extends Activity
 	public LinearLayout enemyLayout;
 	public TextView enemyLivesTxt;
 	public TextView enemyEnergyTxt;
+	public LinearLayout cardLayout;
 	public TextView cardNameTxt;
 	public TextView cardInfoTxt;
 	public TextView cardCostTxt;
@@ -56,6 +57,7 @@ public class MainActivity extends Activity
 		enemyLayout = findViewById(R.id.enemy_layout);
 		enemyLivesTxt = findViewById(R.id.enemy_lives_txt);
 		enemyEnergyTxt = findViewById(R.id.enemy_energy_txt);
+		cardLayout = findViewById(R.id.card_layout);
 		cardNameTxt = findViewById(R.id.card_name_txt);
 		cardInfoTxt = findViewById(R.id.card_info_txt);
 		cardCostTxt = findViewById(R.id.card_cost_txt);
@@ -82,9 +84,9 @@ public class MainActivity extends Activity
 
 
 
-
+	// TODO: cardLayout's size relative to screen size
+	// TODO: record the already drawn cards to not be use again until all of the card is drawn and refreshes
 	// TODO: enemy autoplay
-	// TODO: card animation
 
 
 	public void onCreateLogic(){
@@ -219,6 +221,18 @@ public class MainActivity extends Activity
 		cardNameTxt.setText(drawnCardMap.get("name"));
 		cardCostTxt.setText("⚡" + drawnCardMap.get("cost"));
 		cardInfoTxt.setText(drawnCardMap.get("info"));
+		
+		// TODO: card animation
+		useBtn.setEnabled(false);
+		skipBtn.setEnabled(false);
+		cardLayout.setTranslationY(50);
+		cardLayout.animate().translationY(0).setDuration(1000)
+			.withEndAction(new Runnable() { @Override public void run() {
+					useBtn.setEnabled(true);
+					skipBtn.setEnabled(true);
+				} })
+			.start();
+		
 		System.out.println("drawCard() check");
 	}
 
