@@ -7,9 +7,11 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.*;
 
 public class MainActivity extends Activity 
 {
@@ -26,7 +28,7 @@ public class MainActivity extends Activity
 	public Button skipBtn;
 	public Button useBtn;
 
-	public List<Map<String, String>> cardsData;
+	public List<Map<String, String>> cardsData = new ArrayList<>();
 	public Map<String, String> drawnCardMap;
 
 	public int playerLives = 10;
@@ -59,9 +61,9 @@ public class MainActivity extends Activity
 		cardCostTxt = findViewById(R.id.card_cost_txt);
 		skipBtn = findViewById(R.id.skip_btn);
 		useBtn = findViewById(R.id.use_btn);
-		
+
 		System.out.println("mainLogic() check");
-		
+
 		onCreateLogic();
 
 		skipBtn.setOnClickListener( new View.OnClickListener(){
@@ -86,18 +88,16 @@ public class MainActivity extends Activity
 
 
 	public void onCreateLogic(){
-		System.out.println("uwu check");
 		//Transform the string to a Arraylist that holds a hashmap. 
 		//Each Hashmap holds key-value pairs that makes it easier to search for a specific attribute.
 		//e.g. if i search for the key "name" it will retrieve a value of "Attack".
-		String cards = getResources().getString(R.string.cards);
-        Tools.importDataToArraylist(cardsData, cards, ";", "》");//arraylist, string, splitItemsBy, splitContentsBy
-		System.out.println("uwu check");
+		String sample_cardpack = getResources().getString(R.string.sample_cardpack);
+        Tools.importDataToArraylist(cardsData, sample_cardpack, ";", "》");//arraylist, string, splitItemsBy, splitContentsBy
 		//Start the game by populating views with datas
 		//and also draw a card.
 		updateGame();
 		drawCard();
-		
+
 		System.out.println("onCreateLogic() check");
 	}
 
@@ -136,7 +136,7 @@ public class MainActivity extends Activity
 		//im not gonna be able to use it since i don't have enough energy.
 		//therefore my only option is to skip.
 		//Else if i have enough energy, use the card and move onto next card.
-		
+
 		//if its player's turn,
 		//editSelfLives and editSelfEnergy will be added to the player
 		//editTargetLives and editTargetEnergy will be added to the enemy
@@ -183,7 +183,7 @@ public class MainActivity extends Activity
 			enemyEnergy = 5;
 			enemyEnergy_old = 0;//to prevent not showing changes
 		}
-		
+
 		//whether or not the card can be used. 
 		//Still update and populates the views with datas.
 		updateGame();
@@ -214,7 +214,7 @@ public class MainActivity extends Activity
 		//drawnCardMap will be used on useCard() void method.
 		Random random = new Random();
         drawnCardMap = cardsData.get(random.nextInt(cardsData.size()));
-		
+
 		//update which card you picked by populating some views
 		cardNameTxt.setText(drawnCardMap.get("name"));
 		cardCostTxt.setText("⚡" + drawnCardMap.get("cost"));
@@ -259,10 +259,10 @@ public class MainActivity extends Activity
 		//Detect any differences on datas
 		//do an animation if theres any
 		if (playerEnergy_old != playerEnergy){
-			Animations.greenTextAnim(playerEnergyTxt);
+			Animations.popAnim(playerEnergyTxt);
 		}
 		if (enemyEnergy_old != enemyEnergy){
-			Animations.greenTextAnim(enemyEnergyTxt);
+			Animations.popAnim(enemyEnergyTxt);
 		}
 		if (playerLives_old != playerLives){
 			Animations.popAnim(playerLivesTxt);
@@ -276,7 +276,7 @@ public class MainActivity extends Activity
 		playerEnergy_old = playerEnergy;
 		enemyLives_old = enemyLives;
 		enemyEnergy_old = enemyEnergy;
-		
+
 		//Winning and losing system
 		if(playerLives <= 0){
 			movesTxt.setText(R.string.you_lose);
@@ -286,8 +286,4 @@ public class MainActivity extends Activity
 		}
 		System.out.println("updateGame() check");
 	}
-
-
-
-
 }
