@@ -2,14 +2,16 @@
 <resources>
 
     <string name="app_name">Card Game Test</string>
-    <string name="cards">
+	<string name="you_lose">YOU LOSE!</string>
+	<string name="you_win">YOU WIN!</string>
+	<string name="sample_cardpack">
 		》name=ATTACK
-		》info=+2
+		》info=🗡+2
 		》cost=-2
 		》lives=0, -2
 		;
 		》name=ATTACK
-		》info=+2
+		》info=🗡+2
 		》cost=-2
 		》lives=0, -2
 		;
@@ -22,8 +24,5 @@
 		》info=❤+2
 		》cost=-2
 		》lives=+2, 0
-		</string>
-    <string name="you_lose">YOU LOSE!</string>
-	<string name="you_win">YOU WIN!</string>
-
+	</string>
 </resources>
