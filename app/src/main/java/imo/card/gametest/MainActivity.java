@@ -90,10 +90,10 @@ public class MainActivity extends Activity
 
 
 
-
-	// TODO: record the already drawn cards to not be use again until all of the card is drawn and refreshes
 	// TODO: remove the buttons and replace with cardLayout's swiping action instead
 	// TODO: enemy autoplay
+	// TODO: record the already drawn cards to not be use again until all of the card is drawn and refreshes
+	
 
 
 	public void onCreateLogic(){
@@ -228,7 +228,7 @@ public class MainActivity extends Activity
 		cardCostTxt.setText("⚡" + drawnCardMap.get("cost"));
 		cardInfoTxt.setText(drawnCardMap.get("info"));
 		
-		Animations.cardAnim(skipBtn, useBtn, cardLayout, cardBackLayout);
+		Animations.cardAnim(skipBtn, useBtn, cardLayout, cardBackLayout, cardNameTxt);
 		
 		System.out.println("drawCard() check");
 	}
@@ -254,8 +254,8 @@ public class MainActivity extends Activity
 		}
 		System.out.println("updateTurns() check");
 	}
-
-
+	
+	
 
 	public void updateGame(){
 		//The max energy a player and enemy could have is 5
@@ -271,11 +271,14 @@ public class MainActivity extends Activity
 		//Some datas are populated on useCard() void method.
 		//Display the current datas on textviews
 		movesTxt.setText(userTurn + "\n" + moves + "");
+		
 		playerLivesTxt.setText("❤" + playerLives);
-		playerEnergyTxt.setText("⚡" + playerEnergy + "/5");
+		//playerEnergyTxt.setText("⚡" + playerEnergy + "/5");
+		updateEnergy(playerEnergyTxt, playerEnergy);
 
 		enemyLivesTxt.setText("❤" + enemyLives);
-		enemyEnergyTxt.setText("⚡" + enemyEnergy + "/5");
+		//enemyEnergyTxt.setText("⚡" + enemyEnergy + "/5");
+		updateEnergy(enemyEnergyTxt, enemyEnergy);
 
 		//Detect any differences on datas
 		//do an animation if theres any
@@ -307,5 +310,22 @@ public class MainActivity extends Activity
 			movesTxt.setText(R.string.you_win);
 		}
 		System.out.println("updateGame() check");
+	}
+	
+	
+	
+	public void updateEnergy(final TextView energyTxt, final int energyInt){
+		//imagine there's 5 light bulbs
+		//1 light bulb must be on and everything to off to indicate number 1
+		//2 light bulbs must be on to indicate number 2
+		//3 light bulbs must be on to indicate number 3...so on and so forth
+		//anything that the energyInt doesnt reach e.g. 5, it must be off
+		String energyString = "⚡";
+		energyString = energyInt >= 1 ? energyString + "■" : energyString + "□";
+		energyString = energyInt >= 2 ? energyString + "■" : energyString + "□";
+		energyString = energyInt >= 3 ? energyString + "■" : energyString + "□";
+		energyString = energyInt >= 4 ? energyString + "■" : energyString + "□";
+		energyString = energyInt >= 5 ? energyString + "■" : energyString + "□";
+		energyTxt.setText(energyString);
 	}
 }
