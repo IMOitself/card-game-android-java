@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.util.DisplayMetrics;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,12 +23,16 @@ public class MainActivity extends Activity
 	public LinearLayout enemyLayout;
 	public TextView enemyLivesTxt;
 	public TextView enemyEnergyTxt;
+	public LinearLayout cardBackLayout;
 	public LinearLayout cardLayout;
 	public TextView cardNameTxt;
 	public TextView cardInfoTxt;
 	public TextView cardCostTxt;
+	public LinearLayout buttonsLayout;
 	public Button skipBtn;
 	public Button useBtn;
+	
+	public int screenWidth = 0;
 
 	public List<Map<String, String>> cardsData = new ArrayList<>();
 	public Map<String, String> drawnCardMap;
@@ -57,10 +62,12 @@ public class MainActivity extends Activity
 		enemyLayout = findViewById(R.id.enemy_layout);
 		enemyLivesTxt = findViewById(R.id.enemy_lives_txt);
 		enemyEnergyTxt = findViewById(R.id.enemy_energy_txt);
+		cardBackLayout = findViewById(R.id.card_back_layout);
 		cardLayout = findViewById(R.id.card_layout);
 		cardNameTxt = findViewById(R.id.card_name_txt);
 		cardInfoTxt = findViewById(R.id.card_info_txt);
 		cardCostTxt = findViewById(R.id.card_cost_txt);
+		buttonsLayout = findViewById(R.id.buttons_layout);
 		skipBtn = findViewById(R.id.skip_btn);
 		useBtn = findViewById(R.id.use_btn);
 
@@ -84,12 +91,22 @@ public class MainActivity extends Activity
 
 
 
-	// TODO: cardLayout's size relative to screen size
 	// TODO: record the already drawn cards to not be use again until all of the card is drawn and refreshes
+	// TODO: remove the buttons and replace with cardLayout's swiping action instead
 	// TODO: enemy autoplay
 
 
 	public void onCreateLogic(){
+		// TODO: Some comments
+		DisplayMetrics displayMetrics = new DisplayMetrics();
+		getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+		screenWidth = displayMetrics.widthPixels;
+		
+		Tools.setViewSize(cardLayout, screenWidth / 4, screenWidth / 4);
+		Tools.setViewSize(cardBackLayout, screenWidth / 4, screenWidth / 4);
+		
+		cardBackLayout.setVisibility(View.GONE);//will be used later
+		
 		//Transform the string to a Arraylist that holds a hashmap. 
 		//Each Hashmap holds key-value pairs that makes it easier to search for a specific attribute.
 		//e.g. if i search for the key "name" it will retrieve a value of "Attack".
@@ -175,17 +192,6 @@ public class MainActivity extends Activity
 				drawCard();
 			}
 		}
-		//The max energy a player and enemy could have is 5
-		//This prevents going beyond 5.
-		if (playerEnergy > 5){
-			playerEnergy = 5;
-			playerEnergy_old = 0;//to prevent not showing changes
-		}
-		if (enemyEnergy > 5){
-			enemyEnergy = 5;
-			enemyEnergy_old = 0;//to prevent not showing changes
-		}
-
 		//whether or not the card can be used. 
 		//Still update and populates the views with datas.
 		updateGame();
@@ -222,16 +228,7 @@ public class MainActivity extends Activity
 		cardCostTxt.setText("⚡" + drawnCardMap.get("cost"));
 		cardInfoTxt.setText(drawnCardMap.get("info"));
 		
-		// TODO: card animation
-		useBtn.setEnabled(false);
-		skipBtn.setEnabled(false);
-		cardLayout.setTranslationY(50);
-		cardLayout.animate().translationY(0).setDuration(1000)
-			.withEndAction(new Runnable() { @Override public void run() {
-					useBtn.setEnabled(true);
-					skipBtn.setEnabled(true);
-				} })
-			.start();
+		Animations.cardAnim(skipBtn, useBtn, cardLayout, cardBackLayout);
 		
 		System.out.println("drawCard() check");
 	}
@@ -241,7 +238,7 @@ public class MainActivity extends Activity
 	public void updateTurns(){
 		//This keep count how many moves you make
 		//either by using the card or skipping it.
-		//Once it reach 0 move on to another user
+		//Once it reach zero, move on to the next user
 		if (moves - 1 > 0){
 			moves--;
 		}else{
@@ -261,6 +258,16 @@ public class MainActivity extends Activity
 
 
 	public void updateGame(){
+		//The max energy a player and enemy could have is 5
+		//This prevents going beyond 5.
+		if (playerEnergy > 5){
+			playerEnergy = 5;
+			playerEnergy_old = 0;//to prevent not showing changes
+		}
+		if (enemyEnergy > 5){
+			enemyEnergy = 5;
+			enemyEnergy_old = 0;//to prevent not showing changes
+		}
 		//Some datas are populated on useCard() void method.
 		//Display the current datas on textviews
 		movesTxt.setText(userTurn + "\n" + moves + "");
@@ -284,7 +291,6 @@ public class MainActivity extends Activity
 		if (enemyLives_old != enemyLives){
 			Animations.popAnim(enemyLivesTxt);
 		}
-
 		//Record the data to be compared with later ones
 		playerLives_old = playerLives;
 		playerEnergy_old = playerEnergy;
@@ -292,9 +298,11 @@ public class MainActivity extends Activity
 		enemyEnergy_old = enemyEnergy;
 
 		//Winning and losing system
+		//if player dies then you lose
 		if(playerLives <= 0){
 			movesTxt.setText(R.string.you_lose);
 		}
+		//if enemy dies then you win
 		if(enemyLives <= 0){
 			movesTxt.setText(R.string.you_win);
 		}
