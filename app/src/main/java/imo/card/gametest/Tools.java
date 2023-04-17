@@ -1,15 +1,21 @@
 package imo.card.gametest;
 
+import android.view.View;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class Tools
 {
+	public static void setViewSize(View view, int width, int height){
+		if (width != 0) view.getLayoutParams().width = width;
+		if (height != 0) view.getLayoutParams().height = height;
+	}
+	
 	public static void importDataToArraylist(List<Map<String, String>> arraylist,
-									  String textFile,
-									  String splitItemsBy,
-									  String splitContentsBy){
+											 String textFile,
+											 String splitItemsBy,
+											 String splitContentsBy){
 		String[] rawItems = textFile.split(splitItemsBy);//seperate the contents to individual sections
 		for (String rawItem : rawItems) {//loop to every sections made
 			String rawContent = rawItem.replaceFirst(splitContentsBy, "");//remove the leading desired char before seperating
