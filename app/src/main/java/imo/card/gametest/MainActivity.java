@@ -2,10 +2,12 @@ package imo.card.gametest;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.view.View;
+import android.view.MotionEvent;
+
 import android.util.DisplayMetrics;
 
 import java.util.ArrayList;
@@ -14,9 +16,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-
-// TODO: remove the buttons and replace with cardLayout's swiping action instead
 // TODO: enemy autoplay
+// TODO: Remove the buttons since its useless now. Make "Skip" textview on the left and "Use" on the right.
+//       to indicate where should the user will swipe to perform a logic
 // TODO: record the already drawn cards to not be use again until all of the card is drawn and refreshes
 
 public class MainActivity extends Activity 
@@ -28,6 +30,7 @@ public class MainActivity extends Activity
 	public LinearLayout enemyLayout;
 	public TextView enemyLivesTxt;
 	public TextView enemyEnergyTxt;
+	public View cardParentLayout;
 	public LinearLayout cardBackLayout;
 	public LinearLayout cardLayout;
 	public TextView cardNameTxt;
@@ -67,6 +70,7 @@ public class MainActivity extends Activity
 		enemyLayout = findViewById(R.id.enemy_layout);
 		enemyLivesTxt = findViewById(R.id.enemy_lives_txt);
 		enemyEnergyTxt = findViewById(R.id.enemy_energy_txt);
+		cardParentLayout = findViewById(R.id.cardParentLayout);
 		cardBackLayout = findViewById(R.id.card_back_layout);
 		cardLayout = findViewById(R.id.card_layout);
 		cardNameTxt = findViewById(R.id.card_name_txt);
@@ -88,6 +92,32 @@ public class MainActivity extends Activity
 		useBtn.setOnClickListener( new View.OnClickListener(){
 				@Override public void onClick(View v){
 					useCard();
+				}
+			});
+		
+		//TODO: Some better comments
+		final int centerX = screenWidth/2 - (screenWidth/3)/2;
+		cardParentLayout.setOnTouchListener(new View.OnTouchListener() {
+				public boolean onTouch(View v, MotionEvent event) {
+					switch (event.getAction()) {
+						case MotionEvent.ACTION_MOVE:
+							// Get the x coordinates of the touch event
+							float x = event.getRawX();
+							
+							cardParentLayout.setX(x - (screenWidth/3)/2);
+							break;
+						case MotionEvent.ACTION_UP:
+							cardParentLayout.setX(centerX);
+							// Calculate the drag distance
+							if (event.getRawX() < centerX) {
+								skipCard();
+							} else {
+								useCard();
+							}
+							
+							break;
+					}
+					return true;
 				}
 			});
     }
@@ -125,11 +155,27 @@ public class MainActivity extends Activity
 
 
 
+	public void skipCard(){
+		//skipping a card gives you 1 energy.
+		if (userTurn.equals("player")){
+			playerEnergy = playerEnergy + 1;
+
+		}else if (userTurn.equals("enemy")){
+			enemyEnergy = enemyEnergy + 1;
+
+		}
+		updateTurns();
+		drawCard();
+		updateGame();
+		System.out.println("skipCard() check");
+	}
+
+
+
 	public void useCard(){
 		//The drawnCardMap is a map populated by drawnCard() void method
 		//Some map doesn't have a key of "lives" or "energy"
-		//"lives" key contain a value of e.g "0, 0"
-		//"energy" key also contain a value of e.g "0, 0"
+		//"lives" and "energy" key contain a value of e.g "0, 0"
 		//We split the "0, 0" by "," thus resulting in ["0", " 0"]
 		//The first value of the array populates how many should be added on self.
 		//The second value of the array populates how many should be added on target.
@@ -200,26 +246,9 @@ public class MainActivity extends Activity
 		updateGame();
 		System.out.println("useCard() check");
 	}
-
-
-
-	public void skipCard(){
-		//skipping a card gives you 1 energy.
-		if (userTurn.equals("player")){
-			playerEnergy = playerEnergy + 1;
-
-		}else if (userTurn.equals("enemy")){
-			enemyEnergy = enemyEnergy + 1;
-
-		}
-		updateTurns();
-		drawCard();
-		updateGame();
-		System.out.println("skipCard() check");
-	}
-
-
-
+	
+	
+	
 	public void drawCard(){
 		//Randomly get a hashmap from the cardsData
 		//drawnCardMap will be used on useCard() void method.
