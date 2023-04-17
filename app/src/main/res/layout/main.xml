@@ -7,108 +7,109 @@
 	android:background="#303030"
 	android:orientation="vertical">
 
-	<TextView
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:text="0"
-		android:textAppearance="?android:attr/textAppearanceMedium"
-		android:textColor="#979797"
-		android:id="@+id/moves_txt"
-		android:gravity="center"/>
-
-	<LinearLayout
-		android:orientation="horizontal"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:padding="10dp"
-		android:gravity="center">
-
-		<LinearLayout
-			android:orientation="vertical"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:background="#696969"
-			android:padding="8dp"
-			android:layout_weight="1"
-			android:gravity="center"
-			android:scaleX="1.05"
-			android:scaleY="1.05"
-			android:id="@+id/player_layout">
-
-			<TextView
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:text="❤10"
-				android:textColor="#FFFFFF"
-				android:textStyle="bold"
-				android:textSize="25sp"
-				android:id="@+id/player_lives_txt"/>
-
-			<ImageView
-				android:src="@drawable/green"
-				android:layout_width="70dp"
-				android:layout_height="70dp"/>
-
-			<TextView
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:text="⚡5/5"
-				android:textColor="#FFFFFF"
-				android:textSize="16sp"
-				android:textStyle="bold"
-				android:id="@+id/player_energy_txt"/>
-
-		</LinearLayout>
-
-		<LinearLayout
-			android:orientation="horizontal"
-			android:layout_width="0dp"
-			android:layout_height="0dp"
-			android:layout_weight="4.0"/>
-
-		<LinearLayout
-			android:orientation="vertical"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:background="#696969"
-			android:padding="8dp"
-			android:layout_weight="1"
-			android:gravity="center"
-			android:id="@+id/enemy_layout">
-
-			<TextView
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:text="❤10"
-				android:textColor="#FFFFFF"
-				android:textStyle="bold"
-				android:textSize="25sp"
-				android:id="@+id/enemy_lives_txt"/>
-
-			<ImageView
-				android:src="@drawable/green"
-				android:layout_width="70dp"
-				android:layout_height="70dp"/>
-
-			<TextView
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:text="⚡5/5"
-				android:textColor="#FFFFFF"
-				android:textSize="16sp"
-				android:textStyle="bold"
-				android:id="@+id/enemy_energy_txt"/>
-
-		</LinearLayout>
-
-	</LinearLayout>
-
 	<LinearLayout
 		android:orientation="vertical"
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
+		android:layout_height="match_parent"
 		android:gravity="center"
-		android:layout_margin="10dp">
+		android:layout_weight="1.0">
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="0"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:textColor="#979797"
+			android:id="@+id/moves_txt"
+			android:gravity="bottom|center_horizontal"
+			android:layout_weight="1.0"/>
+
+		<LinearLayout
+			android:orientation="horizontal"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:padding="10dp"
+			android:gravity="center">
+
+			<LinearLayout
+				android:orientation="vertical"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:background="#696969"
+				android:padding="8dp"
+				android:layout_weight="1"
+				android:gravity="center"
+				android:scaleX="1.05"
+				android:scaleY="1.05"
+				android:id="@+id/player_layout">
+
+				<TextView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="❤10"
+					android:textColor="#FFFFFF"
+					android:textStyle="bold"
+					android:textSize="25sp"
+					android:id="@+id/player_lives_txt"/>
+
+				<ImageView
+					android:src="@drawable/green"
+					android:layout_width="70dp"
+					android:layout_height="70dp"/>
+
+				<TextView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="⚡5/5"
+					android:textColor="#FFFFFF"
+					android:textSize="16sp"
+					android:textStyle="bold"
+					android:id="@+id/player_energy_txt"/>
+
+			</LinearLayout>
+
+			<LinearLayout
+				android:orientation="horizontal"
+				android:layout_width="0dp"
+				android:layout_height="0dp"
+				android:layout_weight="4.0"/>
+
+			<LinearLayout
+				android:orientation="vertical"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:background="#696969"
+				android:padding="8dp"
+				android:layout_weight="1"
+				android:gravity="center"
+				android:id="@+id/enemy_layout">
+
+				<TextView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="❤10"
+					android:textColor="#FFFFFF"
+					android:textStyle="bold"
+					android:textSize="25sp"
+					android:id="@+id/enemy_lives_txt"/>
+
+				<ImageView
+					android:src="@drawable/green"
+					android:layout_width="70dp"
+					android:layout_height="70dp"/>
+
+				<TextView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="⚡5/5"
+					android:textColor="#FFFFFF"
+					android:textSize="16sp"
+					android:textStyle="bold"
+					android:id="@+id/enemy_energy_txt"/>
+
+			</LinearLayout>
+
+		</LinearLayout>
 
 		<TextView
 			android:layout_width="wrap_content"
@@ -119,30 +120,50 @@
 			android:textSize="25sp"/>
 
 		<LinearLayout
-			android:orientation="vertical"
+			android:orientation="horizontal"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:padding="10dp"
-			android:gravity="center"
-			android:background="#696969">
+			android:layout_weight="1.0">
 
-			<TextView
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:text="❤10"
-				android:textColor="#FFFFFF"
-				android:textStyle="bold"
-				android:textSize="25sp"
-				android:id="@+id/card_info_txt"/>
+			<LinearLayout
+				android:orientation="vertical"
+				android:layout_width="80dp"
+				android:layout_height="90dp"
+				android:padding="10dp"
+				android:gravity="center"
+				android:background="#696969"
+				android:id="@+id/card_layout">
 
-			<TextView
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:text="⚡5"
-				android:textColor="#FFFFFF"
-				android:textSize="25sp"
-				android:textStyle="bold"
-				android:id="@+id/card_cost_txt"/>
+				<TextView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="❤10"
+					android:textColor="#FFFFFF"
+					android:textStyle="bold"
+					android:textSize="25sp"
+					android:id="@+id/card_info_txt"/>
+
+				<TextView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="⚡5"
+					android:textColor="#FFFFFF"
+					android:textSize="25sp"
+					android:textStyle="bold"
+					android:id="@+id/card_cost_txt"/>
+
+			</LinearLayout>
+
+			<LinearLayout
+				android:orientation="vertical"
+				android:layout_width="80dp"
+				android:layout_height="90dp"
+				android:padding="10dp"
+				android:gravity="center"
+				android:background="#696969"
+				android:id="@+id/card_back_layout">
+
+			</LinearLayout>
 
 		</LinearLayout>
 
@@ -151,7 +172,8 @@
 	<LinearLayout
 		android:orientation="horizontal"
 		android:layout_width="match_parent"
-		android:layout_height="70dp">
+		android:layout_height="70dp"
+		android:id="@+id/buttons_layout">
 
 		<Button
 			android:layout_width="wrap_content"
@@ -170,4 +192,3 @@
 	</LinearLayout>
 
 </LinearLayout>
-
