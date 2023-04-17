@@ -14,6 +14,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+
+// TODO: remove the buttons and replace with cardLayout's swiping action instead
+// TODO: enemy autoplay
+// TODO: record the already drawn cards to not be use again until all of the card is drawn and refreshes
+
 public class MainActivity extends Activity 
 {
 	public TextView movesTxt;
@@ -90,20 +95,18 @@ public class MainActivity extends Activity
 
 
 
-	// TODO: remove the buttons and replace with cardLayout's swiping action instead
-	// TODO: enemy autoplay
-	// TODO: record the already drawn cards to not be use again until all of the card is drawn and refreshes
+	
 	
 
 
 	public void onCreateLogic(){
-		// TODO: Some comments
+		//get the screen width
 		DisplayMetrics displayMetrics = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 		screenWidth = displayMetrics.widthPixels;
-		
-		Tools.setViewSize(cardLayout, screenWidth / 4, screenWidth / 4);
-		Tools.setViewSize(cardBackLayout, screenWidth / 4, screenWidth / 4);
+		//set the view size to 1/3 of the screen
+		Tools.setViewSize(cardLayout, screenWidth / 3, screenWidth / 3);
+		Tools.setViewSize(cardBackLayout, screenWidth / 3, screenWidth / 3);
 		
 		cardBackLayout.setVisibility(View.GONE);//will be used later
 		
@@ -268,16 +271,14 @@ public class MainActivity extends Activity
 			enemyEnergy = 5;
 			enemyEnergy_old = 0;//to prevent not showing changes
 		}
-		//Some datas are populated on useCard() void method.
+		//Variables are populated on useCard() void method.
 		//Display the current datas on textviews
 		movesTxt.setText(userTurn + "\n" + moves + "");
 		
 		playerLivesTxt.setText("❤" + playerLives);
-		//playerEnergyTxt.setText("⚡" + playerEnergy + "/5");
 		updateEnergy(playerEnergyTxt, playerEnergy);
 
 		enemyLivesTxt.setText("❤" + enemyLives);
-		//enemyEnergyTxt.setText("⚡" + enemyEnergy + "/5");
 		updateEnergy(enemyEnergyTxt, enemyEnergy);
 
 		//Detect any differences on datas
