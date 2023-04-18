@@ -11,17 +11,8 @@ public class Animations
 	
 	public static void redTextAnim(final TextView textview){
 		textview.setTextColor(Color.parseColor("#FB1600"));
-		textview.animate().scaleX(1.1f).scaleY(1.1f).setDuration(duration)
-			.withEndAction(new Runnable() { @Override public void run() {
-					textview.setTextColor(Color.parseColor("#FFFFFF"));
-					textview.setScaleX(1);
-					textview.setScaleY(1);
-				} })
-			.start();
-	}
-	public static void greenTextAnim(final TextView textview){
-		textview.setTextColor(Color.parseColor("#6FCB4B"));
-		textview.animate().scaleX(1.1f).scaleY(1.1f).setDuration(duration)
+		float scaleBy = 1.15f;
+		textview.animate().scaleX(scaleBy).scaleY(scaleBy).setDuration(duration)
 			.withEndAction(new Runnable() { @Override public void run() {
 					textview.setTextColor(Color.parseColor("#FFFFFF"));
 					textview.setScaleX(1);
@@ -30,25 +21,28 @@ public class Animations
 			.start();
 	}
 	public static void hoverAnim(View view1, View view2){
-		view1.animate().scaleX(1.05f).scaleY(1.05f).setDuration(duration).start();
+		float scaleBy = 1.05f;
+		view1.animate().scaleX(scaleBy).scaleY(scaleBy ).setDuration(duration).start();
 		if (view2 != null){
 			view2.setScaleX(1);
 			view2.setScaleY(1);
 		}
 	}
 	public static void popAnim(final View view){
-		view.animate().scaleX(1.1f).scaleY(1.1f).setDuration(duration)
+		float scaleBy = 1.15f;
+		view.animate().scaleX(scaleBy).scaleY(scaleBy).setDuration(duration)
 			.withEndAction(new Runnable() { @Override public void run() {
 					view.setScaleX(1);
 					view.setScaleY(1);
 				} })
 			.start();
 	}
-	public static void cardAnim(final Button btn1, final Button btn2, final View cardLayout, final View cardBackLayout){
+	public static void cardAnim(final Button btn1, final Button btn2, final View cardLayout, final View cardBackLayout, final View optionalView){
+		int translateDistance = 100;
 		btn1.setEnabled(false);
 		btn2.setEnabled(false);
 		cardLayout.setVisibility(View.GONE);
-		cardBackLayout.setTranslationY(50);
+		cardBackLayout.setTranslationY(translateDistance);
 		cardBackLayout.setVisibility(View.VISIBLE);
 
 		cardBackLayout.animate().translationY(0).setDuration(duration)
@@ -65,5 +59,11 @@ public class Animations
 						.start();	
 				} })
 			.start();
+			//optionalView's animation is in sync with the card's so that it also trnaslates upward
+			//the only thing it doesnt do is the flipping animation (i.e. scaleX)
+			if (optionalView != null){
+				optionalView.setTranslationY(translateDistance);
+				optionalView.animate().translationY(0).setDuration(duration).start();
+			}
 	}
 }
