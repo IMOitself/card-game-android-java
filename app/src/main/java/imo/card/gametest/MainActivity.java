@@ -7,7 +7,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.view.View;
 import android.view.MotionEvent;
-import android.graphics.Typeface;
 import android.util.DisplayMetrics;
 
 import java.util.ArrayList;
@@ -18,7 +17,7 @@ import java.util.Random;
 
 // TODO: another textview or smth to display moves int
 // TODO: attack animation
-// TODO: enemy autoplay
+// TODO: stop the game when someone wins or lose
 // TODO: Make "Skip" textview on the left and "Use" on the right. To indicate where should the user will swipe.
 // TODO: record the already drawn cards to not be use again until all of the card is drawn and refreshes
 
@@ -88,8 +87,6 @@ public class MainActivity extends Activity
 		buttonsLayout.setVisibility(View.GONE);
 		//to bring them back remove this code above
 		
-		System.out.println("mainLogic() check");
-
 		onCreateLogic();
 
 		skipBtn.setOnClickListener( new View.OnClickListener(){
@@ -135,8 +132,6 @@ public class MainActivity extends Activity
 		//and also draw a card.
 		updateGame();
 		drawCard();
-
-		System.out.println("onCreateLogic() check");
 	}
 	
 	
@@ -169,7 +164,6 @@ public class MainActivity extends Activity
 				}
 				break;
 		}
-		System.out.println("swipeCardLogic() check");
 	}
 
 
@@ -195,8 +189,6 @@ public class MainActivity extends Activity
 		cardCostTxt.setText(energyString);
 
 		Animations.cardAnim(cardLayout, cardBackLayout, cardNameTxt, cardParentLayout, skipBtn, useBtn);
-
-		System.out.println("drawCard() check");
 	}
 	
 	
@@ -208,12 +200,11 @@ public class MainActivity extends Activity
 
 		}else if (userTurn.equals("enemy")){
 			enemyEnergy = enemyEnergy + 1;
-
+			
 		}
 		updateTurns();
 		drawCard();
 		updateGame();
-		System.out.println("skipCard() check");
 	}
 
 
@@ -268,7 +259,7 @@ public class MainActivity extends Activity
 			}
 		}else if (userTurn.equals("enemy")){
 			if (Math.abs(drawnCardCost) > enemyEnergy){
-				Animations.redTextAnim(enemyEnergyTxt);
+				skipCard();
 			}else{
 				enemyEnergy = enemyEnergy + drawnCardCost;
 
@@ -284,8 +275,6 @@ public class MainActivity extends Activity
 		}
 		//whether or not the card can be used, still update the game.
 		updateGame();
-		
-		System.out.println("useCard() check");
 	}
 
 
@@ -296,19 +285,25 @@ public class MainActivity extends Activity
 		//Once it reach zero, move on to the next user
 		if (moves - 1 > 0){
 			moves--;
-		}else{
-			if (userTurn.equals("player")){
-				userTurn = "enemy";
-				Animations.hoverAnim(enemyLayout, playerLayout);
-				
-			}else if (userTurn.equals("enemy")){
-				userTurn = "player";
-				Animations.hoverAnim(playerLayout, enemyLayout);
-				
+			if(isEnemyTurn){
+				enemyRandomPlay(enemyEnergy);
 			}
+		}else{
+				if (userTurn.equals("player")){
+					//player turn has ended
+					userTurn = "enemy";
+					Animations.hoverAnim(enemyLayout, playerLayout);
+					enemyRandomPlay(enemyEnergy);
+					isEnemyTurn = true;
+
+				}else if (userTurn.equals("enemy")){
+					//enemy turn has ended
+					userTurn = "player";
+					Animations.hoverAnim(playerLayout, enemyLayout);
+					isEnemyTurn = false;
+				}
 			moves = 3;
 		}
-		System.out.println("updateTurns() check");
 	}
 	
 	
@@ -326,7 +321,7 @@ public class MainActivity extends Activity
 		}
 		//Variables are populated on useCard() void method.
 		//Display the current datas on textviews
-		titleTxt.setText(userTurn + "\n" + moves + "");
+		titleTxt.setText(userTurn + "\n" + moves);
 		
 		playerLivesTxt.setText("❤" + playerLives);
 		updateEnergy(playerEnergyTxt, playerEnergy, true);
@@ -336,17 +331,17 @@ public class MainActivity extends Activity
 
 		//Detect any differences on datas
 		//do an animation if theres any
-		if (playerEnergy_old != playerEnergy){
-			Animations.popAnim(playerEnergyTxt);
-		}
-		if (enemyEnergy_old != enemyEnergy){
-			Animations.popAnim(enemyEnergyTxt);
-		}
 		if (playerLives_old != playerLives){
 			Animations.popAnim(playerLivesTxt);
 		}
 		if (enemyLives_old != enemyLives){
 			Animations.popAnim(enemyLivesTxt);
+		}
+		if (playerEnergy_old != playerEnergy){
+			Animations.popAnim(playerEnergyTxt);
+		}
+		if (enemyEnergy_old != enemyEnergy){
+			Animations.popAnim(enemyEnergyTxt);
 		}
 		//Record the data to be compared with later ones
 		playerLives_old = playerLives;
@@ -363,7 +358,6 @@ public class MainActivity extends Activity
 		if(enemyLives <= 0){
 			titleTxt.setText(R.string.you_win);
 		}
-		System.out.println("updateGame() check");
 	}
 	
 	
@@ -388,17 +382,18 @@ public class MainActivity extends Activity
 	
 	
 	
-	public void enemyAutoPlay(final int enemyInt){
-		Random random = new Random();
-		int randomInt = random.nextInt(1);
-		if (randomInt == 0){
-			skipCard();
-		}else if (randomInt == 1){
-			if(enemyInt <= 0){
-				skipCard();
-			}else{
-				useCard();
-			}
-		}
+	public void enemyRandomPlay(final int enemyEnergy){
+		View dummy = titleTxt;//not gonna be manipulated
+		dummy.animate().setDuration(Animations.duration * 3)
+			.withEndAction(new Runnable() { @Override public void run() {
+					Random random = new Random();
+					int randomInt = random.nextInt(2);
+					if (randomInt == 0){
+						skipCard();
+					}else if (randomInt == 1){
+						useCard();
+					}
+				} })
+			.start();
 	}
 }
