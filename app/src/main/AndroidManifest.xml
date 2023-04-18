@@ -4,7 +4,7 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/green"
+        android:icon="@drawable/dude_with_sword"
         android:label="@string/app_name"
         android:theme="@style/AppTheme"
 		android:resizeableActivity = "true">
