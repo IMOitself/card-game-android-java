@@ -16,14 +16,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-
+// TODO: another textview or smth to display moves int
+// TODO: attack animation
 // TODO: enemy autoplay
 // TODO: Make "Skip" textview on the left and "Use" on the right. To indicate where should the user will swipe.
 // TODO: record the already drawn cards to not be use again until all of the card is drawn and refreshes
 
 public class MainActivity extends Activity 
 {
-	public TextView movesTxt;
+	public TextView titleTxt;
 	public LinearLayout playerLayout;
 	public TextView playerLivesTxt;
 	public TextView playerEnergyTxt;
@@ -39,6 +40,7 @@ public class MainActivity extends Activity
 	public LinearLayout buttonsLayout;
 	public Button skipBtn;
 	public Button useBtn;
+	public TextView debugTxt;
 	
 	public int screenWidth = 0;
 
@@ -63,7 +65,7 @@ public class MainActivity extends Activity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-		movesTxt = findViewById(R.id.moves_txt);
+		titleTxt = findViewById(R.id.title_txt);
 		playerLayout = findViewById(R.id.player_layout);
 		playerLivesTxt = findViewById(R.id.player_lives_txt);
 		playerEnergyTxt = findViewById(R.id.player_energy_txt);
@@ -79,6 +81,7 @@ public class MainActivity extends Activity
 		buttonsLayout = findViewById(R.id.buttons_layout);
 		skipBtn = findViewById(R.id.skip_btn);
 		useBtn = findViewById(R.id.use_btn);
+		debugTxt = findViewById(R.id.debug_txt);
 		
 		//buttons are not necessary anymore.
 		buttonsLayout.setVisibility(View.GONE);
@@ -138,18 +141,29 @@ public class MainActivity extends Activity
 	
 	
 	public void swipeCardLogic(View cardParentLayout, MotionEvent event){
-		//TODO: Some better comments
-		final int centerX = screenWidth/2 - (screenWidth/3)/2;
+		//TODO: Some comments
+		final int viewWidth = screenWidth/3;
+		final int viewWidthCenter = viewWidth/2;
+		final int centerX = screenWidth/2 - viewWidth/2;
 		switch (event.getAction()) {
 			case MotionEvent.ACTION_MOVE:
-				float x = event.getRawX();
-				cardParentLayout.setX(x - (screenWidth/3)/2);
+				float currentX = event.getRawX();
+				cardParentLayout.setX(currentX - viewWidthCenter);
+				
+				float debugFloat = event.getRawX() - viewWidthCenter;
+				debugTxt.setText("event.getRawX(): " + debugFloat + "\ncenterX: " + centerX);
+				
 				break;
 			case MotionEvent.ACTION_UP:
 				cardParentLayout.setX(centerX);
-				if (event.getRawX() < centerX) {
+				
+				float finalX = event.getRawX() - viewWidthCenter;
+				
+				int safeZone = 80;
+				if (finalX < centerX - safeZone) {
 					skipCard();
-				}else {
+					
+				}else if (finalX > centerX + safeZone) {
 					useCard();
 				}
 				break;
@@ -167,8 +181,17 @@ public class MainActivity extends Activity
 
 		//update which card you picked by populating some views
 		cardNameTxt.setText(drawnCardMap.get("name"));
-		cardCostTxt.setText("⚡" + drawnCardMap.get("cost"));
 		cardInfoTxt.setText(drawnCardMap.get("info"));
+		//TODO: Some comments
+		int cardCost = Math.abs(Integer.parseInt(drawnCardMap.get("cost")));
+		String energyString = "";
+		energyString = cardCost <= 0 ? energyString + "FREE" : energyString + "";
+		energyString = cardCost >= 1 ? energyString + "■" : energyString + "";
+		energyString = cardCost >= 2 ? energyString + "■" : energyString + "";
+		energyString = cardCost >= 3 ? energyString + "■" : energyString + "";
+		energyString = cardCost >= 4 ? energyString + "■" : energyString + "";
+		energyString = cardCost >= 5 ? energyString + "■" : energyString + "";
+		cardCostTxt.setText(energyString);
 
 		Animations.cardAnim(cardLayout, cardBackLayout, cardNameTxt, cardParentLayout, skipBtn, useBtn);
 
@@ -301,13 +324,13 @@ public class MainActivity extends Activity
 		}
 		//Variables are populated on useCard() void method.
 		//Display the current datas on textviews
-		movesTxt.setText(userTurn + "\n" + moves + "");
+		titleTxt.setText(userTurn + "\n" + moves + "");
 		
 		playerLivesTxt.setText("❤" + playerLives);
-		updateEnergy(playerEnergyTxt, playerEnergy);
+		updateEnergy(playerEnergyTxt, playerEnergy, true);
 
 		enemyLivesTxt.setText("❤" + enemyLives);
-		updateEnergy(enemyEnergyTxt, enemyEnergy);
+		updateEnergy(enemyEnergyTxt, enemyEnergy, true);
 
 		//Detect any differences on datas
 		//do an animation if theres any
@@ -332,24 +355,27 @@ public class MainActivity extends Activity
 		//Winning and losing system
 		//if player dies then you lose
 		if(playerLives <= 0){
-			movesTxt.setText(R.string.you_lose);
+			titleTxt.setText(R.string.you_lose);
 		}
 		//if enemy dies then you win
 		if(enemyLives <= 0){
-			movesTxt.setText(R.string.you_win);
+			titleTxt.setText(R.string.you_win);
 		}
 		System.out.println("updateGame() check");
 	}
 	
 	
 	
-	public void updateEnergy(final TextView energyTxt, final int energyInt){
+	public void updateEnergy(final TextView energyTxt, final int energyInt, final boolean showEnergyEmoji){
 		//imagine there's 5 light bulbs
 		//1 light bulb must be on and everything to off to indicate number 1
 		//2 light bulbs must be on to indicate number 2
 		//3 light bulbs must be on to indicate number 3...so on and so forth
 		//anything that the energyInt doesnt reach e.g. 5, it must be off
-		String energyString = "⚡";
+		String energyString = "";
+		if (showEnergyEmoji){
+			energyString = "⚡";
+		}
 		energyString = energyInt >= 1 ? energyString + "■" : energyString + "□";
 		energyString = energyInt >= 2 ? energyString + "■" : energyString + "□";
 		energyString = energyInt >= 3 ? energyString + "■" : energyString + "□";
