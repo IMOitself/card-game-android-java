@@ -18,9 +18,8 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:text="0"
-			android:textAppearance="?android:attr/textAppearanceMedium"
 			android:textColor="#979797"
-			android:id="@+id/moves_txt"
+			android:id="@+id/title_txt"
 			android:gravity="bottom|center_horizontal"
 			android:layout_weight="1.0"/>
 
@@ -53,14 +52,14 @@
 					android:id="@+id/player_lives_txt"/>
 
 				<ImageView
-					android:src="@drawable/green"
+					android:src="@drawable/dude_with_sword"
 					android:layout_width="70dp"
 					android:layout_height="70dp"/>
 
 				<TextView
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:text="⚡5/5"
+					android:text="⚡■■■■■"
 					android:textColor="#FFFFFF"
 					android:textSize="16sp"
 					android:textStyle="bold"
@@ -95,14 +94,14 @@
 					android:id="@+id/enemy_lives_txt"/>
 
 				<ImageView
-					android:src="@drawable/green"
+					android:src="@drawable/guy_with_sword_too"
 					android:layout_width="70dp"
 					android:layout_height="70dp"/>
 
 				<TextView
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:text="⚡5/5"
+					android:text="⚡■■■■■"
 					android:textColor="#FFFFFF"
 					android:textSize="16sp"
 					android:textStyle="bold"
@@ -124,42 +123,49 @@
 			android:orientation="horizontal"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_weight="1.0"
-			android:id="@+id/cardParentLayout">
+			android:id="@+id/cardParentLayout"
+			android:layout_weight="1.0">
 
 			<LinearLayout
 				android:orientation="vertical"
-				android:layout_width="80dp"
-				android:layout_height="90dp"
-				android:padding="10dp"
+				android:layout_width="100dp"
+				android:layout_height="100dp"
+				android:id="@+id/card_layout"
 				android:gravity="center"
-				android:background="#696969"
-				android:id="@+id/card_layout">
+				android:background="#FFFFFF">
+
+				<TextView
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:text="■■■■■"
+					android:textColor="#FFFFFF"
+					android:textSize="16sp"
+					android:id="@+id/card_cost_txt"
+					android:gravity="center"
+					android:lines="1"
+					android:layout_weight="1.0"
+					android:background="#696969"/>
 
 				<TextView
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:text="❤10"
-					android:textColor="#FFFFFF"
+					android:text="🔪2"
+					android:textColor="#696969"
 					android:textStyle="bold"
 					android:textSize="25sp"
-					android:id="@+id/card_info_txt"/>
-
-				<TextView
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:text="⚡5"
-					android:textColor="#FFFFFF"
-					android:textSize="25sp"
-					android:textStyle="bold"
-					android:id="@+id/card_cost_txt"/>
+					android:id="@+id/card_info_txt"
+					android:layout_marginLeft="10dp"
+					android:layout_marginRight="10dp"
+					android:layout_weight="1.0"
+					android:gravity="center"
+					android:layout_marginBottom="10dp"/>
 
 			</LinearLayout>
 
 			<LinearLayout
 				android:orientation="vertical"
-				android:layout_width="80dp"
-				android:layout_height="90dp"
+				android:layout_width="100dp"
+				android:layout_height="100dp"
 				android:padding="10dp"
 				android:gravity="center"
 				android:background="#696969"
@@ -170,6 +176,14 @@
 		</LinearLayout>
 
 	</LinearLayout>
+
+	<TextView
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:text="This project is made by IMOitself. Might be publicly available on Github. Feel free to use and modify."
+		android:textColor="#939393"
+		android:lines="2"
+		android:id="@+id/debug_txt"/>
 
 	<LinearLayout
 		android:orientation="horizontal"
