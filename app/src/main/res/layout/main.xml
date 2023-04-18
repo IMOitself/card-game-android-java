@@ -28,7 +28,6 @@
 			android:orientation="horizontal"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:padding="10dp"
 			android:gravity="center">
 
 			<LinearLayout
@@ -41,7 +40,8 @@
 				android:gravity="center"
 				android:scaleX="1.05"
 				android:scaleY="1.05"
-				android:id="@+id/player_layout">
+				android:id="@+id/player_layout"
+				android:layout_margin="10dp">
 
 				<TextView
 					android:layout_width="wrap_content"
@@ -82,7 +82,8 @@
 				android:padding="8dp"
 				android:layout_weight="1"
 				android:gravity="center"
-				android:id="@+id/enemy_layout">
+				android:id="@+id/enemy_layout"
+				android:layout_margin="10dp">
 
 				<TextView
 					android:layout_width="wrap_content"
@@ -123,7 +124,8 @@
 			android:orientation="horizontal"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_weight="1.0">
+			android:layout_weight="1.0"
+			android:id="@+id/cardParentLayout">
 
 			<LinearLayout
 				android:orientation="vertical"
