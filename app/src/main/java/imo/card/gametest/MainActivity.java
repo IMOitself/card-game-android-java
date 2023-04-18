@@ -7,7 +7,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.view.View;
 import android.view.MotionEvent;
-
+import android.graphics.Typeface;
 import android.util.DisplayMetrics;
 
 import java.util.ArrayList;
@@ -59,6 +59,7 @@ public class MainActivity extends Activity
 
 	public int moves = 3;
 	public String userTurn = "player";
+	public boolean isEnemyTurn = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -86,7 +87,7 @@ public class MainActivity extends Activity
 		//buttons are not necessary anymore.
 		buttonsLayout.setVisibility(View.GONE);
 		//to bring them back remove this code above
-
+		
 		System.out.println("mainLogic() check");
 
 		onCreateLogic();
@@ -151,7 +152,7 @@ public class MainActivity extends Activity
 				cardParentLayout.setX(currentX - viewWidthCenter);
 				
 				float debugFloat = event.getRawX() - viewWidthCenter;
-				debugTxt.setText("event.getRawX(): " + debugFloat + "\ncenterX: " + centerX);
+				debugTxt.setText("event.getRawX(): " + debugFloat + "   centerX: " + centerX);
 				
 				break;
 			case MotionEvent.ACTION_UP:
@@ -159,7 +160,7 @@ public class MainActivity extends Activity
 				
 				float finalX = event.getRawX() - viewWidthCenter;
 				
-				int safeZone = 80;
+				int safeZone = 120;
 				if (finalX < centerX - safeZone) {
 					skipCard();
 					
@@ -299,10 +300,11 @@ public class MainActivity extends Activity
 			if (userTurn.equals("player")){
 				userTurn = "enemy";
 				Animations.hoverAnim(enemyLayout, playerLayout);
-
+				
 			}else if (userTurn.equals("enemy")){
 				userTurn = "player";
 				Animations.hoverAnim(playerLayout, enemyLayout);
+				
 			}
 			moves = 3;
 		}
@@ -382,5 +384,21 @@ public class MainActivity extends Activity
 		energyString = energyInt >= 4 ? energyString + "■" : energyString + "□";
 		energyString = energyInt >= 5 ? energyString + "■" : energyString + "□";
 		energyTxt.setText(energyString);
+	}
+	
+	
+	
+	public void enemyAutoPlay(final int enemyInt){
+		Random random = new Random();
+		int randomInt = random.nextInt(1);
+		if (randomInt == 0){
+			skipCard();
+		}else if (randomInt == 1){
+			if(enemyInt <= 0){
+				skipCard();
+			}else{
+				useCard();
+			}
+		}
 	}
 }
