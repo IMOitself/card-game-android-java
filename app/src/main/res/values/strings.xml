@@ -6,14 +6,14 @@
 	<string name="you_win">YOU WIN!</string>
 	<string name="sample_cardpack">
 		》name=ATTACK
-		》info=🗡+2
+		》info=🔪2
 		》cost=-2
 		》lives=0, -2
 		;
 		》name=ATTACK
-		》info=🗡+2
+		》info=🔪3
 		》cost=-2
-		》lives=0, -2
+		》lives=0, -3
 		;
 		》name=REST
 		》info=⚡+3
@@ -24,5 +24,10 @@
 		》info=❤+2
 		》cost=-2
 		》lives=+2, 0
+		;
+		》name=MEGA ATTACK
+		》info=🔪5
+		》cost=-4
+		》lives=0, -5
 	</string>
 </resources>
