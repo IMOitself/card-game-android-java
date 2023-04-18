@@ -16,9 +16,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+
 // TODO: enemy autoplay
-// TODO: Remove the buttons since its useless now. Make "Skip" textview on the left and "Use" on the right.
-//       to indicate where should the user will swipe to perform a logic
+// TODO: Make "Skip" textview on the left and "Use" on the right. To indicate where should the user will swipe.
 // TODO: record the already drawn cards to not be use again until all of the card is drawn and refreshes
 
 public class MainActivity extends Activity 
@@ -79,6 +79,10 @@ public class MainActivity extends Activity
 		buttonsLayout = findViewById(R.id.buttons_layout);
 		skipBtn = findViewById(R.id.skip_btn);
 		useBtn = findViewById(R.id.use_btn);
+		
+		//buttons are not necessary anymore.
+		buttonsLayout.setVisibility(View.GONE);
+		//to bring them back remove this code above
 
 		System.out.println("mainLogic() check");
 
@@ -94,41 +98,19 @@ public class MainActivity extends Activity
 					useCard();
 				}
 			});
-		
-		//TODO: Some better comments
-		final int centerX = screenWidth/2 - (screenWidth/3)/2;
 		cardParentLayout.setOnTouchListener(new View.OnTouchListener() {
 				public boolean onTouch(View v, MotionEvent event) {
-					switch (event.getAction()) {
-						case MotionEvent.ACTION_MOVE:
-							// Get the x coordinates of the touch event
-							float x = event.getRawX();
-							
-							cardParentLayout.setX(x - (screenWidth/3)/2);
-							break;
-						case MotionEvent.ACTION_UP:
-							cardParentLayout.setX(centerX);
-							// Calculate the drag distance
-							if (event.getRawX() < centerX) {
-								skipCard();
-							} else {
-								useCard();
-							}
-							
-							break;
-					}
+					swipeCardLogic(cardParentLayout, event);
 					return true;
 				}
 			});
     }
-
-
-
-
 	
 	
-
-
+	
+	
+	
+	
 	public void onCreateLogic(){
 		//get the screen width
 		DisplayMetrics displayMetrics = new DisplayMetrics();
@@ -141,8 +123,8 @@ public class MainActivity extends Activity
 		cardBackLayout.setVisibility(View.GONE);//will be used later
 		
 		//Transform the string to a Arraylist that holds a hashmap. 
-		//Each Hashmap holds key-value pairs that makes it easier to search for a specific attribute.
-		//e.g. if i search for the key "name" it will retrieve a value of "Attack".
+		//Each Hashmap holds key-value pairs that makes it easier to search for a specific item.
+		//If i search for the key "name" it will retrieve a value of "John" for example.
 		String sample_cardpack = getResources().getString(R.string.sample_cardpack);
         Tools.importDataToArraylist(cardsData, sample_cardpack, ";", "》");//arraylist, string, splitItemsBy, splitContentsBy
 		//Start the game by populating views with datas
@@ -152,9 +134,49 @@ public class MainActivity extends Activity
 
 		System.out.println("onCreateLogic() check");
 	}
+	
+	
+	
+	public void swipeCardLogic(View cardParentLayout, MotionEvent event){
+		//TODO: Some better comments
+		final int centerX = screenWidth/2 - (screenWidth/3)/2;
+		switch (event.getAction()) {
+			case MotionEvent.ACTION_MOVE:
+				float x = event.getRawX();
+				cardParentLayout.setX(x - (screenWidth/3)/2);
+				break;
+			case MotionEvent.ACTION_UP:
+				cardParentLayout.setX(centerX);
+				if (event.getRawX() < centerX) {
+					skipCard();
+				}else {
+					useCard();
+				}
+				break;
+		}
+		System.out.println("swipeCardLogic() check");
+	}
 
 
+	
+	public void drawCard(){
+		//Randomly get a hashmap from the cardsData
+		//drawnCardMap will be used on useCard() void method.
+		Random random = new Random();
+        drawnCardMap = cardsData.get(random.nextInt(cardsData.size()));
 
+		//update which card you picked by populating some views
+		cardNameTxt.setText(drawnCardMap.get("name"));
+		cardCostTxt.setText("⚡" + drawnCardMap.get("cost"));
+		cardInfoTxt.setText(drawnCardMap.get("info"));
+
+		Animations.cardAnim(cardLayout, cardBackLayout, cardNameTxt, cardParentLayout, skipBtn, useBtn);
+
+		System.out.println("drawCard() check");
+	}
+	
+	
+	
 	public void skipCard(){
 		//skipping a card gives you 1 energy.
 		if (userTurn.equals("player")){
@@ -179,8 +201,6 @@ public class MainActivity extends Activity
 		//We split the "0, 0" by "," thus resulting in ["0", " 0"]
 		//The first value of the array populates how many should be added on self.
 		//The second value of the array populates how many should be added on target.
-		//for example, if the user is player. 
-		//In that case, self is referring to player and target is referring to enemy.
 		int editSelfLives = 0;
 		int editTargetLives = 0;
 		if (drawnCardMap.containsKey("lives")){
@@ -188,7 +208,6 @@ public class MainActivity extends Activity
 			editSelfLives = Integer.parseInt(valueArray[0].trim());
 			editTargetLives = Integer.parseInt(valueArray[1].trim());
 		}
-
 		int editSelfEnergy = 0;
 		int editTargetEnergy = 0;
 		if (drawnCardMap.containsKey("energy")){
@@ -200,15 +219,13 @@ public class MainActivity extends Activity
 		//this int always have negative value.
 		int drawnCardCost = Integer.parseInt(drawnCardMap.get("cost"));
 		//the code below detects if you can use the card or not.
-		//e.g. if i have 3 energy and the card needs 4.
-		//im not gonna be able to use it since i don't have enough energy.
+		//e.g. if i have 3 energy and the card needs 4. The card cant be use.
 		//therefore my only option is to skip.
 		//Else if i have enough energy, use the card and move onto next card.
 
-		//if its player's turn,
-		//editSelfLives and editSelfEnergy will be added to the player
-		//editTargetLives and editTargetEnergy will be added to the enemy
-		//same as the enemy's turn but vice versa.
+		//for example, if the user is player. 
+		//In that case, self is referring to player and target is referring to enemy.
+		//same as if the enemy is the user but vice versa.
 		//negative value subtracts instead of addition.
 		if (userTurn.equals("player")){
 			if (Math.abs(drawnCardCost) > playerEnergy){
@@ -241,28 +258,10 @@ public class MainActivity extends Activity
 				drawCard();
 			}
 		}
-		//whether or not the card can be used. 
-		//Still update and populates the views with datas.
+		//whether or not the card can be used, still update the game.
 		updateGame();
+		
 		System.out.println("useCard() check");
-	}
-	
-	
-	
-	public void drawCard(){
-		//Randomly get a hashmap from the cardsData
-		//drawnCardMap will be used on useCard() void method.
-		Random random = new Random();
-        drawnCardMap = cardsData.get(random.nextInt(cardsData.size()));
-
-		//update which card you picked by populating some views
-		cardNameTxt.setText(drawnCardMap.get("name"));
-		cardCostTxt.setText("⚡" + drawnCardMap.get("cost"));
-		cardInfoTxt.setText(drawnCardMap.get("info"));
-		
-		Animations.cardAnim(skipBtn, useBtn, cardLayout, cardBackLayout, cardNameTxt);
-		
-		System.out.println("drawCard() check");
 	}
 
 
@@ -290,8 +289,8 @@ public class MainActivity extends Activity
 	
 
 	public void updateGame(){
-		//The max energy a player and enemy could have is 5
-		//This prevents going beyond 5.
+		//The max energy a player and enemy could have is 5. 
+		//This code prevents going beyond 5.
 		if (playerEnergy > 5){
 			playerEnergy = 5;
 			playerEnergy_old = 0;//to prevent not showing changes
