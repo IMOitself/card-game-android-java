@@ -5,6 +5,8 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Button;
 
+//TODO: Some comments
+
 public class Animations
 {
 	private static int duration = 500;
@@ -37,10 +39,20 @@ public class Animations
 				} })
 			.start();
 	}
-	public static void cardAnim(final Button btn1, final Button btn2, final View cardLayout, final View cardBackLayout, final View optionalView){
-		int translateDistance = 100;
+	public static void cardAnim(
+	final View cardLayout,
+	final View cardBackLayout,
+	final View optionalView,
+	final View cardSwipe,
+	final Button btn1, final Button btn2
+	){
+		//This disables the buttons and swiping action to prevent future issues
+		cardSwipe.setEnabled(false);
 		btn1.setEnabled(false);
 		btn2.setEnabled(false);
+		//If you want to spam using the card nonstop. Delete the code above. Be careful tho.
+		
+		int translateDistance = 100;
 		cardLayout.setVisibility(View.GONE);
 		cardBackLayout.setTranslationY(translateDistance);
 		cardBackLayout.setVisibility(View.VISIBLE);
@@ -52,9 +64,12 @@ public class Animations
 								cardBackLayout.setScaleX(1);
 								cardLayout.setScaleX(0);
 								cardLayout.setVisibility(View.VISIBLE);
-								cardLayout.animate().scaleX(1).setDuration(duration).start();
-								btn1.setEnabled(true);
-								btn2.setEnabled(true);
+								cardLayout.animate().scaleX(1).setDuration(duration).withEndAction(new Runnable() { @Override public void run() {
+											cardSwipe.setEnabled(true);
+											btn1.setEnabled(true);
+											btn2.setEnabled(true);
+										} })
+									.start();
 							} })
 						.start();	
 				} })
