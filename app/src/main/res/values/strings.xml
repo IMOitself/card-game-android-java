@@ -1,36 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+	<string name="notice">
+		This project is made by IMOitself. Might be publicly available on Github. Feel free to use and modify.
+		</string>
     <string name="app_name">Card Game Test</string>
 	<string name="you_lose">YOU LOSE!</string>
 	<string name="you_win">YOU WIN!</string>
 	<string name="sample_cardpack">
 		》name=ATTACK
-		》info=🔪2
+		》info=attack 🔪2
 		》cost=-2
 		》lives=0, -2
 		》type=attack
 		;
 		》name=ATTACK II
-		》info=🔪3
+		》info=attack 🔪3
 		》cost=-2
 		》lives=0, -3
 		》type=attack
 		;
 		》name=REST
-		》info=⚡+3
+		》info=gain energy ⚡+3
 		》cost=0
 		》energy=+3, 0
 		》type=rest
 		;
 		》name=HEAL
-		》info=❤+2
+		》info=heal ❤+2
 		》cost=-2
 		》lives=+2, 0
 		》type=heal
 		;
 		》name=MEGA ATTACK
-		》info=🔪5
+		》info=attack 🔪5
 		》cost=-4
 		》lives=0, -5
 		》type=mega_attack
