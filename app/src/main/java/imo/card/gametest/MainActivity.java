@@ -5,17 +5,18 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.ImageView;
 import android.view.View;
 import android.view.MotionEvent;
 import android.util.DisplayMetrics;
 
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-// TODO: another textview or smth to display moves int
 // TODO: attack animation
 // TODO: stop the game when someone wins or lose
 // TODO: Make "Skip" textview on the left and "Use" on the right. To indicate where should the user will swipe.
@@ -30,6 +31,8 @@ public class MainActivity extends Activity
 	public LinearLayout enemyLayout;
 	public TextView enemyLivesTxt;
 	public TextView enemyEnergyTxt;
+	public ImageView movesImg;
+	public TextView movesTxt;
 	public View cardParentLayout;
 	public LinearLayout cardBackLayout;
 	public LinearLayout cardLayout;
@@ -46,20 +49,24 @@ public class MainActivity extends Activity
 	public List<Map<String, String>> cardsData = new ArrayList<>();
 	public Map<String, String> drawnCardMap;
 
+	public int moves = 3;
 	public int playerLives = 10;
 	public int playerEnergy = 5;
 	public int enemyLives = 10;
 	public int enemyEnergy = 5;
-
+	
+	public int moves_old = moves;
 	public int playerLives_old = playerLives;
 	public int playerEnergy_old = playerEnergy;
 	public int enemyLives_old = enemyLives;
 	public int enemyEnergy_old = enemyEnergy;
 
-	public int moves = 3;
 	public String userTurn = "player";
 	public boolean isEnemyTurn = false;
-
+	
+	public String[] playerCardNames;
+	public String[] enemyCardNames;
+	
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -72,6 +79,8 @@ public class MainActivity extends Activity
 		enemyLayout = findViewById(R.id.enemy_layout);
 		enemyLivesTxt = findViewById(R.id.enemy_lives_txt);
 		enemyEnergyTxt = findViewById(R.id.enemy_energy_txt);
+		movesImg = findViewById(R.id.moves_img);
+		movesTxt = findViewById(R.id.moves_txt);
 		cardParentLayout = findViewById(R.id.cardParentLayout);
 		cardBackLayout = findViewById(R.id.card_back_layout);
 		cardLayout = findViewById(R.id.card_layout);
@@ -173,12 +182,16 @@ public class MainActivity extends Activity
 		//drawnCardMap will be used on useCard() void method.
 		Random random = new Random();
         drawnCardMap = cardsData.get(random.nextInt(cardsData.size()));
+		// TODO: Some comments
+		String cardName = drawnCardMap.get("name");
+		String cardInfo = drawnCardMap.get("info");
+		String cardType = drawnCardMap.get("type");
+		cardNameTxt.setText(cardName);
+		cardInfoTxt.setText(cardInfo);
 
-		//update which card you picked by populating some views
-		cardNameTxt.setText(drawnCardMap.get("name"));
-		cardInfoTxt.setText(drawnCardMap.get("info"));
 		//TODO: Some comments
-		int cardCost = Math.abs(Integer.parseInt(drawnCardMap.get("cost")));
+		int cardCost = Integer.parseInt(drawnCardMap.get("cost"));
+		cardCost = Math.abs(cardCost);
 		String energyString = "";
 		energyString = cardCost <= 0 ? energyString + "FREE" : energyString + "";
 		energyString = cardCost >= 1 ? energyString + "■" : energyString + "";
@@ -188,8 +201,9 @@ public class MainActivity extends Activity
 		energyString = cardCost >= 5 ? energyString + "■" : energyString + "";
 		cardCostTxt.setText(energyString);
 
-		Animations.cardAnim(cardLayout, cardBackLayout, cardNameTxt, cardParentLayout, skipBtn, useBtn);
-	}
+		Animations.cardAnim(cardLayout, cardBackLayout, cardNameTxt, isEnemyTurn, cardParentLayout, skipBtn, useBtn);
+		
+		}
 	
 	
 	
@@ -216,17 +230,20 @@ public class MainActivity extends Activity
 		//We split the "0, 0" by "," thus resulting in ["0", " 0"]
 		//The first value of the array populates how many should be added on self.
 		//The second value of the array populates how many should be added on target.
+		String cardLives = drawnCardMap.get("lives");
+		String cardEnergy = drawnCardMap.get("energy");
+		
 		int editSelfLives = 0;
 		int editTargetLives = 0;
 		if (drawnCardMap.containsKey("lives")){
-			String[] valueArray = drawnCardMap.get("lives").split(",");
+			String[] valueArray = cardLives.split(",");
 			editSelfLives = Integer.parseInt(valueArray[0].trim());
 			editTargetLives = Integer.parseInt(valueArray[1].trim());
 		}
 		int editSelfEnergy = 0;
 		int editTargetEnergy = 0;
 		if (drawnCardMap.containsKey("energy")){
-			String[] valueArray = drawnCardMap.get("energy").split(",");
+			String[] valueArray = cardEnergy.split(",");
 			editSelfEnergy = Integer.parseInt(valueArray[0].trim());
 			editTargetEnergy = Integer.parseInt(valueArray[1].trim());
 		}
@@ -258,6 +275,7 @@ public class MainActivity extends Activity
 				drawCard();
 			}
 		}else if (userTurn.equals("enemy")){
+			//Enemy will play on its own. The decision of enemy is made on updateTurns() on enemyRandomPlay()
 			if (Math.abs(drawnCardCost) > enemyEnergy){
 				skipCard();
 			}else{
@@ -321,7 +339,8 @@ public class MainActivity extends Activity
 		}
 		//Variables are populated on useCard() void method.
 		//Display the current datas on textviews
-		titleTxt.setText(userTurn + "\n" + moves);
+		titleTxt.setText(userTurn + "");
+		movesTxt.setText(moves + "");
 		
 		playerLivesTxt.setText("❤" + playerLives);
 		updateEnergy(playerEnergyTxt, playerEnergy, true);
@@ -331,6 +350,9 @@ public class MainActivity extends Activity
 
 		//Detect any differences on datas
 		//do an animation if theres any
+		if (moves_old != moves){
+			Animations.rotateAnim(movesImg, userTurn);
+		}
 		if (playerLives_old != playerLives){
 			Animations.popAnim(playerLivesTxt);
 		}
@@ -344,6 +366,7 @@ public class MainActivity extends Activity
 			Animations.popAnim(enemyEnergyTxt);
 		}
 		//Record the data to be compared with later ones
+		moves_old = moves;
 		playerLives_old = playerLives;
 		playerEnergy_old = playerEnergy;
 		enemyLives_old = enemyLives;
