@@ -20,7 +20,7 @@ import java.util.Random;
 
 // TODO: attack animation
 // TODO: stop the game when someone wins or lose
-// TODO: Make "Skip" textview on the left and "Use" on the right. To indicate where should the user will swipe.
+// TODO: Indicate "Skip" textview on the left and "Use" on the right on swiping the card.
 // TODO: record the already drawn cards to not be use again until all of the card is drawn and refreshes
 
 public class MainActivity extends Activity 
@@ -135,7 +135,7 @@ public class MainActivity extends Activity
 		
 		//TODO: some comments
 		int bgColor;
-		int strokeColor = Color.parseColor("#FFFFFF");//no color
+		int strokeColor = Color.parseColor("#FFFFFF");//white
 		int strokeWidth = 1;
 		int cornerRadius = 0;
 		float opacity = 0.3f;
@@ -146,6 +146,10 @@ public class MainActivity extends Activity
 		bgColor = Color.parseColor("#00FFFFFF");//no color
 		Tools.setRoundedViewWithStroke(cardTypeImg, bgColor, strokeColor, strokeWidth, cornerRadius, opacity);
 		Tools.setRoundedViewWithStroke(cardCostTxt, bgColor, strokeColor, strokeWidth, cornerRadius, opacity);
+		bgColor = Color.parseColor("#696969");//grey
+		strokeWidth = 2;
+		Tools.setRoundedViewWithStroke(playerLayout, bgColor, strokeColor, strokeWidth, cornerRadius, opacity);
+		
 		
 		cardBackLayout.setVisibility(View.GONE);//will be used later
 		
@@ -211,7 +215,7 @@ public class MainActivity extends Activity
 		int cardCost = Integer.parseInt(drawnCardMap.get("cost"));
 		cardCost = Math.abs(cardCost);
 		String energyString = "";
-		energyString = cardCost <= 0 ? energyString + "---" : energyString + "";
+		energyString = cardCost <= 0 ? energyString + "----" : energyString + "";
 		energyString = cardCost >= 1 ? energyString + "■" : energyString + "";
 		energyString = cardCost >= 2 ? energyString + "■" : energyString + "";
 		energyString = cardCost >= 3 ? energyString + "■" : energyString + "";
@@ -389,7 +393,7 @@ public class MainActivity extends Activity
 		playerEnergy_old = playerEnergy;
 		enemyLives_old = enemyLives;
 		enemyEnergy_old = enemyEnergy;
-
+		
 		//Winning and losing system
 		//if player dies then you lose
 		if(playerLives <= 0){
@@ -399,6 +403,23 @@ public class MainActivity extends Activity
 		if(enemyLives <= 0){
 			titleTxt.setText(R.string.you_win);
 		}
+	}
+	
+	
+	
+	public void enemyRandomPlay(final int enemyEnergy){
+		View dummy = titleTxt;//not gonna be manipulated
+		dummy.animate().setDuration(Animations.duration * 3)
+			.withEndAction(new Runnable() { @Override public void run() {
+					Random random = new Random();
+					int randomInt = random.nextInt(2);
+					if (randomInt == 0){
+						skipCard();
+					}else if (randomInt == 1){
+						useCard();
+					}
+				} })
+			.start();
 	}
 	
 	
@@ -438,22 +459,5 @@ public class MainActivity extends Activity
 		energyString = energyInt >= 4 ? energyString + "■" : energyString + "□";
 		energyString = energyInt >= 5 ? energyString + "■" : energyString + "□";
 		energyTxt.setText(energyString);
-	}
-	
-	
-	
-	public void enemyRandomPlay(final int enemyEnergy){
-		View dummy = titleTxt;//not gonna be manipulated
-		dummy.animate().setDuration(Animations.duration * 3)
-			.withEndAction(new Runnable() { @Override public void run() {
-					Random random = new Random();
-					int randomInt = random.nextInt(2);
-					if (randomInt == 0){
-						skipCard();
-					}else if (randomInt == 1){
-						useCard();
-					}
-				} })
-			.start();
 	}
 }
