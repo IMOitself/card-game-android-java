@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-// TODO: attack animation
 // TODO: stop the game when someone wins or lose
 // TODO: Indicate "Skip" textview on the left and "Use" on the right on swiping the card.
 // TODO: record the already drawn cards to not be use again until all of the card is drawn and refreshes
@@ -124,12 +123,15 @@ public class MainActivity extends Activity
 	
 	
 	
+	
 	public void onCreateLogic(){
 		//get the screen width
 		DisplayMetrics displayMetrics = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 		screenWidth = displayMetrics.widthPixels;
 		//set the view size to 1/3 of the screen
+		Tools.setViewSize(playerLayout, screenWidth / 3, screenWidth / 3);
+		Tools.setViewSize(enemyLayout, screenWidth / 3, screenWidth / 3);
 		Tools.setViewSize(cardLayout, screenWidth / 3, screenWidth / 3);
 		Tools.setViewSize(cardBackLayout, screenWidth / 3, screenWidth / 3);
 		
@@ -207,7 +209,7 @@ public class MainActivity extends Activity
 		String cardName = drawnCardMap.get("name");
 		String cardInfo = drawnCardMap.get("info");
 		String cardType = drawnCardMap.get("type");
-		detectCardType(cardType, cardTypeImg);
+		setImageByCardType(cardType, cardTypeImg);
 		cardNameTxt.setText(cardName);
 		cardInfoTxt.setText(cardInfo);
 
@@ -254,6 +256,7 @@ public class MainActivity extends Activity
 		//The second value of the array populates how many should be added on target.
 		String cardLives = drawnCardMap.get("lives");
 		String cardEnergy = drawnCardMap.get("energy");
+		String cardType = drawnCardMap.get("type");
 		
 		int editSelfLives = 0;
 		int editTargetLives = 0;
@@ -292,7 +295,10 @@ public class MainActivity extends Activity
 
 				playerEnergy = playerEnergy + editSelfEnergy;//overwrites drawnCardCost
 				enemyEnergy = enemyEnergy + editTargetEnergy;
-
+				
+				if(cardType.contains("attack")){//contains() method because it will reach any string with "attack"
+					Animations.attackAnim(-5, playerLayout, enemyLayout);
+				}
 				updateTurns();
 				drawCard();
 			}
@@ -308,7 +314,11 @@ public class MainActivity extends Activity
 
 				enemyEnergy = enemyEnergy + editSelfEnergy;//overwrites drawnCardCost
 				playerEnergy = playerEnergy + editTargetEnergy;
-
+				
+				if(cardType.contains("attack")){//contains() method because it will reach any string with "attack"
+					Animations.attackAnim(5, enemyLayout, playerLayout);
+				}
+				
 				updateTurns();
 				drawCard();
 			}
@@ -424,7 +434,7 @@ public class MainActivity extends Activity
 	
 	
 	
-	public void detectCardType(String cardType, ImageView img){
+	public void setImageByCardType(String cardType, ImageView img){
 		switch(cardType){
 			case "attack":
 				img.setImageResource(R.drawable.attack_type);
