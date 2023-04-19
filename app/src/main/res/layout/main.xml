@@ -45,7 +45,7 @@
 				<TextView
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:text="❤10"
+					android:text="❤00"
 					android:textColor="#FFFFFF"
 					android:textStyle="bold"
 					android:textSize="25sp"
@@ -87,7 +87,7 @@
 				<TextView
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:text="❤10"
+					android:text="❤00"
 					android:textColor="#FFFFFF"
 					android:textStyle="bold"
 					android:textSize="25sp"
@@ -111,10 +111,34 @@
 
 		</LinearLayout>
 
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:gravity="center"
+			android:orientation="horizontal">
+
+			<ImageView
+				android:id="@+id/moves_img"
+				android:layout_width="50dp"
+				android:layout_height="50dp"
+				android:layout_margin="10dp"
+				android:scaleType="fitCenter"
+				android:src="@drawable/sand_clock"/>
+
+			<TextView
+				android:id="@+id/moves_txt"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="00"
+				android:textColor="#D0D0D0"
+				android:textSize="34sp"/>
+
+		</LinearLayout>
+
 		<TextView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:text="Beep Boop"
+			android:text="MEGA ATTACK"
 			android:textColor="#939393"
 			android:id="@+id/card_name_txt"
 			android:textSize="25sp"/>
@@ -128,35 +152,51 @@
 
 			<LinearLayout
 				android:orientation="vertical"
-				android:layout_width="100dp"
-				android:layout_height="100dp"
+				android:layout_width="130dp"
+				android:layout_height="130dp"
 				android:id="@+id/card_layout"
 				android:gravity="center"
 				android:background="#FFFFFF">
 
-				<TextView
+				<LinearLayout
+					android:orientation="vertical"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
-					android:text="■■■■■"
-					android:textColor="#FFFFFF"
-					android:textSize="16sp"
-					android:id="@+id/card_cost_txt"
-					android:gravity="center"
-					android:lines="1"
-					android:layout_weight="1.0"
-					android:background="#696969"/>
+					android:layout_weight="0.5"
+					android:background="#696969"
+					android:gravity="center">
+
+					<ImageView
+						android:src="@drawable/mega_attack_type"
+						android:layout_width="30dp"
+						android:layout_height="30dp"
+						android:id="@+id/card_type_img"
+						android:scaleType="fitCenter"/>
+
+					<TextView
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:text="■■■■■"
+						android:textColor="#FFFFFF"
+						android:textSize="16sp"
+						android:id="@+id/card_cost_txt"
+						android:gravity="center"
+						android:lines="1"
+						android:textStyle="bold"/>
+
+				</LinearLayout>
 
 				<TextView
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:text="🔪2"
+					android:text="🔪5"
 					android:textColor="#696969"
 					android:textStyle="bold"
 					android:textSize="25sp"
 					android:id="@+id/card_info_txt"
 					android:layout_marginLeft="10dp"
 					android:layout_marginRight="10dp"
-					android:layout_weight="1.0"
+					android:layout_weight="3"
 					android:gravity="center"
 					android:layout_marginBottom="10dp"/>
 
@@ -164,8 +204,8 @@
 
 			<LinearLayout
 				android:orientation="vertical"
-				android:layout_width="100dp"
-				android:layout_height="100dp"
+				android:layout_width="130dp"
+				android:layout_height="130dp"
 				android:padding="10dp"
 				android:gravity="center"
 				android:background="#696969"
@@ -183,7 +223,8 @@
 		android:text="This project is made by IMOitself. Might be publicly available on Github. Feel free to use and modify."
 		android:textColor="#939393"
 		android:lines="2"
-		android:id="@+id/debug_txt"/>
+		android:id="@+id/debug_txt"
+		android:textSize="12sp"/>
 
 	<LinearLayout
 		android:orientation="horizontal"
