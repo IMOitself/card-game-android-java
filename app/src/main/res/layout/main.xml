@@ -31,11 +31,10 @@
 
 			<LinearLayout
 				android:orientation="vertical"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
+				android:layout_width="140dp"
+				android:layout_height="140dp"
 				android:background="#696969"
 				android:padding="8dp"
-				android:layout_weight="1"
 				android:gravity="center"
 				android:scaleX="1.05"
 				android:scaleY="1.05"
@@ -75,11 +74,10 @@
 
 			<LinearLayout
 				android:orientation="vertical"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
+				android:layout_width="140dp"
+				android:layout_height="140dp"
 				android:background="#696969"
 				android:padding="8dp"
-				android:layout_weight="1"
 				android:gravity="center"
 				android:id="@+id/enemy_layout"
 				android:layout_margin="10dp">
@@ -192,7 +190,7 @@
 					android:text="🔪5"
 					android:textColor="#696969"
 					android:textStyle="bold"
-					android:textSize="25sp"
+					android:textSize="20sp"
 					android:id="@+id/card_info_txt"
 					android:layout_marginLeft="10dp"
 					android:layout_marginRight="10dp"
@@ -220,7 +218,7 @@
 	<TextView
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:text="This project is made by IMOitself. Might be publicly available on Github. Feel free to use and modify."
+		android:text="@string/notice"
 		android:textColor="#939393"
 		android:lines="2"
 		android:id="@+id/debug_txt"
