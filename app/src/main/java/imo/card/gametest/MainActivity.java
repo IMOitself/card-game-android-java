@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.view.View;
 import android.view.MotionEvent;
 import android.util.DisplayMetrics;
+import android.graphics.Color;
 
 import java.util.Arrays;
 import java.util.ArrayList;
@@ -36,9 +37,10 @@ public class MainActivity extends Activity
 	public View cardParentLayout;
 	public LinearLayout cardBackLayout;
 	public LinearLayout cardLayout;
+	public ImageView cardTypeImg;
+	public TextView cardCostTxt;
 	public TextView cardNameTxt;
 	public TextView cardInfoTxt;
-	public TextView cardCostTxt;
 	public LinearLayout buttonsLayout;
 	public Button skipBtn;
 	public Button useBtn;
@@ -84,9 +86,10 @@ public class MainActivity extends Activity
 		cardParentLayout = findViewById(R.id.cardParentLayout);
 		cardBackLayout = findViewById(R.id.card_back_layout);
 		cardLayout = findViewById(R.id.card_layout);
+		cardTypeImg = findViewById(R.id.card_type_img);
+		cardCostTxt = findViewById(R.id.card_cost_txt);
 		cardNameTxt = findViewById(R.id.card_name_txt);
 		cardInfoTxt = findViewById(R.id.card_info_txt);
-		cardCostTxt = findViewById(R.id.card_cost_txt);
 		buttonsLayout = findViewById(R.id.buttons_layout);
 		skipBtn = findViewById(R.id.skip_btn);
 		useBtn = findViewById(R.id.use_btn);
@@ -129,6 +132,20 @@ public class MainActivity extends Activity
 		//set the view size to 1/3 of the screen
 		Tools.setViewSize(cardLayout, screenWidth / 3, screenWidth / 3);
 		Tools.setViewSize(cardBackLayout, screenWidth / 3, screenWidth / 3);
+		
+		//TODO: some comments
+		int bgColor;
+		int strokeColor = Color.parseColor("#FFFFFF");//no color
+		int strokeWidth = 1;
+		int cornerRadius = 0;
+		float opacity = 0.3f;
+		bgColor = Color.parseColor("#FFFFFF");//white
+		Tools.setRoundedViewWithStroke(cardLayout, bgColor, strokeColor, strokeWidth, cornerRadius, opacity);
+		bgColor = Color.parseColor("#696969");//grey
+		Tools.setRoundedViewWithStroke(cardBackLayout, bgColor, strokeColor, strokeWidth, cornerRadius, opacity);
+		bgColor = Color.parseColor("#00FFFFFF");//no color
+		Tools.setRoundedViewWithStroke(cardTypeImg, bgColor, strokeColor, strokeWidth, cornerRadius, opacity);
+		Tools.setRoundedViewWithStroke(cardCostTxt, bgColor, strokeColor, strokeWidth, cornerRadius, opacity);
 		
 		cardBackLayout.setVisibility(View.GONE);//will be used later
 		
@@ -186,6 +203,7 @@ public class MainActivity extends Activity
 		String cardName = drawnCardMap.get("name");
 		String cardInfo = drawnCardMap.get("info");
 		String cardType = drawnCardMap.get("type");
+		detectCardType(cardType, cardTypeImg);
 		cardNameTxt.setText(cardName);
 		cardInfoTxt.setText(cardInfo);
 
@@ -193,7 +211,7 @@ public class MainActivity extends Activity
 		int cardCost = Integer.parseInt(drawnCardMap.get("cost"));
 		cardCost = Math.abs(cardCost);
 		String energyString = "";
-		energyString = cardCost <= 0 ? energyString + "FREE" : energyString + "";
+		energyString = cardCost <= 0 ? energyString + "---" : energyString + "";
 		energyString = cardCost >= 1 ? energyString + "■" : energyString + "";
 		energyString = cardCost >= 2 ? energyString + "■" : energyString + "";
 		energyString = cardCost >= 3 ? energyString + "■" : energyString + "";
@@ -380,6 +398,25 @@ public class MainActivity extends Activity
 		//if enemy dies then you win
 		if(enemyLives <= 0){
 			titleTxt.setText(R.string.you_win);
+		}
+	}
+	
+	
+	
+	public void detectCardType(String cardType, ImageView img){
+		switch(cardType){
+			case "attack":
+				img.setImageResource(R.drawable.attack_type);
+				break;
+			case "rest":
+				img.setImageResource(R.drawable.rest_type);
+				break;
+			case "heal":
+				img.setImageResource(R.drawable.heal_type);
+				break;
+			case "mega_attack":
+				img.setImageResource(R.drawable.mega_attack_type);
+				break;
 		}
 	}
 	
