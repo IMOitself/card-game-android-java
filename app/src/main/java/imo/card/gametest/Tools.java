@@ -1,6 +1,12 @@
 package imo.card.gametest;
 
+import android.app.Activity;
+import android.widget.TextView;
+import android.view.ViewGroup;
 import android.view.View;
+import android.content.Context;
+import android.graphics.Typeface;
+import android.graphics.drawable.GradientDrawable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +16,14 @@ public class Tools
 	public static void setViewSize(View view, int width, int height){
 		if (width != 0) view.getLayoutParams().width = width;
 		if (height != 0) view.getLayoutParams().height = height;
+	}
+	public static void setRoundedViewWithStroke(View layout, int backgroundColor, int strokeColor, int strokeWidth, int cornerRadius, float opacity) {
+		GradientDrawable shape = new GradientDrawable();
+		shape.setShape(GradientDrawable.RECTANGLE);
+		shape.setColor(backgroundColor);
+		shape.setCornerRadius(cornerRadius);
+		shape.setStroke(strokeWidth, strokeColor & 0xFFFFFF | ((int)(opacity * 255)) << 24);
+		layout.setBackgroundDrawable(shape);//display the shape as background of the view
 	}
 	
 	public static void importDataToArraylist(List<Map<String, String>> arraylist,
