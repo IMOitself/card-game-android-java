@@ -23,6 +23,15 @@ public class Animations
 			.start();
 	}
 	public static void hoverAnim(View view1, View view2){
+		int bgColor = Color.parseColor("#696969");//grey
+		int strokeColor = Color.parseColor("#FFFFFF");//white
+		int strokeWidth = 2;
+		int cornerRadius = 0;
+		float opacity = 0.3f;
+		Tools.setRoundedViewWithStroke(view1, bgColor, strokeColor, strokeWidth, cornerRadius, opacity);
+		strokeWidth = 0;
+		Tools.setRoundedViewWithStroke(view2, bgColor, strokeColor, strokeWidth, cornerRadius, opacity);
+		
 		float scaleBy = 1.05f;
 		view1.animate().scaleX(scaleBy).scaleY(scaleBy ).setDuration(duration).start();
 		if (view2 != null){
@@ -66,8 +75,8 @@ public class Animations
 								cardLayout.setScaleX(0);
 								cardLayout.setVisibility(View.VISIBLE);
 								cardLayout.animate().scaleX(1).setDuration(duration).withEndAction(new Runnable() { @Override public void run() {
-											cardSwipe.setEnabled(true);
 											if (isEnemyTurn == false){
+												cardSwipe.setEnabled(true);
 												btn1.setEnabled(true);
 												btn2.setEnabled(true);
 											}
