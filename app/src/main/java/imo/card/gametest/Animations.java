@@ -110,4 +110,33 @@ public class Animations
 				} })
 			.start();
 	}
+	public static void attackAnim (final int moveBackBy, final View self, final View target){
+		//moves back by 5dp,
+		//Dash to the distance of its own view's length times the value.
+		//after that, animate the target's reaction to the dash
+		//then the view will go back to its original position.
+		int viewWidth = self.getWidth();
+		if(moveBackBy > 0){//positive
+			viewWidth = -self.getWidth();
+		}
+		final int moveBy = viewWidth/2;
+		self.animate().translationX(moveBackBy).setDuration(duration/4)
+			.withEndAction(new Runnable() { @Override public void run() {
+					self.animate().translationX(moveBy).setDuration(duration*3/4)
+						.withEndAction(new Runnable() { @Override public void run() {
+								targetHurtAnim(target);
+								self.animate().translationX(0).setDuration(duration).start();
+							} })
+						.start();
+				} })
+			.start();
+	}
+	public static void targetHurtAnim(final View target){
+		//basically move upward as if its hurt then back to its original position.
+		target.animate().translationY(-10).setDuration(duration/3)
+			.withEndAction(new Runnable() { @Override public void run() {
+					target.animate().translationY(0).setDuration(duration/4).start();
+				} })
+			.start();
+	}
 }
