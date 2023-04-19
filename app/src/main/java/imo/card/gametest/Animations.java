@@ -9,7 +9,7 @@ import android.widget.Button;
 
 public class Animations
 {
-	private static int duration = 500;
+	public static int duration = 500;
 	
 	public static void redTextAnim(final TextView textview){
 		textview.setTextColor(Color.parseColor("#FB1600"));
@@ -43,6 +43,7 @@ public class Animations
 	final View cardLayout,
 	final View cardBackLayout,
 	final View optionalView,
+	final boolean isEnemyTurn,
 	final View cardSwipe,
 	final Button btn1, final Button btn2
 	){
@@ -50,7 +51,7 @@ public class Animations
 		cardSwipe.setEnabled(false);
 		btn1.setEnabled(false);
 		btn2.setEnabled(false);
-		//If you want to spam using the card nonstop. Delete the code above. Be careful tho.
+		//If you want to spam using the card nonstop, delete the code above. Be careful tho.
 		
 		int translateDistance = 100;
 		cardLayout.setVisibility(View.GONE);
@@ -66,8 +67,10 @@ public class Animations
 								cardLayout.setVisibility(View.VISIBLE);
 								cardLayout.animate().scaleX(1).setDuration(duration).withEndAction(new Runnable() { @Override public void run() {
 											cardSwipe.setEnabled(true);
-											btn1.setEnabled(true);
-											btn2.setEnabled(true);
+											if (isEnemyTurn == false){
+												btn1.setEnabled(true);
+												btn2.setEnabled(true);
+											}
 										} })
 									.start();
 							} })
@@ -80,5 +83,22 @@ public class Animations
 				optionalView.setTranslationY(translateDistance);
 				optionalView.animate().translationY(0).setDuration(duration).start();
 			}
+	}
+	public static void rotateAnim(final View view, final String userTurn){
+		//since remainingMovesImg looks like a hourglass
+		//rotate it to whichever the target's direction
+		//then seamlessly flip it back
+		int num = 180;
+		if (userTurn.equals("player")) {//player turn
+			num = 180;
+		}else{//enemy turn
+			num = -180;
+		}
+		final int rotation = num;
+		view.animate().rotation(rotation).setDuration(duration)
+			.withEndAction(new Runnable() { @Override public void run() {
+					view.setRotation(0);
+				} })
+			.start();
 	}
 }
