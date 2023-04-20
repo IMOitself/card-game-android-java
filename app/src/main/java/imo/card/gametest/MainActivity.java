@@ -157,7 +157,8 @@ public class MainActivity extends Activity
 		//If i search for the key "name" it will retrieve a value of "John" for example.
 		String sample_cardpack = getResources().getString(R.string.sample_cardpack);
         Tools.importDataToArraylist(cardsData, sample_cardpack, ";", "》");//arraylist, string, splitItemsBy, splitContentsBy
-		//TODO: Some comments
+		//Stock the lists with cards. Will be use to restock playerCardsCurrent and enemyCardsCurrent
+		//TODO: make a seperate set of cards for the player and enemy
 		playerCardsStock.addAll(cardsData);
 		enemyCardsStock.addAll(cardsData);
 		//Start the game by populating views with datas
@@ -234,8 +235,7 @@ public class MainActivity extends Activity
 				//get your last touch's position
 				float finalX = event.getRawX() - viewWidthCenter;
 				//safeArea is a certain distance from the center
-				//that is safe to drop the card without doing a logic
-				//TODO:better explanation about safeArea:/
+				//that will not gonna do anything when your touch is on there
 				int safeArea = 80;
 				if (finalX < centerX - safeArea) {
 					//if the card is on the left of the center
@@ -252,40 +252,43 @@ public class MainActivity extends Activity
 
 
 	public void drawCard(){
-		//Randomly get a hashmap from the cardsData
-		//drawnCardMap will be used on useCard() void method.
-		//TODO:Some comments
 		Random random = new Random();
 		int randomInt = 0;
+		
 		if(userTurn.equals("player")){
-			if(playerCardsCurrent.isEmpty()){
-				playerCardsCurrent.addAll(playerCardsStock);
-				debugTxt.setText("playerCardsCurrent restocked!");
-			}
+			//Restock playerCardsCurrent if empty. might add a logic when cards are restocked
+			if(playerCardsCurrent.isEmpty()) playerCardsCurrent.addAll(playerCardsStock);
+			//Randomly pick a map on the arraylist.
 			randomInt = random.nextInt(playerCardsCurrent.size());
 			drawnCardMap = playerCardsCurrent.get(randomInt);
+			//Remove the map on the list to not get drawn again unless the list restocked again
 			playerCardsCurrent.remove(drawnCardMap);
 			
 		}else if(userTurn.equals("enemy")){
-			if(enemyCardsCurrent.isEmpty()){
-				enemyCardsCurrent.addAll(enemyCardsStock);
-				debugTxt.setText("enemyCardsCurrent restocked!");
-			}
+			//Restock enemyCardsCurrent if empty.
+			if(enemyCardsCurrent.isEmpty()) enemyCardsCurrent.addAll(enemyCardsStock);
+			//Randomly pick a map on the arraylist.
 			randomInt = random.nextInt(enemyCardsCurrent.size());
 			drawnCardMap = enemyCardsCurrent.get(randomInt);
+			//Remove the map on the list to not get drawn again unless the list restocked again
 			enemyCardsCurrent.remove(drawnCardMap);
-			
 		}
+		//After a map is picked, use its attributes.
 		String cardName = drawnCardMap.get("name");
 		String cardInfo = drawnCardMap.get("info");
 		String cardType = drawnCardMap.get("type");
+		//Based on cardType, display a specific image corresponding its card type
 		setImageByCardType(cardType, cardTypeImg);
+		//Populate the textviews
 		cardNameTxt.setText(cardName);
 		cardInfoTxt.setText(cardInfo);
 
-		//TODO: Some comments
+		//Get the cardCost. usually its a negative number.
 		int cardCost = Integer.parseInt(drawnCardMap.get("cost"));
+		//Make it positive
 		cardCost = Math.abs(cardCost);
+		//The code below is like in the updateEnergy() void method 
+		//but the difference is it reach 0 and below. See updateEnergy for info.
 		String energyString = "";
 		energyString = cardCost <= 0 ? energyString + "----" : energyString + "";
 		energyString = cardCost >= 1 ? energyString + "■" : energyString + "";
@@ -294,7 +297,8 @@ public class MainActivity extends Activity
 		energyString = cardCost >= 4 ? energyString + "■" : energyString + "";
 		energyString = cardCost >= 5 ? energyString + "■" : energyString + "";
 		cardCostTxt.setText(energyString);
-
+		
+		//animate the card as if its doing intro upwards then flipping on its back
 		Animations.cardAnim(cardLayout, cardBackLayout, cardNameTxt, isEnemyTurn, cardParentLayout, skipBtn, useBtn);
 
 	}
@@ -309,7 +313,7 @@ public class MainActivity extends Activity
 		}else if (userTurn.equals("enemy")){
 			enemyEnergy = enemyEnergy + 1;
 		}
-		updateTurns();
+		useMoves();
 		drawCard();
 		updateGame();
 	}
@@ -352,11 +356,14 @@ public class MainActivity extends Activity
 		//for example, if the user is player. 
 		//In that case, self is referring to player and target is referring to enemy.
 		//same as if the enemy is the user but vice versa.
-		//negative value subtracts instead of addition.
+		//Negative value subtracts instead of addition.
 		if (userTurn.equals("player")){
 			if (Math.abs(drawnCardCost) > playerEnergy){
-				Animations.redTextAnim(playerEnergyTxt);	
+				//If theres not enough energy. Indicate it by making the text red.
+				Animations.redTextAnim(playerEnergyTxt);
 			}else{
+				//If theres enough energy. subtract the cost to playerEnergy
+				//It might not seem its subtraction, but the drawnCardCost is always negative
 				playerEnergy = playerEnergy + drawnCardCost;
 
 				playerLives = playerLives + editSelfLives;
@@ -364,18 +371,22 @@ public class MainActivity extends Activity
 
 				playerEnergy = playerEnergy + editSelfEnergy;//overwrites drawnCardCost
 				enemyEnergy = enemyEnergy + editTargetEnergy;
-
-				if(cardType.contains("attack")){//contains() method because it will reach any string with "attack"
+				
+				if(cardType.contains("attack")){
+					//contains() method because it will reach any string with "attack"
 					Animations.attackAnim(-5, playerLayout, enemyLayout);
 				}
-				updateTurns();
+				useMoves();
 				drawCard();
 			}
 		}else if (userTurn.equals("enemy")){
 			//Enemy will play on its own. The decision of enemy is made on updateTurns() on enemyRandomPlay()
 			if (Math.abs(drawnCardCost) > enemyEnergy){
+				//if theres not enough energy. Skip the card.
 				skipCard();
 			}else{
+				//If theres enough energy. subtract the cost to enemyEnergy
+				//It might not seem its subtraction, but the drawnCardCost is always negative
 				enemyEnergy = enemyEnergy + drawnCardCost;
 
 				enemyLives = enemyLives + editSelfLives;
@@ -384,11 +395,12 @@ public class MainActivity extends Activity
 				enemyEnergy = enemyEnergy + editSelfEnergy;//overwrites drawnCardCost
 				playerEnergy = playerEnergy + editTargetEnergy;
 
-				if(cardType.contains("attack")){//contains() method because it will reach any string with "attack"
+				if(cardType.contains("attack")){
+					//contains() method because it will reach any string with "attack"
 					Animations.attackAnim(5, enemyLayout, playerLayout);
 				}
 
-				updateTurns();
+				useMoves();
 				drawCard();
 			}
 		}
@@ -398,14 +410,17 @@ public class MainActivity extends Activity
 
 
 
-	public void updateTurns(){
+	public void useMoves(){
 		//This keep count how many moves you make
 		//either by using the card or skipping it.
 		//Once it reach zero, move on to the next user
 		if (moves - 1 > 0){
 			moves--;
+			//rotate the movesImg like a sand or hour glass
 			Animations.rotateAnim(movesImg, userTurn);
 			if(isEnemyTurn){
+				//if its still enemy turn, do some random decisions 
+				//whether to skip or use a card
 				enemyRandomPlay(enemyEnergy);
 			}
 		}else{
@@ -511,7 +526,7 @@ public class MainActivity extends Activity
 
 
 	public void setImageByCardType(String cardType, ImageView img){
-		//Display what card type is it on an imageview.
+		//Based on the cardType display specific image corresponding to it.
 		//thats pretty much the explanation:/
 		switch(cardType){
 			case "attack":
