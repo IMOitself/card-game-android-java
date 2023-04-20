@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-// TODO: finish all codes that are needed to be explained
 // TODO: stop the game when someone wins or lose
 // TODO: record the already drawn cards to not be use again until all of the card is drawn and refreshes
 
@@ -68,8 +67,7 @@ public class MainActivity extends Activity
 	public boolean isEnemyTurn = false;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 		titleTxt = findViewById(R.id.title_txt);
@@ -162,52 +160,80 @@ public class MainActivity extends Activity
 
 
 	public void swipeCardLogic(View cardParentLayout, MotionEvent event){
-		//TODO: Some comments
+		//The card's width is set to 1/3 of the screen on onCreateLogic().
+		//Get the view width's center by dividing it to 2.
+		//Find the center of the screen by dividing it to 2.
+		//screenWidthCenter then subtracted by viewWidthCenter because trust me it works.
 		final int viewWidth = screenWidth/3;
 		final int viewWidthCenter = viewWidth/2;
-		final int centerX = screenWidth/2 - viewWidth/2;
+		final int screenWidthCenter = screenWidth/2;
+		final int centerX = screenWidthCenter - viewWidthCenter;
 		switch (event.getAction()) {
-			
 			case MotionEvent.ACTION_DOWN:
+				//When your finger touched the screen.
+				//Make these views visible. This views tells where the user should swipe
 				skipIndicatorTxt.setVisibility(View.VISIBLE);
 				useIndicatorTxt.setVisibility(View.VISIBLE);
 				break;
 
 			case MotionEvent.ACTION_MOVE:
+				//When your finger moved while touching the screen
+				//Get the current location horizontally of your touch
 				float currentX = event.getRawX() - viewWidthCenter;
+				//Set the location of the view to your touch
 				cardParentLayout.setX(currentX);
-
+				
+				//Get how far your touch moved to the center of the screen
+				//then convert it to decimal e.g. 150 / 100 = 1.50
+				//add 0.5f coz why not
 				float recordAddedX = Math.abs(currentX - centerX);
-				float scaleBy = (recordAddedX/100)+1;
+				float scaleBy = (recordAddedX/100)+0.5f;
 				if (currentX < centerX) {
-					skipIndicatorTxt.setScaleX(scaleBy);
-					skipIndicatorTxt.setScaleY(scaleBy);
-
+					//if its on the left
+					if(scaleBy >= 1){
+						//To prevent getting smaller than its default scale.
+						//Now set the view's X and Y to scaleBy
+						skipIndicatorTxt.setScaleX(scaleBy);
+						skipIndicatorTxt.setScaleY(scaleBy);
+					}
 				}else if (currentX > centerX) {
-					useIndicatorTxt.setScaleX(scaleBy);
-					useIndicatorTxt.setScaleY(scaleBy);
+					//if its on the right
+					if(scaleBy >= 1){
+						//to prevent getting smaller than its default scale
+						//Now set the view's X and Y to scaleBy
+						useIndicatorTxt.setScaleX(scaleBy);
+						useIndicatorTxt.setScaleY(scaleBy);
+					}
 				}
-
+				//this code is unnecessary but its here anyway
 				debugTxt.setText("event.getRawX(): " + currentX + "   centerX: " + centerX + " recordAddedX: " + recordAddedX + "\n" + "skipIndicatorTxt: " + skipIndicatorTxt.getScaleX() + " useIndicatorTxt: " + useIndicatorTxt.getScaleX());
+				//remove this code above if its annoying
 				break;
 
 			case MotionEvent.ACTION_UP:
+				//When your finger is released.
+				//remove these views and set them back to normal size.
 				skipIndicatorTxt.setVisibility(View.GONE);
 				skipIndicatorTxt.setScaleX(1);
 				skipIndicatorTxt.setScaleY(1);
 				useIndicatorTxt.setVisibility(View.GONE);
 				useIndicatorTxt.setScaleX(1);
 				useIndicatorTxt.setScaleY(1);
-
+				
+				//bring the card to its original position which is the center
 				cardParentLayout.setX(centerX);
+				//get your last touch's position
 				float finalX = event.getRawX() - viewWidthCenter;
-				int safeArea = 110;
+				//safeArea is a certain distance from the center
+				//that is safe to drop the card without doing a logic
+				//TODO:better explanation about safeArea:/
+				int safeArea = 80;
 				if (finalX < centerX - safeArea) {
-					//if the card is on the left of the center of the screen
+					//if the card is on the left of the center
 					skipCard();
 
 				}else if (finalX > centerX + safeArea) {
-					//if the card is on the right of the center of the screen
+					//if the card is on the right of the center
 					useCard();
 				}
 				break;
@@ -254,7 +280,6 @@ public class MainActivity extends Activity
 
 		}else if (userTurn.equals("enemy")){
 			enemyEnergy = enemyEnergy + 1;
-
 		}
 		updateTurns();
 		drawCard();
@@ -351,6 +376,7 @@ public class MainActivity extends Activity
 		//Once it reach zero, move on to the next user
 		if (moves - 1 > 0){
 			moves--;
+			Animations.rotateAnim(movesImg, userTurn);
 			if(isEnemyTurn){
 				enemyRandomPlay(enemyEnergy);
 			}
@@ -398,9 +424,6 @@ public class MainActivity extends Activity
 
 		//Detect any differences on datas
 		//do an animation if theres any
-		if (moves_old != moves){
-			Animations.rotateAnim(movesImg, userTurn);
-		}
 		if (playerLives_old != playerLives){
 			Animations.popAnim(playerLivesTxt);
 		}
@@ -434,9 +457,18 @@ public class MainActivity extends Activity
 
 
 	public void enemyRandomPlay(final int enemyEnergy){
-		View dummy = titleTxt;//not gonna be manipulated
+		///dummy view can be anything that are not gonna be animated by other animattions
+		//its not gonna be manipulated or animated or whatsoever
+		//its sole purpose is to delay a code
+		View dummy = titleTxt;
 		dummy.animate().setDuration(Animations.duration * 3)
 			.withEndAction(new Runnable() { @Override public void run() {
+					//This code is delayed because its too fast to run this code again
+					//and also make sure to only run after all of the animations are played
+					//Pick random int between 0 and 1.
+					//if 0 then skip the card
+					//if 1 then use the card
+					//some decisions is also made on useCard().
 					Random random = new Random();
 					int randomInt = random.nextInt(2);
 					if (randomInt == 0){
@@ -451,6 +483,8 @@ public class MainActivity extends Activity
 
 
 	public void setImageByCardType(String cardType, ImageView img){
+		//Display what card type is it.
+		//thats pretty much the explanation:/
 		switch(cardType){
 			case "attack":
 				img.setImageResource(R.drawable.attack_type);
@@ -491,7 +525,8 @@ public class MainActivity extends Activity
 		Tools.setRoundedViewWithStroke(cardTypeImg, bgColor, strokeColor, strokeWidth, cornerRadius, opacity);
 		Tools.setRoundedViewWithStroke(cardCostTxt, bgColor, strokeColor, strokeWidth, cornerRadius, opacity);
 
-		//playerLayout will be outlined first
+		//playerLayout will be outlined first. 
+		//Make the outline thicker and maintain background color
 		bgColor = Color.parseColor("#696969");
 		strokeWidth = 2;
 		Tools.setRoundedViewWithStroke(playerLayout, bgColor, strokeColor, strokeWidth, cornerRadius, opacity);
