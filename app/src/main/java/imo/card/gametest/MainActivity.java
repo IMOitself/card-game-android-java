@@ -18,8 +18,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+// TODO: finish all codes that are needed to be explained
 // TODO: stop the game when someone wins or lose
-// TODO: Indicate "Skip" textview on the left and "Use" on the right on swiping the card.
 // TODO: record the already drawn cards to not be use again until all of the card is drawn and refreshes
 
 public class MainActivity extends Activity 
@@ -33,6 +33,8 @@ public class MainActivity extends Activity
 	public TextView enemyEnergyTxt;
 	public ImageView movesImg;
 	public TextView movesTxt;
+	public TextView useIndicatorTxt;
+	public TextView skipIndicatorTxt;
 	public View cardParentLayout;
 	public LinearLayout cardBackLayout;
 	public LinearLayout cardLayout;
@@ -44,7 +46,7 @@ public class MainActivity extends Activity
 	public Button skipBtn;
 	public Button useBtn;
 	public TextView debugTxt;
-	
+
 	public int screenWidth = 0;
 
 	public List<Map<String, String>> cardsData = new ArrayList<>();
@@ -55,7 +57,7 @@ public class MainActivity extends Activity
 	public int playerEnergy = 5;
 	public int enemyLives = 10;
 	public int enemyEnergy = 5;
-	
+
 	public int moves_old = moves;
 	public int playerLives_old = playerLives;
 	public int playerEnergy_old = playerEnergy;
@@ -64,10 +66,7 @@ public class MainActivity extends Activity
 
 	public String userTurn = "player";
 	public boolean isEnemyTurn = false;
-	
-	public String[] playerCardNames;
-	public String[] enemyCardNames;
-	
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -82,6 +81,8 @@ public class MainActivity extends Activity
 		enemyEnergyTxt = findViewById(R.id.enemy_energy_txt);
 		movesImg = findViewById(R.id.moves_img);
 		movesTxt = findViewById(R.id.moves_txt);
+		useIndicatorTxt = findViewById(R.id.use_indicator_txt);
+		skipIndicatorTxt = findViewById(R.id.skip_indicator_txt);
 		cardParentLayout = findViewById(R.id.cardParentLayout);
 		cardBackLayout = findViewById(R.id.card_back_layout);
 		cardLayout = findViewById(R.id.card_layout);
@@ -93,11 +94,11 @@ public class MainActivity extends Activity
 		skipBtn = findViewById(R.id.skip_btn);
 		useBtn = findViewById(R.id.use_btn);
 		debugTxt = findViewById(R.id.debug_txt);
-		
+
 		//buttons are not necessary anymore.
 		buttonsLayout.setVisibility(View.GONE);
 		//to bring them back remove this code above
-		
+
 		onCreateLogic();
 
 		skipBtn.setOnClickListener( new View.OnClickListener(){
@@ -117,13 +118,13 @@ public class MainActivity extends Activity
 				}
 			});
     }
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
 	public void onCreateLogic(){
 		//get the screen width
 		DisplayMetrics displayMetrics = new DisplayMetrics();
@@ -132,28 +133,20 @@ public class MainActivity extends Activity
 		//set the view size to 1/3 of the screen
 		Tools.setViewSize(playerLayout, screenWidth / 3, screenWidth / 3);
 		Tools.setViewSize(enemyLayout, screenWidth / 3, screenWidth / 3);
+		
 		Tools.setViewSize(cardLayout, screenWidth / 3, screenWidth / 3);
 		Tools.setViewSize(cardBackLayout, screenWidth / 3, screenWidth / 3);
+		//card is on its back by default then it will be flipped later when drawn
+		cardLayout.setVisibility(View.GONE);
 		
-		//TODO: some comments
-		int bgColor;
-		int strokeColor = Color.parseColor("#FFFFFF");//white
-		int strokeWidth = 1;
-		int cornerRadius = 0;
-		float opacity = 0.3f;
-		bgColor = Color.parseColor("#FFFFFF");//white
-		Tools.setRoundedViewWithStroke(cardLayout, bgColor, strokeColor, strokeWidth, cornerRadius, opacity);
-		bgColor = Color.parseColor("#696969");//grey
-		Tools.setRoundedViewWithStroke(cardBackLayout, bgColor, strokeColor, strokeWidth, cornerRadius, opacity);
-		bgColor = Color.parseColor("#00FFFFFF");//no color
-		Tools.setRoundedViewWithStroke(cardTypeImg, bgColor, strokeColor, strokeWidth, cornerRadius, opacity);
-		Tools.setRoundedViewWithStroke(cardCostTxt, bgColor, strokeColor, strokeWidth, cornerRadius, opacity);
-		bgColor = Color.parseColor("#696969");//grey
-		strokeWidth = 2;
-		Tools.setRoundedViewWithStroke(playerLayout, bgColor, strokeColor, strokeWidth, cornerRadius, opacity);
+		//will only be visible when the card is touch
+		skipIndicatorTxt.setVisibility(View.GONE);
+		Tools.setViewSize(skipIndicatorTxt, screenWidth/3, 0);
+		useIndicatorTxt.setVisibility(View.GONE);
+		Tools.setViewSize(useIndicatorTxt, screenWidth/3, 0);
 		
-		
-		cardBackLayout.setVisibility(View.GONE);//will be used later
+		//this void method is used only to minimize the code here
+		setViewsCustomBgDrawable();
 		
 		//Transform the string to a Arraylist that holds a hashmap. 
 		//Each Hashmap holds key-value pairs that makes it easier to search for a specific item.
@@ -165,33 +158,56 @@ public class MainActivity extends Activity
 		updateGame();
 		drawCard();
 	}
-	
-	
-	
+
+
+
 	public void swipeCardLogic(View cardParentLayout, MotionEvent event){
 		//TODO: Some comments
 		final int viewWidth = screenWidth/3;
 		final int viewWidthCenter = viewWidth/2;
 		final int centerX = screenWidth/2 - viewWidth/2;
 		switch (event.getAction()) {
-			case MotionEvent.ACTION_MOVE:
-				float currentX = event.getRawX();
-				cardParentLayout.setX(currentX - viewWidthCenter);
-				
-				float debugFloat = event.getRawX() - viewWidthCenter;
-				debugTxt.setText("event.getRawX(): " + debugFloat + "   centerX: " + centerX);
-				
+			
+			case MotionEvent.ACTION_DOWN:
+				skipIndicatorTxt.setVisibility(View.VISIBLE);
+				useIndicatorTxt.setVisibility(View.VISIBLE);
 				break;
+
+			case MotionEvent.ACTION_MOVE:
+				float currentX = event.getRawX() - viewWidthCenter;
+				cardParentLayout.setX(currentX);
+
+				float recordAddedX = Math.abs(currentX - centerX);
+				float scaleBy = (recordAddedX/100)+1;
+				if (currentX < centerX) {
+					skipIndicatorTxt.setScaleX(scaleBy);
+					skipIndicatorTxt.setScaleY(scaleBy);
+
+				}else if (currentX > centerX) {
+					useIndicatorTxt.setScaleX(scaleBy);
+					useIndicatorTxt.setScaleY(scaleBy);
+				}
+
+				debugTxt.setText("event.getRawX(): " + currentX + "   centerX: " + centerX + " recordAddedX: " + recordAddedX + "\n" + "skipIndicatorTxt: " + skipIndicatorTxt.getScaleX() + " useIndicatorTxt: " + useIndicatorTxt.getScaleX());
+				break;
+
 			case MotionEvent.ACTION_UP:
+				skipIndicatorTxt.setVisibility(View.GONE);
+				skipIndicatorTxt.setScaleX(1);
+				skipIndicatorTxt.setScaleY(1);
+				useIndicatorTxt.setVisibility(View.GONE);
+				useIndicatorTxt.setScaleX(1);
+				useIndicatorTxt.setScaleY(1);
+
 				cardParentLayout.setX(centerX);
-				
 				float finalX = event.getRawX() - viewWidthCenter;
-				
-				int safeZone = 120;
-				if (finalX < centerX - safeZone) {
+				int safeArea = 110;
+				if (finalX < centerX - safeArea) {
+					//if the card is on the left of the center of the screen
 					skipCard();
-					
-				}else if (finalX > centerX + safeZone) {
+
+				}else if (finalX > centerX + safeArea) {
+					//if the card is on the right of the center of the screen
 					useCard();
 				}
 				break;
@@ -199,7 +215,7 @@ public class MainActivity extends Activity
 	}
 
 
-	
+
 	public void drawCard(){
 		//Randomly get a hashmap from the cardsData
 		//drawnCardMap will be used on useCard() void method.
@@ -226,11 +242,11 @@ public class MainActivity extends Activity
 		cardCostTxt.setText(energyString);
 
 		Animations.cardAnim(cardLayout, cardBackLayout, cardNameTxt, isEnemyTurn, cardParentLayout, skipBtn, useBtn);
-		
-		}
-	
-	
-	
+
+	}
+
+
+
 	public void skipCard(){
 		//skipping a card gives you 1 energy.
 		if (userTurn.equals("player")){
@@ -238,7 +254,7 @@ public class MainActivity extends Activity
 
 		}else if (userTurn.equals("enemy")){
 			enemyEnergy = enemyEnergy + 1;
-			
+
 		}
 		updateTurns();
 		drawCard();
@@ -257,7 +273,7 @@ public class MainActivity extends Activity
 		String cardLives = drawnCardMap.get("lives");
 		String cardEnergy = drawnCardMap.get("energy");
 		String cardType = drawnCardMap.get("type");
-		
+
 		int editSelfLives = 0;
 		int editTargetLives = 0;
 		if (drawnCardMap.containsKey("lives")){
@@ -295,7 +311,7 @@ public class MainActivity extends Activity
 
 				playerEnergy = playerEnergy + editSelfEnergy;//overwrites drawnCardCost
 				enemyEnergy = enemyEnergy + editTargetEnergy;
-				
+
 				if(cardType.contains("attack")){//contains() method because it will reach any string with "attack"
 					Animations.attackAnim(-5, playerLayout, enemyLayout);
 				}
@@ -314,11 +330,11 @@ public class MainActivity extends Activity
 
 				enemyEnergy = enemyEnergy + editSelfEnergy;//overwrites drawnCardCost
 				playerEnergy = playerEnergy + editTargetEnergy;
-				
+
 				if(cardType.contains("attack")){//contains() method because it will reach any string with "attack"
 					Animations.attackAnim(5, enemyLayout, playerLayout);
 				}
-				
+
 				updateTurns();
 				drawCard();
 			}
@@ -339,24 +355,24 @@ public class MainActivity extends Activity
 				enemyRandomPlay(enemyEnergy);
 			}
 		}else{
-				if (userTurn.equals("player")){
-					//player turn has ended
-					userTurn = "enemy";
-					Animations.hoverAnim(enemyLayout, playerLayout);
-					enemyRandomPlay(enemyEnergy);
-					isEnemyTurn = true;
+			if (userTurn.equals("player")){
+				//player turn has ended
+				userTurn = "enemy";
+				Animations.hoverAnim(enemyLayout, playerLayout);
+				enemyRandomPlay(enemyEnergy);
+				isEnemyTurn = true;
 
-				}else if (userTurn.equals("enemy")){
-					//enemy turn has ended
-					userTurn = "player";
-					Animations.hoverAnim(playerLayout, enemyLayout);
-					isEnemyTurn = false;
-				}
+			}else if (userTurn.equals("enemy")){
+				//enemy turn has ended
+				userTurn = "player";
+				Animations.hoverAnim(playerLayout, enemyLayout);
+				isEnemyTurn = false;
+			}
 			moves = 3;
 		}
 	}
-	
-	
+
+
 
 	public void updateGame(){
 		//The max energy a player and enemy could have is 5. 
@@ -373,7 +389,7 @@ public class MainActivity extends Activity
 		//Display the current datas on textviews
 		titleTxt.setText(userTurn + "");
 		movesTxt.setText(moves + "");
-		
+
 		playerLivesTxt.setText("❤" + playerLives);
 		updateEnergy(playerEnergyTxt, playerEnergy, true);
 
@@ -403,7 +419,7 @@ public class MainActivity extends Activity
 		playerEnergy_old = playerEnergy;
 		enemyLives_old = enemyLives;
 		enemyEnergy_old = enemyEnergy;
-		
+
 		//Winning and losing system
 		//if player dies then you lose
 		if(playerLives <= 0){
@@ -414,9 +430,9 @@ public class MainActivity extends Activity
 			titleTxt.setText(R.string.you_win);
 		}
 	}
-	
-	
-	
+
+
+
 	public void enemyRandomPlay(final int enemyEnergy){
 		View dummy = titleTxt;//not gonna be manipulated
 		dummy.animate().setDuration(Animations.duration * 3)
@@ -431,9 +447,9 @@ public class MainActivity extends Activity
 				} })
 			.start();
 	}
-	
-	
-	
+
+
+
 	public void setImageByCardType(String cardType, ImageView img){
 		switch(cardType){
 			case "attack":
@@ -453,6 +469,36 @@ public class MainActivity extends Activity
 	
 	
 	
+	public void setViewsCustomBgDrawable(){
+		//customize the views with custom background drawable
+		//set the values first then configure it based on the view
+		int bgColor;
+		int strokeColor = Color.parseColor("#FFFFFF");//white
+		int strokeWidth = 1;
+		int cornerRadius = 0;
+		float opacity = 0.3f;
+
+		//cardLayout has a white background so it should be kept that way
+		bgColor = Color.parseColor("#FFFFFF");
+		Tools.setRoundedViewWithStroke(cardLayout, bgColor, strokeColor, strokeWidth, cornerRadius, opacity);
+
+		//cardBackLayout has a grey background so it should be kept that way
+		bgColor = Color.parseColor("#696969");
+		Tools.setRoundedViewWithStroke(cardBackLayout, bgColor, strokeColor, strokeWidth, cornerRadius, opacity);
+
+		//cardTypeImg and cardCostTxt is transparent and should be kept that way
+		bgColor = Color.parseColor("#00FFFFFF");
+		Tools.setRoundedViewWithStroke(cardTypeImg, bgColor, strokeColor, strokeWidth, cornerRadius, opacity);
+		Tools.setRoundedViewWithStroke(cardCostTxt, bgColor, strokeColor, strokeWidth, cornerRadius, opacity);
+
+		//playerLayout will be outlined first
+		bgColor = Color.parseColor("#696969");
+		strokeWidth = 2;
+		Tools.setRoundedViewWithStroke(playerLayout, bgColor, strokeColor, strokeWidth, cornerRadius, opacity);
+	}
+
+
+
 	public void updateEnergy(final TextView energyTxt, final int energyInt, final boolean showEnergyEmoji){
 		//imagine there's 5 light bulbs
 		//1 light bulb must be on and everything to off to indicate number 1
