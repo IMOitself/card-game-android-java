@@ -18,8 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-// TODO: stop the game when someone wins or lose
-
 public class MainActivity extends Activity 
 {
 	public TextView titleTxt;
@@ -65,10 +63,15 @@ public class MainActivity extends Activity
 	public String userTurn = "player";
 	public boolean isEnemyTurn = false;
 	
-	//this is temporary in the future player and enemy cards will not gonna have the same set of cards
+	//use for properly ending the game while recording data
+	public int movesMade = 0;
+	public boolean isGameFinished = false;
+	public Map<String, String> gameResult = new HashMap<>();
+
+	//this is temporary, in the future player and enemy cards will not gonna have the same set of cards
 	public List<Map<String, String>> playerCardsStock = new ArrayList<>();
 	public List<Map<String, String>> enemyCardsStock = new ArrayList<>();
-	
+
 	public List<Map<String, String>> playerCardsCurrent = new ArrayList<>();
 	public List<Map<String, String>> enemyCardsCurrent = new ArrayList<>();
 
@@ -137,21 +140,21 @@ public class MainActivity extends Activity
 		//set the view size to 1/3 of the screen
 		Tools.setViewSize(playerLayout, screenWidth / 3, screenWidth / 3);
 		Tools.setViewSize(enemyLayout, screenWidth / 3, screenWidth / 3);
-		
+
 		Tools.setViewSize(cardLayout, screenWidth / 3, screenWidth / 3);
 		Tools.setViewSize(cardBackLayout, screenWidth / 3, screenWidth / 3);
 		//card is on its back by default then it will be flipped later when drawn
 		cardLayout.setVisibility(View.GONE);
-		
+
 		//will only be visible when the card is touch
 		skipIndicatorTxt.setVisibility(View.GONE);
 		Tools.setViewSize(skipIndicatorTxt, screenWidth/3, 0);
 		useIndicatorTxt.setVisibility(View.GONE);
 		Tools.setViewSize(useIndicatorTxt, screenWidth/3, 0);
-		
+
 		//this void method is used only to minimize the code here
 		setViewsCustomBgDrawable();
-		
+
 		//Transform the string to a Arraylist that holds a hashmap. 
 		//Each Hashmap holds key-value pairs that makes it easier to search for a specific item.
 		//If i search for the key "name" it will retrieve a value of "John" for example.
@@ -192,7 +195,7 @@ public class MainActivity extends Activity
 				float currentX = event.getRawX() - viewWidthCenter;
 				//Set the location of the view to your touch
 				cardParentLayout.setX(currentX);
-				
+
 				//Get how far your touch moved to the center of the screen
 				//then convert it to decimal e.g. 150 / 100 = 1.50
 				//add 0.5f coz why not
@@ -216,7 +219,9 @@ public class MainActivity extends Activity
 					}
 				}
 				//this code is unnecessary but its here anyway
-				debugTxt.setText("event.getRawX(): " + currentX + "   centerX: " + centerX + " recordAddedX: " + recordAddedX + "\n" + "skipIndicatorTxt: " + skipIndicatorTxt.getScaleX() + " useIndicatorTxt: " + useIndicatorTxt.getScaleX());
+				if(!isGameFinished){
+					debugTxt.setText("event.getRawX(): " + currentX + "   centerX: " + centerX + " recordAddedX: " + recordAddedX + "\n" + "skipIndicatorTxt: " + skipIndicatorTxt.getScaleX() + " useIndicatorTxt: " + useIndicatorTxt.getScaleX());
+				}
 				//remove this code above if its annoying
 				break;
 
@@ -229,7 +234,7 @@ public class MainActivity extends Activity
 				useIndicatorTxt.setVisibility(View.GONE);
 				useIndicatorTxt.setScaleX(1);
 				useIndicatorTxt.setScaleY(1);
-				
+
 				//bring the card to its original position which is the center
 				cardParentLayout.setX(centerX);
 				//get your last touch's position
@@ -238,11 +243,11 @@ public class MainActivity extends Activity
 				//that will not gonna do anything when your touch is on there
 				int safeArea = 80;
 				if (finalX < centerX - safeArea) {
-					//if the card is on the left of the center
+					//left side of the center
 					skipCard();
 
 				}else if (finalX > centerX + safeArea) {
-					//if the card is on the right of the center
+					//right side of the center
 					useCard();
 				}
 				break;
@@ -252,192 +257,206 @@ public class MainActivity extends Activity
 
 
 	public void drawCard(){
-		Random random = new Random();
-		int randomInt = 0;
-		
-		if(userTurn.equals("player")){
-			//Restock playerCardsCurrent if empty. might add a logic when cards are restocked
-			if(playerCardsCurrent.isEmpty()) playerCardsCurrent.addAll(playerCardsStock);
-			//Randomly pick a map on the arraylist.
-			randomInt = random.nextInt(playerCardsCurrent.size());
-			drawnCardMap = playerCardsCurrent.get(randomInt);
-			//Remove the map on the list to not get drawn again unless the list restocked again
-			playerCardsCurrent.remove(drawnCardMap);
-			
-		}else if(userTurn.equals("enemy")){
-			//Restock enemyCardsCurrent if empty.
-			if(enemyCardsCurrent.isEmpty()) enemyCardsCurrent.addAll(enemyCardsStock);
-			//Randomly pick a map on the arraylist.
-			randomInt = random.nextInt(enemyCardsCurrent.size());
-			drawnCardMap = enemyCardsCurrent.get(randomInt);
-			//Remove the map on the list to not get drawn again unless the list restocked again
-			enemyCardsCurrent.remove(drawnCardMap);
+		if(!isGameFinished){
+			//if the game is not finished yet
+			Random random = new Random();
+			int randomInt = 0;
+
+			if(userTurn.equals("player")){
+				//Restock playerCardsCurrent if empty. might add a logic when cards are restocked
+				if(playerCardsCurrent.isEmpty()) playerCardsCurrent.addAll(playerCardsStock);
+				//Randomly pick a map on the arraylist.
+				randomInt = random.nextInt(playerCardsCurrent.size());
+				drawnCardMap = playerCardsCurrent.get(randomInt);
+				//Remove the map on the list to not get drawn again unless the list restocked again
+				playerCardsCurrent.remove(drawnCardMap);
+
+			}else if(userTurn.equals("enemy")){
+				//Restock enemyCardsCurrent if empty.
+				if(enemyCardsCurrent.isEmpty()) enemyCardsCurrent.addAll(enemyCardsStock);
+				//Randomly pick a map on the arraylist.
+				randomInt = random.nextInt(enemyCardsCurrent.size());
+				drawnCardMap = enemyCardsCurrent.get(randomInt);
+				//Remove the map on the list to not get drawn again unless the list restocked again
+				enemyCardsCurrent.remove(drawnCardMap);
+			}
+			//After a map is picked, use its attributes.
+			String cardName = drawnCardMap.get("name");
+			String cardInfo = drawnCardMap.get("info");
+			String cardType = drawnCardMap.get("type");
+			//Based on cardType, display a specific image corresponding to its card type
+			setImageByCardType(cardType, cardTypeImg);
+			//Populate the textviews
+			cardNameTxt.setText(cardName);
+			cardInfoTxt.setText(cardInfo);
+
+			//Get the cardCost. usually its a negative number.
+			int cardCost = Integer.parseInt(drawnCardMap.get("cost"));
+			//Make it positive
+			cardCost = Math.abs(cardCost);
+			//The code below is like in the updateEnergy() void method 
+			//but the difference is it reach 0 and below. See updateEnergy for info.
+			String energyString = "";
+			energyString = cardCost <= 0 ? energyString + "----" : energyString + "";
+			energyString = cardCost >= 1 ? energyString + "■" : energyString + "";
+			energyString = cardCost >= 2 ? energyString + "■" : energyString + "";
+			energyString = cardCost >= 3 ? energyString + "■" : energyString + "";
+			energyString = cardCost >= 4 ? energyString + "■" : energyString + "";
+			energyString = cardCost >= 5 ? energyString + "■" : energyString + "";
+			cardCostTxt.setText(energyString);
+
+			//animate the card as if its doing intro upwards then flipping on its back
+			Animations.cardAnim(cardLayout, cardBackLayout, cardNameTxt, isEnemyTurn, cardParentLayout, skipBtn, useBtn);
+
 		}
-		//After a map is picked, use its attributes.
-		String cardName = drawnCardMap.get("name");
-		String cardInfo = drawnCardMap.get("info");
-		String cardType = drawnCardMap.get("type");
-		//Based on cardType, display a specific image corresponding its card type
-		setImageByCardType(cardType, cardTypeImg);
-		//Populate the textviews
-		cardNameTxt.setText(cardName);
-		cardInfoTxt.setText(cardInfo);
-
-		//Get the cardCost. usually its a negative number.
-		int cardCost = Integer.parseInt(drawnCardMap.get("cost"));
-		//Make it positive
-		cardCost = Math.abs(cardCost);
-		//The code below is like in the updateEnergy() void method 
-		//but the difference is it reach 0 and below. See updateEnergy for info.
-		String energyString = "";
-		energyString = cardCost <= 0 ? energyString + "----" : energyString + "";
-		energyString = cardCost >= 1 ? energyString + "■" : energyString + "";
-		energyString = cardCost >= 2 ? energyString + "■" : energyString + "";
-		energyString = cardCost >= 3 ? energyString + "■" : energyString + "";
-		energyString = cardCost >= 4 ? energyString + "■" : energyString + "";
-		energyString = cardCost >= 5 ? energyString + "■" : energyString + "";
-		cardCostTxt.setText(energyString);
-		
-		//animate the card as if its doing intro upwards then flipping on its back
-		Animations.cardAnim(cardLayout, cardBackLayout, cardNameTxt, isEnemyTurn, cardParentLayout, skipBtn, useBtn);
-
 	}
 
 
 
 	public void skipCard(){
-		//skipping a card gives you 1 energy.
-		if (userTurn.equals("player")){
-			playerEnergy = playerEnergy + 1;
+		if(!isGameFinished){
+			//if the game is not finished yet
+            //skipping a card gives you 1 energy.
+			if (userTurn.equals("player")){
+				playerEnergy = playerEnergy + 1;
 
-		}else if (userTurn.equals("enemy")){
-			enemyEnergy = enemyEnergy + 1;
+			}else if (userTurn.equals("enemy")){
+				enemyEnergy = enemyEnergy + 1;
+			}
+			useMoves();
+			drawCard();
+			updateGame();
 		}
-		useMoves();
-		drawCard();
-		updateGame();
 	}
 
 
 
 	public void useCard(){
-		//The drawnCardMap is a map populated by drawnCard() void method
-		//Some map doesn't have a key of "lives" or "energy"
-		//"lives" and "energy" key contain a value of e.g "0, 0"
-		//We split the "0, 0" by "," thus resulting in ["0", " 0"]
-		//The first value of the array populates how many should be added on self.
-		//The second value of the array populates how many should be added on target.
-		String cardLives = drawnCardMap.get("lives");
-		String cardEnergy = drawnCardMap.get("energy");
-		String cardType = drawnCardMap.get("type");
+		if(!isGameFinished){
+			//if the game is not finished yet
+            //The drawnCardMap is a map populated by drawnCard() void method
+			//Some map doesn't have a key of "lives" or "energy"
+			//"lives" and "energy" key contain a value of e.g "0, 0"
+			//We split the "0, 0" by "," thus resulting in ["0", " 0"]
+			//The first value of the array populates how many should be added on self.
+			//The second value of the array populates how many should be added on target.
+			String cardLives = drawnCardMap.get("lives");
+			String cardEnergy = drawnCardMap.get("energy");
+			String cardType = drawnCardMap.get("type");
 
-		int editSelfLives = 0;
-		int editTargetLives = 0;
-		if (drawnCardMap.containsKey("lives")){
-			String[] valueArray = cardLives.split(",");
-			editSelfLives = Integer.parseInt(valueArray[0].trim());
-			editTargetLives = Integer.parseInt(valueArray[1].trim());
-		}
-		int editSelfEnergy = 0;
-		int editTargetEnergy = 0;
-		if (drawnCardMap.containsKey("energy")){
-			String[] valueArray = cardEnergy.split(",");
-			editSelfEnergy = Integer.parseInt(valueArray[0].trim());
-			editTargetEnergy = Integer.parseInt(valueArray[1].trim());
-		}
-		//drawnCardCost is the energy cost of the card.
-		//this int always have negative value.
-		int drawnCardCost = Integer.parseInt(drawnCardMap.get("cost"));
-		//the code below detects if you can use the card or not.
-		//e.g. if i have 3 energy and the card needs 4. The card cant be use.
-		//therefore my only option is to skip.
-		//Else if i have enough energy, use the card and move onto next card.
-
-		//for example, if the user is player. 
-		//In that case, self is referring to player and target is referring to enemy.
-		//same as if the enemy is the user but vice versa.
-		//Negative value subtracts instead of addition.
-		if (userTurn.equals("player")){
-			if (Math.abs(drawnCardCost) > playerEnergy){
-				//If theres not enough energy. Indicate it by making the text red.
-				Animations.redTextAnim(playerEnergyTxt);
-			}else{
-				//If theres enough energy. subtract the cost to playerEnergy
-				//It might not seem its subtraction, but the drawnCardCost is always negative
-				playerEnergy = playerEnergy + drawnCardCost;
-
-				playerLives = playerLives + editSelfLives;
-				enemyLives = enemyLives + editTargetLives;
-
-				playerEnergy = playerEnergy + editSelfEnergy;//overwrites drawnCardCost
-				enemyEnergy = enemyEnergy + editTargetEnergy;
-				
-				if(cardType.contains("attack")){
-					//contains() method because it will reach any string with "attack"
-					Animations.attackAnim(-5, playerLayout, enemyLayout);
-				}
-				useMoves();
-				drawCard();
+			int editSelfLives = 0;
+			int editTargetLives = 0;
+			if (drawnCardMap.containsKey("lives")){
+				String[] valueArray = cardLives.split(",");
+				editSelfLives = Integer.parseInt(valueArray[0].trim());
+				editTargetLives = Integer.parseInt(valueArray[1].trim());
 			}
-		}else if (userTurn.equals("enemy")){
-			//Enemy will play on its own. The decision of enemy is made on updateTurns() on enemyRandomPlay()
-			if (Math.abs(drawnCardCost) > enemyEnergy){
-				//if theres not enough energy. Skip the card.
-				skipCard();
-			}else{
-				//If theres enough energy. subtract the cost to enemyEnergy
-				//It might not seem its subtraction, but the drawnCardCost is always negative
-				enemyEnergy = enemyEnergy + drawnCardCost;
-
-				enemyLives = enemyLives + editSelfLives;
-				playerLives = playerLives + editTargetLives;
-
-				enemyEnergy = enemyEnergy + editSelfEnergy;//overwrites drawnCardCost
-				playerEnergy = playerEnergy + editTargetEnergy;
-
-				if(cardType.contains("attack")){
-					//contains() method because it will reach any string with "attack"
-					Animations.attackAnim(5, enemyLayout, playerLayout);
-				}
-
-				useMoves();
-				drawCard();
+			int editSelfEnergy = 0;
+			int editTargetEnergy = 0;
+			if (drawnCardMap.containsKey("energy")){
+				String[] valueArray = cardEnergy.split(",");
+				editSelfEnergy = Integer.parseInt(valueArray[0].trim());
+				editTargetEnergy = Integer.parseInt(valueArray[1].trim());
 			}
+			//drawnCardCost is the energy cost of the card.
+			//this int always have negative value.
+			int drawnCardCost = Integer.parseInt(drawnCardMap.get("cost"));
+			//the code below detects if you can use the card or not.
+			//e.g. if i have 3 energy and the card needs 4. The card cant be use.
+			//therefore my only option is to skip.
+			//Else if i have enough energy, use the card and move onto next card.
+
+			//for example, if the user is player. 
+			//In that case, self is referring to player and target is referring to enemy.
+			//same as if the enemy is the user but vice versa.
+			//Negative value subtracts instead of addition.
+			if (userTurn.equals("player")){
+				if (Math.abs(drawnCardCost) > playerEnergy){
+					//If theres not enough energy. Indicate it by making the text red.
+					Animations.redTextAnim(playerEnergyTxt);
+				}else{
+					//If theres enough energy. subtract the cost to playerEnergy
+					//It might not seem its subtraction, but the drawnCardCost is always negative
+					playerEnergy = playerEnergy + drawnCardCost;
+
+					playerLives = playerLives + editSelfLives;
+					enemyLives = enemyLives + editTargetLives;
+
+					playerEnergy = playerEnergy + editSelfEnergy;//overwrites drawnCardCost
+					enemyEnergy = enemyEnergy + editTargetEnergy;
+
+					if(cardType.contains("attack")){
+						//contains() method because it will reach any string with "attack"
+						Animations.attackAnim(-5, playerLayout, enemyLayout);
+					}
+					useMoves();
+					drawCard();
+				}
+			}else if (userTurn.equals("enemy")){
+				//Enemy will play on its own. The decision of enemy is made on updateTurns() on enemyRandomPlay()
+				if (Math.abs(drawnCardCost) > enemyEnergy){
+					//if theres not enough energy. Skip the card.
+					skipCard();
+				}else{
+					//If theres enough energy. subtract the cost to enemyEnergy
+					//It might not seem its subtraction, but the drawnCardCost is always negative
+					enemyEnergy = enemyEnergy + drawnCardCost;
+
+					enemyLives = enemyLives + editSelfLives;
+					playerLives = playerLives + editTargetLives;
+
+					enemyEnergy = enemyEnergy + editSelfEnergy;//overwrites drawnCardCost
+					playerEnergy = playerEnergy + editTargetEnergy;
+
+					if(cardType.contains("attack")){
+						//contains() method because it will reach any string with "attack"
+						Animations.attackAnim(5, enemyLayout, playerLayout);
+					}
+
+					useMoves();
+					drawCard();
+				}
+			}
+			//whether or not the card can be used, still update the game.
+			updateGame();
 		}
-		//whether or not the card can be used, still update the game.
-		updateGame();
 	}
 
 
 
 	public void useMoves(){
-		//This keep count how many moves you make
-		//either by using the card or skipping it.
-		//Once it reach zero, move on to the next user
-		if (moves - 1 > 0){
-			moves--;
-			//rotate the movesImg like a sand or hour glass
-			Animations.rotateAnim(movesImg, userTurn);
-			if(isEnemyTurn){
-				//if its still enemy turn, do some random decisions 
-				//whether to skip or use a card
-				enemyRandomPlay(enemyEnergy);
-			}
-		}else{
-			if (userTurn.equals("player")){
-				//player turn has ended
-				userTurn = "enemy";
-				Animations.hoverAnim(enemyLayout, playerLayout);
-				enemyRandomPlay(enemyEnergy);
-				isEnemyTurn = true;
+		if(!isGameFinished){
+			//if game is not finished yet
+			//The code below keep count how many moves you make
+			//either by using the card or skipping it.
+			//Once moves int reach zero, move on to the next user
+			if (moves - 1 > 0){
+				moves--;
+				//rotate the movesImg like a sand or hour glass
+				Animations.rotateAnim(movesImg, userTurn);
+				if(isEnemyTurn){
+					//if its still enemy turn, do some random decisions 
+					//whether to skip or use a card
+					enemyRandomPlay(enemyEnergy);
+				}
+			}else{
+				if (userTurn.equals("player")){
+					//player turn has ended
+					userTurn = "enemy";
+					Animations.hoverAnim(enemyLayout, playerLayout);
+					enemyRandomPlay(enemyEnergy);
+					isEnemyTurn = true;
 
-			}else if (userTurn.equals("enemy")){
-				//enemy turn has ended
-				userTurn = "player";
-				Animations.hoverAnim(playerLayout, enemyLayout);
-				isEnemyTurn = false;
+				}else if (userTurn.equals("enemy")){
+					//enemy turn has ended
+					userTurn = "player";
+					Animations.hoverAnim(playerLayout, enemyLayout);
+					isEnemyTurn = false;
+				}
+				moves = 3;
 			}
-			moves = 3;
+			//record how many moves has been made
+			movesMade++;//might not gonna be necessary
 		}
 	}
 
@@ -490,37 +509,76 @@ public class MainActivity extends Activity
 		//if enemy dies then you win
 		if(enemyLives <= 0){
 			titleTxt.setText(R.string.you_win);
+			//finish the game
+			isGameFinished = true;
+			//set the winner to player
+			gameResult.put("winner", "player");
+			//get how many moves has been made
+			gameResult.put("moves_made", movesMade + "");
+			//get how much extra damage has been made
+			//if none then stay zero
+			gameResult.put("overkill", "0");
+			//if the enemyLives is negative 
+			//then get it to determine how much extra damage has been made
+			if(enemyLives < 0) gameResult.put("overkill", enemyLives + "");
+			
+			String debugString = "isGameFinished: " + isGameFinished + " ";
+			debugString = debugString + "winner: " + gameResult.get("winner") + "\n";
+			debugString = debugString + "moves_made: " + gameResult.get("moves_made") + " ";
+			debugString = debugString + "overkill: " + gameResult.get("overkill") + " ";
+			debugTxt.setText(debugString);
 		}
 		//if player dies then you lose
 		if(playerLives <= 0){
 			titleTxt.setText(R.string.you_lose);
+			//finish the game
+			isGameFinished = true;
+			//set the winner to enemy
+			gameResult.put("winner", "enemy");
+			//get how many moves has been made
+			gameResult.put("moves_made", movesMade + "");
+			//get how much extra damage has been made
+			//if none then stay zero
+			gameResult.put("overkill", "0");
+			//if the playerLives is negative 
+			//then get it to determine how much extra damage has been made
+			if(playerLives < 0) gameResult.put("overkill", playerLives + "");
+			
+			String debugString = "isGameFinished: " + isGameFinished + " ";
+			debugString = debugString + "winner: " + gameResult.get("winner") + "\n";
+			debugString = debugString + "moves_made: " + gameResult.get("moves_made") + " ";
+			debugString = debugString + "overkill: " + gameResult.get("overkill") + " ";
+			debugTxt.setText(debugString);
 		}
 	}
 
 
 
 	public void enemyRandomPlay(final int enemyEnergy){
-		///dummy view can be anything that are not gonna be animated by other animattions
-		//its not gonna be manipulated or animated or whatsoever
-		//its sole purpose is to delay a code
-		View dummy = titleTxt;
-		dummy.animate().setDuration(Animations.duration * 3)
-			.withEndAction(new Runnable() { @Override public void run() {
-					//This code is delayed because its too fast to run this code again
-					//and also make sure to only run after all of the animations are played
-					//Pick random int between 0 and 1.
-					//if 0 then skip the card
-					//if 1 then use the card
-					//some decisions is also made on useCard().
-					Random random = new Random();
-					int randomInt = random.nextInt(2);
-					if (randomInt == 0){
-						skipCard();
-					}else if (randomInt == 1){
-						useCard();
-					}
-				} })
-			.start();
+		if(!isGameFinished){
+			//if the game is not finished yet
+            //dummy view can be anything that are not gonna be animated by other animattions
+			//its not gonna be manipulated or animated or whatsoever
+			//its sole purpose is to delay a code
+			View dummy = titleTxt;
+			dummy.animate().setDuration(Animations.duration * 3)
+				.withEndAction(new Runnable() { @Override public void run() {
+						//This code is delayed because its too fast to run this code again
+						//and also make sure to only run after all of the animations are played
+						//Pick random int between 0 and 1.
+						//if 0 then skip the card
+						//if 1 then use the card
+						//some decisions is also made on useCard().
+						Random random = new Random();
+						int randomInt = random.nextInt(2);
+						if (randomInt == 0){
+							skipCard();
+						}else if (randomInt == 1){
+							useCard();
+						}
+					} })
+				.start();
+		}
 	}
 
 
@@ -543,36 +601,35 @@ public class MainActivity extends Activity
 				break;
 		}
 	}
-	
-	
-	
+
+
+
 	public void setViewsCustomBgDrawable(){
 		//customize the views with custom background drawable
 		//set the values first then configure it based on the view
 		int bgColor;
 		int strokeColor = Color.parseColor("#FFFFFF");//white
 		int strokeWidth = 1;
+		float strokeAlpha = 0.3f;
 		int cornerRadius = 0;
-		float opacity = 0.3f;
 
 		//cardLayout has a white background so it should be kept that way
 		bgColor = Color.parseColor("#FFFFFF");
-		Tools.setRoundedViewWithStroke(cardLayout, bgColor, strokeColor, strokeWidth, cornerRadius, opacity);
+		Tools.setRoundedViewWithStroke(cardLayout, bgColor, strokeColor, strokeWidth, strokeAlpha, cornerRadius);
 
 		//cardBackLayout has a grey background so it should be kept that way
 		bgColor = Color.parseColor("#696969");
-		Tools.setRoundedViewWithStroke(cardBackLayout, bgColor, strokeColor, strokeWidth, cornerRadius, opacity);
+		Tools.setRoundedViewWithStroke(cardBackLayout, bgColor, strokeColor, strokeWidth, strokeAlpha, cornerRadius);
 
 		//cardTypeImg and cardCostTxt is transparent and should be kept that way
 		bgColor = Color.parseColor("#00FFFFFF");
-		Tools.setRoundedViewWithStroke(cardTypeImg, bgColor, strokeColor, strokeWidth, cornerRadius, opacity);
-		Tools.setRoundedViewWithStroke(cardCostTxt, bgColor, strokeColor, strokeWidth, cornerRadius, opacity);
-
+		Tools.setRoundedViewWithStroke(cardTypeImg, bgColor, strokeColor, strokeWidth, strokeAlpha, cornerRadius);
+		Tools.setRoundedViewWithStroke(cardCostTxt, bgColor, strokeColor, strokeWidth, strokeAlpha, cornerRadius);
 		//playerLayout will be outlined first. 
 		//Make the outline thicker and maintain background color
 		bgColor = Color.parseColor("#696969");
 		strokeWidth = 2;
-		Tools.setRoundedViewWithStroke(playerLayout, bgColor, strokeColor, strokeWidth, cornerRadius, opacity);
+		Tools.setRoundedViewWithStroke(playerLayout, bgColor, strokeColor, strokeWidth, strokeAlpha, cornerRadius);
 	}
 
 
