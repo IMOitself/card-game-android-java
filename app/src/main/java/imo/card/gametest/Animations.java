@@ -5,14 +5,15 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Button;
 
-//TODO: Some comments
-
 public class Animations
 {
+	//This int will be use to determine how fast an animation should be
 	public static int duration = 500;
 	
 	public static void redTextAnim(final TextView textview){
+		//Set the color of the textview to red
 		textview.setTextColor(Color.parseColor("#FB1600"));
+		//do a pop animation
 		float scaleBy = 1.15f;
 		textview.animate().scaleX(scaleBy).scaleY(scaleBy).setDuration(duration)
 			.withEndAction(new Runnable() { @Override public void run() {
@@ -23,23 +24,30 @@ public class Animations
 			.start();
 	}
 	public static void hoverAnim(View view1, View view2){
+		//customize the views with custom background drawable
+		//set the values first then configure it based on the view
 		int bgColor = Color.parseColor("#696969");//grey
 		int strokeColor = Color.parseColor("#FFFFFF");//white
 		int strokeWidth = 2;
 		int cornerRadius = 0;
 		float opacity = 0.3f;
-		Tools.setRoundedViewWithStroke(view1, bgColor, strokeColor, strokeWidth, cornerRadius, opacity);
-		strokeWidth = 0;
-		Tools.setRoundedViewWithStroke(view2, bgColor, strokeColor, strokeWidth, cornerRadius, opacity);
 		
+		//view1 will be outlined
+		Tools.setRoundedViewWithStroke(view1, bgColor, strokeColor, strokeWidth, cornerRadius, opacity);
+		//scale view1 to indicate its been highlighted
 		float scaleBy = 1.05f;
 		view1.animate().scaleX(scaleBy).scaleY(scaleBy ).setDuration(duration).start();
-		if (view2 != null){
-			view2.setScaleX(1);
-			view2.setScaleY(1);
-		}
+		
+		//view2 will be removed of stroke/outline
+		strokeWidth = 0;
+		Tools.setRoundedViewWithStroke(view2, bgColor, strokeColor, strokeWidth, cornerRadius, opacity);
+		//set view2 to default size
+		view2.setScaleX(1);
+		view2.setScaleY(1);
 	}
 	public static void popAnim(final View view){
+		//scale the view to a certain size then to default size
+		//as if it just pop
 		float scaleBy = 1.15f;
 		view.animate().scaleX(scaleBy).scaleY(scaleBy).setDuration(duration)
 			.withEndAction(new Runnable() { @Override public void run() {
@@ -62,19 +70,27 @@ public class Animations
 		btn2.setEnabled(false);
 		//If you want to spam using the card nonstop, delete the code above. Be careful tho.
 		
-		int translateDistance = 100;
+		//make the card gone to indicate its flipped on its back
 		cardLayout.setVisibility(View.GONE);
-		cardBackLayout.setTranslationY(translateDistance);
 		cardBackLayout.setVisibility(View.VISIBLE);
-
+		//translate the card's back to a certain distance first
+		int translateDistance = 100;
+		cardBackLayout.setTranslationY(translateDistance);
+		//then go back to zero as if its moving upward
 		cardBackLayout.animate().translationY(0).setDuration(duration)
 			.withEndAction(new Runnable() { @Override public void run() {
+				    //after that scale the card' back to zero until its gone
 					cardBackLayout.animate().scaleX(0).setDuration(duration).withEndAction(new Runnable() { @Override public void run() {
+						        //remove the card's back and set it to its default size when its gone
 								cardBackLayout.setVisibility(View.GONE);
 								cardBackLayout.setScaleX(1);
+								//set the scale of the card to zero first
 								cardLayout.setScaleX(0);
+								//then make it visible
 								cardLayout.setVisibility(View.VISIBLE);
+								//scale the card back to its default size as if its being flipped
 								cardLayout.animate().scaleX(1).setDuration(duration).withEndAction(new Runnable() { @Override public void run() {
+									        //if its enemy turn still dont make the buttons and swiping action enabled
 											if (isEnemyTurn == false){
 												cardSwipe.setEnabled(true);
 												btn1.setEnabled(true);
@@ -86,9 +102,11 @@ public class Animations
 						.start();	
 				} })
 			.start();
-			//optionalView's animation is in sync with the card's so that it also trnaslates upward
+			//optionalView's animation is in sync with the card's so that it also translates upward
 			//the only thing it doesnt do is the flipping animation (i.e. scaleX)
 			if (optionalView != null){
+				//translate it to a distance first before translating it back
+				//as if it moves upward with the card
 				optionalView.setTranslationY(translateDistance);
 				optionalView.animate().translationY(0).setDuration(duration).start();
 			}
@@ -110,9 +128,9 @@ public class Animations
 				} })
 			.start();
 	}
-	public static void attackAnim (final int moveBackBy, final View self, final View target){
+	public static void attackAnim(final int moveBackBy, final View self, final View target){
 		//moves back by 5dp,
-		//Dash to the distance of its own view's length times the value.
+		//Dash to the distance of half of its own view's length.
 		//after that, animate the target's reaction to the dash
 		//then the view will go back to its original position.
 		int viewWidth = self.getWidth();
