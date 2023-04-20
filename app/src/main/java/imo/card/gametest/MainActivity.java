@@ -19,7 +19,6 @@ import java.util.Map;
 import java.util.Random;
 
 // TODO: stop the game when someone wins or lose
-// TODO: record the already drawn cards to not be use again until all of the card is drawn and refreshes
 
 public class MainActivity extends Activity 
 {
@@ -65,6 +64,13 @@ public class MainActivity extends Activity
 
 	public String userTurn = "player";
 	public boolean isEnemyTurn = false;
+	
+	//this is temporary in the future player and enemy cards will not gonna have the same set of cards
+	public List<Map<String, String>> playerCardsStock = new ArrayList<>();
+	public List<Map<String, String>> enemyCardsStock = new ArrayList<>();
+	
+	public List<Map<String, String>> playerCardsCurrent = new ArrayList<>();
+	public List<Map<String, String>> enemyCardsCurrent = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,6 +157,9 @@ public class MainActivity extends Activity
 		//If i search for the key "name" it will retrieve a value of "John" for example.
 		String sample_cardpack = getResources().getString(R.string.sample_cardpack);
         Tools.importDataToArraylist(cardsData, sample_cardpack, ";", "》");//arraylist, string, splitItemsBy, splitContentsBy
+		//TODO: Some comments
+		playerCardsStock.addAll(cardsData);
+		enemyCardsStock.addAll(cardsData);
 		//Start the game by populating views with datas
 		//and also draw a card.
 		updateGame();
@@ -245,9 +254,28 @@ public class MainActivity extends Activity
 	public void drawCard(){
 		//Randomly get a hashmap from the cardsData
 		//drawnCardMap will be used on useCard() void method.
+		//TODO:Some comments
 		Random random = new Random();
-        drawnCardMap = cardsData.get(random.nextInt(cardsData.size()));
-		// TODO: Some comments
+		int randomInt = 0;
+		if(userTurn.equals("player")){
+			if(playerCardsCurrent.isEmpty()){
+				playerCardsCurrent.addAll(playerCardsStock);
+				debugTxt.setText("playerCardsCurrent restocked!");
+			}
+			randomInt = random.nextInt(playerCardsCurrent.size());
+			drawnCardMap = playerCardsCurrent.get(randomInt);
+			playerCardsCurrent.remove(drawnCardMap);
+			
+		}else if(userTurn.equals("enemy")){
+			if(enemyCardsCurrent.isEmpty()){
+				enemyCardsCurrent.addAll(enemyCardsStock);
+				debugTxt.setText("enemyCardsCurrent restocked!");
+			}
+			randomInt = random.nextInt(enemyCardsCurrent.size());
+			drawnCardMap = enemyCardsCurrent.get(randomInt);
+			enemyCardsCurrent.remove(drawnCardMap);
+			
+		}
 		String cardName = drawnCardMap.get("name");
 		String cardInfo = drawnCardMap.get("info");
 		String cardType = drawnCardMap.get("type");
@@ -444,13 +472,13 @@ public class MainActivity extends Activity
 		enemyEnergy_old = enemyEnergy;
 
 		//Winning and losing system
-		//if player dies then you lose
-		if(playerLives <= 0){
-			titleTxt.setText(R.string.you_lose);
-		}
 		//if enemy dies then you win
 		if(enemyLives <= 0){
 			titleTxt.setText(R.string.you_win);
+		}
+		//if player dies then you lose
+		if(playerLives <= 0){
+			titleTxt.setText(R.string.you_lose);
 		}
 	}
 
@@ -483,7 +511,7 @@ public class MainActivity extends Activity
 
 
 	public void setImageByCardType(String cardType, ImageView img){
-		//Display what card type is it.
+		//Display what card type is it on an imageview.
 		//thats pretty much the explanation:/
 		switch(cardType){
 			case "attack":
