@@ -1,12 +1,8 @@
 package imo.card.gametest;
 
-import android.app.Activity;
-import android.widget.TextView;
-import android.view.ViewGroup;
-import android.view.View;
-import android.content.Context;
-import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
+import android.view.View;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,14 +26,14 @@ public class Tools
 											 String textFile,
 											 String splitItemsBy,
 											 String splitContentsBy){
-		String[] rawItems = textFile.split(splitItemsBy);//seperate the contents to individual sections
+		String[] rawItems = textFile.split(splitItemsBy);//separate the contents to individual sections
 		for (String rawItem : rawItems) {//loop to every sections made
-			String rawContent = rawItem.replaceFirst(splitContentsBy, "");//remove the leading desired char before seperating
-			String[] keyValues = rawContent.split(splitContentsBy);//seperate into pieces by the desired char
+			String rawContent = rawItem.replaceFirst(splitContentsBy, "");//remove the leading desired char before separating
+			String[] keyValues = rawContent.split(splitContentsBy);//separate into pieces by the desired char
 			Map<String, String> newMap = new HashMap<>();
-			for (String keyValue : keyValues) {//get the seperated pieces
+			for (String keyValue : keyValues) {//get the separated pieces
 				if(keyValue.contains("=")){
-					String[] splitKeyValue = keyValue.split("=");//seperate into 2 pieces by =
+					String[] splitKeyValue = keyValue.split("=");//separate into 2 pieces by =
 					newMap.put(splitKeyValue[0].trim(), splitKeyValue[1].trim());//put the 1st piece into the key and 2nd piece to the value of a map
 				}
 			}
