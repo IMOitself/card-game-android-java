@@ -64,7 +64,8 @@ public class MainActivity extends Activity
 	public boolean isEnemyTurn = false;
 	
 	//use for properly ending the game while recording data
-	public int movesMade = 0;
+	public int playerMovesMade = 0;
+	public int enemyMovesMade = 0;
 	public boolean isGameFinished = false;
 	public Map<String, String> gameResult = new HashMap<>();
 
@@ -457,7 +458,8 @@ public class MainActivity extends Activity
 				moves = 3;
 			}
 			//record how many moves has been made
-			movesMade++;//might not gonna be necessary
+			if(userTurn.equals("player")){ playerMovesMade++;
+			}else if(userTurn.equals("enemy")) enemyMovesMade++;
 		}
 	}
 
@@ -510,46 +512,12 @@ public class MainActivity extends Activity
 		//if enemy dies then you win
 		if(enemyLives <= 0){
 			titleTxt.setText(R.string.you_win);
-			//finish the game
-			isGameFinished = true;
-			//set the winner to player
-			gameResult.put("winner", "player");
-			//get how many moves has been made
-			gameResult.put("moves_made", movesMade + "");
-			//get how much extra damage has been made
-			//if none then stay zero
-			gameResult.put("overkill", "0");
-			//if the enemyLives is negative 
-			//then get it to determine how much extra damage has been made
-			if(enemyLives < 0) gameResult.put("overkill", enemyLives + "");
-			
-			String debugString = "isGameFinished: " + isGameFinished + " ";
-			debugString = debugString + "winner: " + gameResult.get("winner") + "\n";
-			debugString = debugString + "moves_made: " + gameResult.get("moves_made") + " ";
-			debugString = debugString + "overkill: " + gameResult.get("overkill") + " ";
-			debugTxt.setText(debugString);
+			recordGameResult("player");
 		}
 		//if player dies then you lose
 		if(playerLives <= 0){
 			titleTxt.setText(R.string.you_lose);
-			//finish the game
-			isGameFinished = true;
-			//set the winner to enemy
-			gameResult.put("winner", "enemy");
-			//get how many moves has been made
-			gameResult.put("moves_made", movesMade + "");
-			//get how much extra damage has been made
-			//if none then stay zero
-			gameResult.put("overkill", "0");
-			//if the playerLives is negative 
-			//then get it to determine how much extra damage has been made
-			if(playerLives < 0) gameResult.put("overkill", playerLives + "");
-			
-			String debugString = "isGameFinished: " + isGameFinished + " ";
-			debugString = debugString + "winner: " + gameResult.get("winner") + "\n";
-			debugString = debugString + "moves_made: " + gameResult.get("moves_made") + " ";
-			debugString = debugString + "overkill: " + gameResult.get("overkill") + " ";
-			debugTxt.setText(debugString);
+			recordGameResult("enemy");
 		}
 	}
 
@@ -649,5 +617,31 @@ public class MainActivity extends Activity
 		energyString = energyInt >= 4 ? energyString + "■" : energyString + "□";
 		energyString = energyInt >= 5 ? energyString + "■" : energyString + "□";
 		energyTxt.setText(energyString);
+	}
+
+
+
+	public void recordGameResult(String winner){
+		//finish the game
+		isGameFinished = true;
+		//set the winner to enemy
+		gameResult.put("winner", winner);
+		//get how many moves the player has been made
+		gameResult.put("player_moves_made", playerMovesMade + "");
+		//get how many moves the enemy has been made
+		gameResult.put("enemy_moves_made", enemyMovesMade + "");
+		//get how much extra damage has been made
+		//if none then stay zero
+		gameResult.put("overkill", "0");
+		//if the playerLives is negative 
+		//then get it to determine how much extra damage has been made
+		if(playerLives < 0) gameResult.put("overkill", playerLives + "");
+
+		String debugString = "isGameFinished: " + isGameFinished + " ";
+		debugString = debugString + "winner: " + gameResult.get("winner") + "\n";
+		debugString = debugString + "player_moves_made: " + gameResult.get("player_moves_made") + " ";
+		debugString = debugString + "enemy_moves_made: " + gameResult.get("enemy_moves_made") + " ";
+		debugString = debugString + "overkill: " + gameResult.get("overkill") + " ";
+		debugTxt.setText(debugString);
 	}
 }
