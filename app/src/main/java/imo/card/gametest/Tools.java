@@ -17,19 +17,13 @@ public class Tools
 		if (width != 0) view.getLayoutParams().width = width;
 		if (height != 0) view.getLayoutParams().height = height;
 	}
-	public static void setCustomBgWithStroke(View view, int bgColor, int cornerRadius, int strokeWidth, int strokeColor, float strokeAlpha, float dashWidth, float dashGap) {
+	public static void setCustomBgWithStroke(View view, int bgColor, int cornerRadius, int strokeWidth, int strokeColor, float strokeAlpha) {
 		GradientDrawable shape = new GradientDrawable();
 		shape.setShape(GradientDrawable.RECTANGLE);
 		shape.setColor(bgColor);
 		shape.setCornerRadius(cornerRadius);
 		int strokeColorWithAlpha = strokeColor & 0xFFFFFF | ((int)(strokeAlpha * 255)) << 24;
-		if(dashWidth != 0 || dashGap != 0){
-			// Set the stroke with dash
-			shape.setStroke(strokeWidth, strokeColorWithAlpha, dashWidth, dashGap);
-		}else{
-			//Set the stroke without dash
-			shape.setStroke(strokeWidth, strokeColorWithAlpha);
-		}
+		shape.setStroke(strokeWidth, strokeColorWithAlpha);
 		view.setBackground(shape);
 	}
 	public static void importDataToArraylist(List<Map<String, String>> arraylist,
