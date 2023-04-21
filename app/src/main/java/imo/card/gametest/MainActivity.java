@@ -164,10 +164,14 @@ public class MainActivity extends Activity
 		//TODO: make a seperate set of cards for the player and enemy
 		playerCardsStock.addAll(cardsData);
 		enemyCardsStock.addAll(cardsData);
+		//pop up the story dialog first
+		StoryDialog storyDialog = new StoryDialog(this);
+		storyDialog.show();
 		//Start the game by populating views with datas
 		//and also draw a card.
 		updateGame();
 		drawCard();
+		
 	}
 
 
