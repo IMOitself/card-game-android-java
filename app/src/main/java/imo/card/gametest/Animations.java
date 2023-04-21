@@ -23,24 +23,22 @@ public class Animations
 				} })
 			.start();
 	}
-	public static void hoverAnim(View view1, View view2){
+	public static void hoverAnim(View view1, View view2, int bgColor){
 		//customize the views with custom background drawable
 		//set the values first then configure it based on the view
-		int bgColor = Color.parseColor("#696969");//grey
-		int strokeColor = Color.parseColor("#FFFFFF");//white
+		int strokeColor = Color.WHITE;
 		int strokeWidth = 2;
+		float strokeAlpha = 0.3f;
 		int cornerRadius = 0;
-		float opacity = 0.3f;
-		
 		//view1 will be outlined
-		Tools.setRoundedViewWithStroke(view1, bgColor, strokeColor, strokeWidth, cornerRadius, opacity);
+		Tools.setCustomBgWithStroke(view1, bgColor, cornerRadius, strokeWidth, strokeColor, strokeAlpha, 0, 0);
 		//scale view1 to indicate its been highlighted
 		float scaleBy = 1.05f;
 		view1.animate().scaleX(scaleBy).scaleY(scaleBy ).setDuration(duration).start();
 		
 		//view2 will be removed of stroke/outline
 		strokeWidth = 0;
-		Tools.setRoundedViewWithStroke(view2, bgColor, strokeColor, strokeWidth, cornerRadius, opacity);
+		Tools.setCustomBgWithStroke(view2, bgColor, cornerRadius, strokeWidth, strokeColor, strokeAlpha, 0, 0);
 		//set view2 to default size
 		view2.setScaleX(1);
 		view2.setScaleY(1);
