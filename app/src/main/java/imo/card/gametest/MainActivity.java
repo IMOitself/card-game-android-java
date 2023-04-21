@@ -68,7 +68,6 @@ public class MainActivity extends Activity
 	public boolean isGameFinished = false;
 	public Map<String, String> gameResult = new HashMap<>();
 
-	//this is temporary, in the future player and enemy cards will not gonna have the same set of cards
 	public List<Map<String, String>> playerCardsStock = new ArrayList<>();
 	public List<Map<String, String>> enemyCardsStock = new ArrayList<>();
 
@@ -203,16 +202,18 @@ public class MainActivity extends Activity
 				float scaleBy = (recordAddedX/100)+0.5f;
 				if (currentX < centerX) {
 					//if its on the left
-					if(scaleBy >= 1){
-						//To prevent getting smaller than its default scale.
+					if(scaleBy >= 1 && scaleBy <= 2){
+						//to prevent getting smaller than its default scale 
+						//or getting higher than 2
 						//Now set the view's X and Y to scaleBy
 						skipIndicatorTxt.setScaleX(scaleBy);
 						skipIndicatorTxt.setScaleY(scaleBy);
 					}
 				}else if (currentX > centerX) {
 					//if its on the right
-					if(scaleBy >= 1){
-						//to prevent getting smaller than its default scale
+					if(scaleBy >= 1 && scaleBy <= 2){
+						//to prevent getting smaller than its default scale 
+						//or getting higher than 2
 						//Now set the view's X and Y to scaleBy
 						useIndicatorTxt.setScaleX(scaleBy);
 						useIndicatorTxt.setScaleY(scaleBy);
@@ -443,14 +444,14 @@ public class MainActivity extends Activity
 				if (userTurn.equals("player")){
 					//player turn has ended
 					userTurn = "enemy";
-					Animations.hoverAnim(enemyLayout, playerLayout);
+					Animations.hoverAnim(enemyLayout, playerLayout, Color.parseColor("#696969"));
 					enemyRandomPlay(enemyEnergy);
 					isEnemyTurn = true;
 
 				}else if (userTurn.equals("enemy")){
 					//enemy turn has ended
 					userTurn = "player";
-					Animations.hoverAnim(playerLayout, enemyLayout);
+					Animations.hoverAnim(playerLayout, enemyLayout, Color.parseColor("#696969"));
 					isEnemyTurn = false;
 				}
 				moves = 3;
@@ -607,29 +608,27 @@ public class MainActivity extends Activity
 	public void setViewsCustomBgDrawable(){
 		//customize the views with custom background drawable
 		//set the values first then configure it based on the view
+		//each view has specific background color that is needed to be kept that way
+		//because changing background drawable also change the background color
 		int bgColor;
-		int strokeColor = Color.parseColor("#FFFFFF");//white
+		int strokeColor = Color.WHITE;
 		int strokeWidth = 1;
 		float strokeAlpha = 0.3f;
 		int cornerRadius = 0;
-
-		//cardLayout has a white background so it should be kept that way
-		bgColor = Color.parseColor("#FFFFFF");
-		Tools.setRoundedViewWithStroke(cardLayout, bgColor, strokeColor, strokeWidth, strokeAlpha, cornerRadius);
-
-		//cardBackLayout has a grey background so it should be kept that way
+		//cardLayout's default color is white
+		bgColor = Color.WHITE;
+		Tools.setCustomBgWithStroke(cardLayout, bgColor, cornerRadius, strokeWidth, strokeColor, strokeAlpha);
+		//cardBackLayout's default color is grey
 		bgColor = Color.parseColor("#696969");
-		Tools.setRoundedViewWithStroke(cardBackLayout, bgColor, strokeColor, strokeWidth, strokeAlpha, cornerRadius);
-
-		//cardTypeImg and cardCostTxt is transparent and should be kept that way
-		bgColor = Color.parseColor("#00FFFFFF");
-		Tools.setRoundedViewWithStroke(cardTypeImg, bgColor, strokeColor, strokeWidth, strokeAlpha, cornerRadius);
-		Tools.setRoundedViewWithStroke(cardCostTxt, bgColor, strokeColor, strokeWidth, strokeAlpha, cornerRadius);
-		//playerLayout will be outlined first. 
-		//Make the outline thicker and maintain background color
-		bgColor = Color.parseColor("#696969");
+		Tools.setCustomBgWithStroke(cardBackLayout, bgColor, cornerRadius, strokeWidth, strokeColor, strokeAlpha);
+		//cardTypeImg and cardCostTxt has no color
+		bgColor = Color.TRANSPARENT;
+		Tools.setCustomBgWithStroke(cardTypeImg, bgColor, cornerRadius, strokeWidth, strokeColor, strokeAlpha);
+		Tools.setCustomBgWithStroke(cardCostTxt, bgColor, cornerRadius, strokeWidth, strokeColor, strokeAlpha);
+		//playerLayout will be outlined first by making its stroke thick.
 		strokeWidth = 2;
-		Tools.setRoundedViewWithStroke(playerLayout, bgColor, strokeColor, strokeWidth, strokeAlpha, cornerRadius);
+		bgColor = Color.parseColor("#696969");
+		Tools.setCustomBgWithStroke(playerLayout, bgColor, cornerRadius, strokeWidth, strokeColor, strokeAlpha);
 	}
 
 
