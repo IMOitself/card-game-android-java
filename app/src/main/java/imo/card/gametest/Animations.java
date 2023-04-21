@@ -31,14 +31,14 @@ public class Animations
 		float strokeAlpha = 0.3f;
 		int cornerRadius = 0;
 		//view1 will be outlined
-		Tools.setCustomBgWithStroke(view1, bgColor, cornerRadius, strokeWidth, strokeColor, strokeAlpha, 0, 0);
+		Tools.setCustomBgWithStroke(view1, bgColor, cornerRadius, strokeWidth, strokeColor, strokeAlpha);
 		//scale view1 to indicate its been highlighted
 		float scaleBy = 1.05f;
 		view1.animate().scaleX(scaleBy).scaleY(scaleBy ).setDuration(duration).start();
 		
 		//view2 will be removed of stroke/outline
 		strokeWidth = 0;
-		Tools.setCustomBgWithStroke(view2, bgColor, cornerRadius, strokeWidth, strokeColor, strokeAlpha, 0, 0);
+		Tools.setCustomBgWithStroke(view2, bgColor, cornerRadius, strokeWidth, strokeColor, strokeAlpha);
 		//set view2 to default size
 		view2.setScaleX(1);
 		view2.setScaleY(1);
