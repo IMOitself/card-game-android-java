@@ -35,7 +35,6 @@ public class StoryDialog extends Dialog {
 	public TextView choice2Txt;
 	public TextView hintTxt;
 	
-	public int screenWidth;
 	public ArrayList<Map<String, String>> routeData = new ArrayList<>();
 	public ArrayList<Map<String, String>> sceneData = new ArrayList<>();
 	public String[] sceneSequencesArray;
@@ -44,6 +43,9 @@ public class StoryDialog extends Dialog {
 	public boolean stillDisplaySequence = true;
 	public boolean hasChosen = false;
 	public int forChoice = 0;
+	public Map<String, String> choice1Map = new HashMap<>();
+	public Map<String, String> choice2Map = new HashMap<>();
+	public Map<String, String> chosenMap = new HashMap<>();
 	
     public StoryDialog(final Context context) {
         super(context);
@@ -67,6 +69,26 @@ public class StoryDialog extends Dialog {
 		choice2Txt = findViewById(R.id.choice2_txt);
 		hintTxt = findViewById(R.id.hint_txt);
 		
+		onDialogCreate(context);
+		
+		mainStoryLayout.setOnClickListener(new View.OnClickListener(){
+			@Override public void onClick(View v){
+				mainOnClick(context);
+			}
+		});
+		View.OnClickListener choicesClickListener = new View.OnClickListener(){
+			@Override public void onClick(View view){
+				choicesOnClick(view);
+			}
+		};
+		choice1Layout.setOnClickListener(choicesClickListener);
+		choice2Layout.setOnClickListener(choicesClickListener);
+    }
+	
+	
+	
+	public void onDialogCreate(Context context){
+		choicesParentLayout.setVisibility(View.GONE);
 		int strokeColor = Color.WHITE;
 		int strokeWidth = 2;
 		float strokeAlpha = 0.3f;
@@ -74,46 +96,6 @@ public class StoryDialog extends Dialog {
 		int bgColor = Color.TRANSPARENT;
 		Tools.setCustomBgWithStroke(choice1Layout, bgColor, cornerRadius, strokeWidth, strokeColor, strokeAlpha);
 		Tools.setCustomBgWithStroke(choice2Layout, bgColor, cornerRadius, strokeWidth, strokeColor, strokeAlpha);
-		
-		onDialogCreate(context);
-		
-		mainStoryLayout.setOnClickListener(new View.OnClickListener(){
-			@Override public void onClick(View v){
-				mainOnclick(context);
-			}
-		});
-		View.OnClickListener choicesOnClick = new View.OnClickListener(){
-			@Override public void onClick(View view){
-				stillDisplaySequence = true;
-				hasChosen = true;
-				int strokeColor = Color.WHITE;
-				int strokeWidth = 2;
-				float strokeAlpha = 0.3f;
-				int cornerRadius = 10;
-				int bgColor = Color.TRANSPARENT;
-				Tools.setCustomBgWithStroke(choice1Layout, bgColor, cornerRadius, strokeWidth, strokeColor, strokeAlpha);
-				Tools.setCustomBgWithStroke(choice2Layout, bgColor, cornerRadius, strokeWidth, strokeColor, strokeAlpha);
-				
-				strokeWidth = 4;
-				bgColor = Color.parseColor("#1affffff");
-				if (view.getId() == choice1LayoutId) {
-					Tools.setCustomBgWithStroke(choice1Layout, bgColor, cornerRadius, strokeWidth, strokeColor, strokeAlpha);
-					
-				} else if (view.getId() == choice2LayoutId) {
-					Tools.setCustomBgWithStroke(choice2Layout, bgColor, cornerRadius, strokeWidth, strokeColor, strokeAlpha);
-				}		
-			}
-		};
-		choice1Layout.setOnClickListener(choicesOnClick);
-		choice2Layout.setOnClickListener(choicesOnClick);
-    }
-
-	
-	
-	
-	
-	public void onDialogCreate(Context context){
-		choicesParentLayout.setVisibility(View.GONE);
 		
 		routeData = Tools.getArrayListFromSharedPrefs(context, "route_data");
 		sceneData = Tools.getArrayListFromSharedPrefs(context, "scene_data");
@@ -128,7 +110,7 @@ public class StoryDialog extends Dialog {
 	
 	
 	
-	public void mainOnclick(Context context){
+	public void mainOnClick(Context context){
 		int sceneSequencesLength = sceneSequencesArray.length - 1;
 		
 		if(sequenceIndex <= sceneSequencesLength){
@@ -138,6 +120,7 @@ public class StoryDialog extends Dialog {
 					choicesHintTxt.setVisibility(View.GONE);
 					hintTxt.setVisibility(View.VISIBLE);
 					storyTxt.setText("");
+					hasChosen = false;
 				}
 				String textviewString = storyTxt.getText().toString().trim();
 				String stringSequence = sceneSequencesArray[sequenceIndex];
@@ -152,7 +135,7 @@ public class StoryDialog extends Dialog {
 					hintTxt.setVisibility(View.INVISIBLE);
 					stillDisplaySequence = false;
 					hasChosen = false;
-					choicesSelection(stringSequence);
+					makeChoicesSelection(stringSequence, choice1Txt, choice2Txt);
 				}
 				sequenceIndex++;
 			}
@@ -163,7 +146,7 @@ public class StoryDialog extends Dialog {
 	
 	
 	
-	public void choicesSelection(String stringSequence){
+	public void makeChoicesSelection(String stringSequence, TextView choice1Txt, TextView choice2Txt){
 		//usually stringSequence has "pick:" at the start.
 		//remove it by doing substring(5)
 		stringSequence = stringSequence.substring(5).trim();
@@ -187,7 +170,8 @@ public class StoryDialog extends Dialog {
 			}
 			if (routeLevelKey != null||routeLevelValue != null) {//this will run only if its populated
 				List<Map<String, String>> levelMaps = new ArrayList<>();
-				//this will search a map with desired level from routeData into levelMaps
+				//this will search a map with desired key and value from routeData
+				//list maps that has the same key and value
 				for (Map<String, String> map : routeData) {
 					if (map.get(routeLevelKey).equals(routeLevelValue)) {
 						levelMaps.add(map);
@@ -199,13 +183,42 @@ public class StoryDialog extends Dialog {
 					outputMap = levelMaps.get(random.nextInt(levelMaps.size()));
 				}
 				if (forChoice == 1){
-					choiceArray[0] = outputMap.get("route_name");
+					choice1Map = outputMap;
+					choiceArray[0] = choice1Map.get("route_name");
+					
 				}else if (forChoice == 2){
-					choiceArray[1] = outputMap.get("route_name");
+					choice2Map = outputMap;
+					choiceArray[1] = choice2Map.get("route_name");
 				}
 			}
 			choice1Txt.setText(choiceArray[0]);
 			choice2Txt.setText(choiceArray[1]);
+		}
+	}
+	public void choicesOnClick(View view){
+		stillDisplaySequence = true;
+		hasChosen = true;
+
+		int strokeColor = Color.WHITE;
+		int strokeWidth = 2;
+		float strokeAlpha = 0.3f;
+		int cornerRadius = 10;
+		int bgColor = Color.TRANSPARENT;
+		Tools.setCustomBgWithStroke(choice1Layout, bgColor, cornerRadius, strokeWidth, strokeColor, strokeAlpha);
+		Tools.setCustomBgWithStroke(choice2Layout, bgColor, cornerRadius, strokeWidth, strokeColor, strokeAlpha);
+
+		strokeWidth = 4;
+		bgColor = Color.parseColor("#1affffff");
+		if (view.getId() == choice1LayoutId) {
+			Tools.setCustomBgWithStroke(choice1Layout, bgColor, cornerRadius, strokeWidth, strokeColor, strokeAlpha);
+			chosenMap = choice1Map;
+
+		} else if (view.getId() == choice2LayoutId) {
+			Tools.setCustomBgWithStroke(choice2Layout, bgColor, cornerRadius, strokeWidth, strokeColor, strokeAlpha);
+			chosenMap = choice2Map;
+		}
+		if (chosenMap != null) {
+			choicesHintTxt.setText(chosenMap.get("route_name") + ": " + chosenMap.get("route_desc"));
 		}
 	}
 }
