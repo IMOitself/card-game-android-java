@@ -6,6 +6,14 @@
     <string name="app_name">Card Game Test</string>
 	<string name="you_lose">YOU LOSE!</string>
 	<string name="you_win">YOU WIN!</string>
+	<string name="hint_tap_to_see_description">tap the route to see its description.</string>
+	<string name="hint_tap_anywhere_to_continue">Tap anywhere to continue.</string>
+	<string name="use">USE</string>
+	<string name="skip">SKIP</string>
+	<string name="rickroll">Never gonna give you up.\nNever gonna let you down.\nNever gonna run around and desert you</string>
+	<string name="one">ONE</string>
+	<string name="text">Text</string>
+	<string name="two">TWO</string>
 	<string name="sample_cardpack">
 		》name=ATTACK
 		》info=attack 🔪2
@@ -37,4 +45,45 @@
 		》lives=0, -5
 		》type=mega_attack
 	</string>
+	<string name="initial_scene_txt">
+		"》scene_id=initial_scene
+        》scene_sequences=
+        »text:The great dope wizards called you.
+		»text:They created this sick vessel \nthat allows you to access their world.
+        »text:And with your mad skills and will power,\n they gave you a task to wreck all the golems \nacross the land.
+		»text:Choose which path you want to start:
+        »pick:route_level_1,route_level_2
+		»text:You're now ready to embark on a new adventure.
+		»text:What great mysteries will you uncover.
+		"
+	</string>
+	<string name="routes_txt">
+        》route_name=Plains
+        》route_desc=flat as heck.
+		》route_level=1
+        》route_length=3
+        》route_enemies=a
+        》route_scenes=a
+        ;
+        》route_name=Small Forest
+        》route_desc=has small creatures.
+		》route_level=1
+        》route_length=3
+        》route_enemies=a
+        》route_scenes=a
+        ;
+        》route_name=Rocky Cliffs
+		》route_desc=full of rocks, obviously.
+		》route_level=2
+        》route_length=2
+        》route_enemies=a
+        》route_scenes=a
+		;
+        》route_name=Coast
+        》route_desc=near where the sea at.
+		》route_level=2
+        》route_length=4
+        》route_enemies=a
+        》route_scenes=a
+    </string>
 </resources>
