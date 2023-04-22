@@ -2,6 +2,7 @@ package imo.card.gametest;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.content.Context;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -44,8 +45,11 @@ public class MainActivity extends Activity
 	public TextView debugTxt;
 
 	public int screenWidth = 0;
-
-	public List<Map<String, String>> cardsData = new ArrayList<>();
+	
+	public ArrayList<Map<String, String>> routeData = new ArrayList<>();
+	public ArrayList<Map<String, String>> sceneData = new ArrayList<>();
+	
+	public ArrayList<Map<String, String>> cardsData = new ArrayList<>();
 	public Map<String, String> drawnCardMap;
 
 	public int moves = 3;
@@ -69,11 +73,11 @@ public class MainActivity extends Activity
 	public boolean isGameFinished = false;
 	public Map<String, String> gameResult = new HashMap<>();
 
-	public List<Map<String, String>> playerCardsStock = new ArrayList<>();
-	public List<Map<String, String>> enemyCardsStock = new ArrayList<>();
+	public ArrayList<Map<String, String>> playerCardsStock = new ArrayList<>();
+	public ArrayList<Map<String, String>> enemyCardsStock = new ArrayList<>();
 
-	public List<Map<String, String>> playerCardsCurrent = new ArrayList<>();
-	public List<Map<String, String>> enemyCardsCurrent = new ArrayList<>();
+	public ArrayList<Map<String, String>> playerCardsCurrent = new ArrayList<>();
+	public ArrayList<Map<String, String>> enemyCardsCurrent = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -164,6 +168,14 @@ public class MainActivity extends Activity
 		//TODO: make a seperate set of cards for the player and enemy
 		playerCardsStock.addAll(cardsData);
 		enemyCardsStock.addAll(cardsData);
+		//TODO: Some comments
+		String routesFile = getResources().getString(R.string.routes_txt);
+        Tools.importDataToArraylist(routeData, routesFile, ";", "》");//arraylist, string, splitItemsBy, splitContentsBy
+		Tools.putArrayListInSharedPrefs(this, routeData, "route_data");
+		
+		String scenesFile = getResources().getString(R.string.initial_scene_txt);
+        Tools.importDataToArraylist(sceneData, scenesFile, ";", "》");//arraylist, string, splitItemsBy, splitContentsBy
+		Tools.putArrayListInSharedPrefs(this, sceneData, "scene_data");
 		//pop up the story dialog first
 		StoryDialog storyDialog = new StoryDialog(this);
 		storyDialog.show();
@@ -593,9 +605,8 @@ public class MainActivity extends Activity
 		//cardBackLayout's default color is grey
 		bgColor = Color.parseColor("#696969");
 		Tools.setCustomBgWithStroke(cardBackLayout, bgColor, cornerRadius, strokeWidth, strokeColor, strokeAlpha);
-		//cardTypeImg and cardCostTxt has no color
+		//cardCostTxt has no color
 		bgColor = Color.TRANSPARENT;
-		Tools.setCustomBgWithStroke(cardTypeImg, bgColor, cornerRadius, strokeWidth, strokeColor, strokeAlpha);
 		Tools.setCustomBgWithStroke(cardCostTxt, bgColor, cornerRadius, strokeWidth, strokeColor, strokeAlpha);
 		//playerLayout will be outlined first by making its stroke thick.
 		strokeWidth = 2;
@@ -637,15 +648,21 @@ public class MainActivity extends Activity
 		//get how much extra damage has been made
 		//if none then stay zero
 		gameResult.put("overkill", "0");
-		//if the playerLives is negative 
-		//then get it to determine how much extra damage has been made
-		if(playerLives < 0) gameResult.put("overkill", playerLives + "");
-
-		String debugString = "isGameFinished: " + isGameFinished + " ";
-		debugString = debugString + "winner: " + gameResult.get("winner") + "\n";
+		if(winner.equals("player")){
+			//if the winner is player then its target is enemy
+			//Determine how much extra damage has been made way past 0
+			if(enemyLives < 0) gameResult.put("overkill", enemyLives + "");
+			
+		}else if (winner.equals("enemy")){
+			//if the winner is enemy then its target is player
+			//Determine how much extra damage has been made way past 0
+			if(playerLives < 0) gameResult.put("overkill", playerLives + "");
+		}
+		String debugString = "winner: " + gameResult.get("winner") + " ";
 		debugString = debugString + "player_moves_made: " + gameResult.get("player_moves_made") + " ";
 		debugString = debugString + "enemy_moves_made: " + gameResult.get("enemy_moves_made") + " ";
 		debugString = debugString + "overkill: " + gameResult.get("overkill") + " ";
 		debugTxt.setText(debugString);
 	}
+	
 }
