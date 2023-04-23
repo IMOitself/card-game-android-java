@@ -38,11 +38,11 @@ public class Tools
 		view.setBackground(shape);
 	}
 	
-	public static void importDataToArraylist(ArrayList<Map<String, String>> arraylist,
-											 String textFile,
-											 String splitItemsBy,
-											 String splitContentsBy){
-		String[] rawItems = textFile.split(splitItemsBy);//seperate the contents to individual sections
+	public static void importStringToArraylist(String string,
+											   ArrayList<Map<String, String>> arraylist,
+											   String splitItemsBy,
+											   String splitContentsBy){
+		String[] rawItems = string.split(splitItemsBy);//seperate the contents to individual sections
 		for (String rawItem : rawItems) {//loop to every sections made
 			String rawContent = rawItem.replaceFirst(splitContentsBy, "");//remove the leading desired char before seperating
 			String[] keyValues = rawContent.split(splitContentsBy);//seperate into pieces by the desired char
@@ -76,19 +76,19 @@ public class Tools
 		String jsonString = new JSONArray(arrayList).toString();
 		// Get an instance of SharedPreferences
 		SharedPreferences sharedPreferences = context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
-		// Get an editor object
+		// put the converted arraylist into the sharedPreferences
 		SharedPreferences.Editor editor = sharedPreferences.edit();
-		// Store the JSON string in shared preferences using the specified key
 		editor.putString(key, jsonString);
-		// Commit the changes to shared preferences
 		editor.apply();
 	}
 	
 	public static ArrayList<Map<String, String>> getArrayListFromSharedPrefs(Context context, String key) {
 		// Get an instance of SharedPreferences
 		SharedPreferences sharedPreferences = context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
-		// Retrieve the JSON string from shared preferences using the specified key
+		// Retrieve the JSON string with a specified key
 		String jsonString = sharedPreferences.getString(key, "");
+		// If no value was found return null
+		if (jsonString == null) return null;
 		// Convert the JSON string back to the ArrayList<Map<String, String>>
 		ArrayList<Map<String, String>> arrayList = new ArrayList<>();
 		try {
@@ -108,6 +108,41 @@ public class Tools
 			e.printStackTrace();
 		}
 		return arrayList;
+	}
+	
+	public static void putMapInSharedPrefs(Context context, Map<String, String> map, String key) {
+		// Convert the Map to a JSON string
+		String jsonString = new JSONObject(map).toString();
+		// Get an instance of SharedPreferences
+		SharedPreferences sharedPreferences = context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+		// put the converted map into the sharedPreferences
+		SharedPreferences.Editor editor = sharedPreferences.edit();
+		editor.putString(key, jsonString);
+		editor.apply();
+	}
+	
+	public static Map<String, String> getMapFromSharedPrefs(Context context, String key) {
+		// Get an instance of SharedPreferences
+		SharedPreferences sharedPreferences = context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+		// Retrieve the JSON string from SharedPreferences using the specified key
+		String jsonString = sharedPreferences.getString(key, null);
+		// If no value was found return null
+		if (jsonString == null) return null;
+		try {
+			// Convert the JSON string to a Map using the JSONObject class
+			JSONObject jsonObject = new JSONObject(jsonString);
+			Map<String, String> map = new HashMap<>();
+			Iterator<String> keys = jsonObject.keys();
+			while (keys.hasNext()) {
+				String mapKey = keys.next();
+				String mapValue = jsonObject.getString(mapKey);
+				map.put(mapKey, mapValue);
+			}
+			return map;
+		} catch (JSONException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 	
 }
