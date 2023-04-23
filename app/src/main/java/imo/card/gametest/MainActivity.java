@@ -1,7 +1,9 @@
 package imo.card.gametest;
 
-import android.app.Activity;
 import android.os.Bundle;
+import android.app.Activity;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Context;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -176,8 +178,19 @@ public class MainActivity extends Activity
 		String initial_scene_txt = getResources().getString(R.string.initial_scene_txt);
         Tools.importDataToArraylist(sceneData, initial_scene_txt, ";", "》");//arraylist, string, splitItemsBy, splitContentsBy
 		Tools.putArrayListInSharedPrefs(this, sceneData, "scene_data");
-		//pop up the story dialog first
-		StoryDialog storyDialog = new StoryDialog(this);
+		//pop up the story dialog first and detect if it's dismissed
+		final StoryDialog storyDialog = new StoryDialog(this);
+		storyDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+				@Override
+				public void onDismiss(DialogInterface dialogInterface) {
+					Map<String, String> chosenMap = storyDialog.chosenMap;
+					if(!chosenMap.isEmpty()){
+						if(chosenMap.containsKey("name")){
+							titleTxt.setText(chosenMap.get("name"));
+						}
+					}
+				}
+			});
 		storyDialog.show();
 		//Start the game by populating views with datas
 		//and also draw a card.
@@ -494,7 +507,7 @@ public class MainActivity extends Activity
 		}
 		//Variables are populated on useCard() void method.
 		//Display the current datas on textviews
-		titleTxt.setText(userTurn + "");
+		//titleTxt.setText(userTurn + "");
 		movesTxt.setText(moves + "");
 
 		playerLivesTxt.setText("❤" + playerLives);
