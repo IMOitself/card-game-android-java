@@ -24,40 +24,42 @@ import java.util.Random;
 public class MainActivity extends Activity 
 {
 	public TextView titleTxt;
+	public ImageView movesImg;
+	public TextView movesTxt;
 	public LinearLayout playerLayout;
+	public LinearLayout playerLivesLayout;
 	public TextView playerLivesTxt;
 	public TextView playerEnergyTxt;
 	public LinearLayout enemyLayout;
+	public LinearLayout enemyLivesLayout;
 	public TextView enemyLivesTxt;
 	public TextView enemyEnergyTxt;
-	public ImageView movesImg;
-	public TextView movesTxt;
-	public TextView useIndicatorTxt;
-	public TextView skipIndicatorTxt;
+	public TextView cardNameTxt;
 	public View cardParentLayout;
-	public LinearLayout cardBackLayout;
 	public LinearLayout cardLayout;
 	public ImageView cardTypeImg;
 	public TextView cardCostTxt;
-	public TextView cardNameTxt;
 	public TextView cardInfoTxt;
+	public LinearLayout cardBackLayout;
+	public TextView useIndicatorTxt;
+	public TextView skipIndicatorTxt;
+	public TextView debugTxt;
 	public LinearLayout buttonsLayout;
 	public Button skipBtn;
 	public Button useBtn;
-	public TextView debugTxt;
 
 	public int screenWidth = 0;
-	
+
 	public ArrayList<Map<String, String>> routeData = new ArrayList<>();
 	public ArrayList<Map<String, String>> initialSceneData = new ArrayList<>();
-	
+
 	public ArrayList<Map<String, String>> cardsData = new ArrayList<>();
 	public Map<String, String> drawnCardMap;
 
 	public int moves = 3;
-	public int playerLives = 10;
+	public int playerLives = 20;
 	public int playerEnergy = 5;
-	public int enemyLives = 10;
+	public int enemyLives = 20;
 	public int enemyEnergy = 5;
 
 	public int moves_old = moves;
@@ -68,7 +70,7 @@ public class MainActivity extends Activity
 
 	public String userTurn = "player";
 	public boolean isEnemyTurn = false;
-	
+
 	//use for properly ending the game while recording data
 	public int playerMovesMade = 0;
 	public int enemyMovesMade = 0;
@@ -86,27 +88,29 @@ public class MainActivity extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 		titleTxt = findViewById(R.id.title_txt);
+		movesImg = findViewById(R.id.moves_img);
+		movesTxt = findViewById(R.id.moves_txt);
 		playerLayout = findViewById(R.id.player_layout);
+		playerLivesLayout = findViewById(R.id.player_lives_layout);
 		playerLivesTxt = findViewById(R.id.player_lives_txt);
 		playerEnergyTxt = findViewById(R.id.player_energy_txt);
 		enemyLayout = findViewById(R.id.enemy_layout);
+		enemyLivesLayout = findViewById(R.id.enemy_lives_layout);
 		enemyLivesTxt = findViewById(R.id.enemy_lives_txt);
 		enemyEnergyTxt = findViewById(R.id.enemy_energy_txt);
-		movesImg = findViewById(R.id.moves_img);
-		movesTxt = findViewById(R.id.moves_txt);
-		useIndicatorTxt = findViewById(R.id.use_indicator_txt);
-		skipIndicatorTxt = findViewById(R.id.skip_indicator_txt);
+		cardNameTxt = findViewById(R.id.card_name_txt);
 		cardParentLayout = findViewById(R.id.cardParentLayout);
-		cardBackLayout = findViewById(R.id.card_back_layout);
 		cardLayout = findViewById(R.id.card_layout);
 		cardTypeImg = findViewById(R.id.card_type_img);
 		cardCostTxt = findViewById(R.id.card_cost_txt);
-		cardNameTxt = findViewById(R.id.card_name_txt);
 		cardInfoTxt = findViewById(R.id.card_info_txt);
+		cardBackLayout = findViewById(R.id.card_back_layout);
+		useIndicatorTxt = findViewById(R.id.use_indicator_txt);
+		skipIndicatorTxt = findViewById(R.id.skip_indicator_txt);
+		debugTxt = findViewById(R.id.debug_txt);
 		buttonsLayout = findViewById(R.id.buttons_layout);
 		skipBtn = findViewById(R.id.skip_btn);
 		useBtn = findViewById(R.id.use_btn);
-		debugTxt = findViewById(R.id.debug_txt);
 
 		//buttons are not necessary anymore.
 		buttonsLayout.setVisibility(View.GONE);
@@ -135,10 +139,6 @@ public class MainActivity extends Activity
 
 
 
-
-
-
-
 	public void onCreateLogic(){
 		//get the screen width
 		DisplayMetrics displayMetrics = new DisplayMetrics();
@@ -157,11 +157,11 @@ public class MainActivity extends Activity
 		Tools.setViewSize(skipIndicatorTxt, screenWidth/3, 0);
 		useIndicatorTxt.setVisibility(View.GONE);
 		Tools.setViewSize(useIndicatorTxt, screenWidth/3, 0);
-		
+
 		//translate the enemyLayout first to 1 and half of its size
 		int enemyLayoutWidth = screenWidth / 3;
 		enemyLayout.setTranslationX(enemyLayoutWidth + enemyLayoutWidth/2);//1.5 width
-		
+
 		//this void method is used only to minimize the code here
 		setViewsCustomBgDrawable();
 
@@ -178,11 +178,13 @@ public class MainActivity extends Activity
 		String route_txt = getResources().getString(R.string.routes_txt);
         Tools.importStringToArraylist(route_txt, routeData, ";", "》");//arraylist, string, splitItemsBy, splitContentsBy
 		Tools.putArrayListInSharedPrefs(this, routeData, "route_data");
-		
+
 		String initial_scene_txt = getResources().getString(R.string.initial_scene_txt);
         Tools.importStringToArraylist(initial_scene_txt, initialSceneData, ";", "》");//arraylist, string, splitItemsBy, splitContentsBy
 		Tools.putArrayListInSharedPrefs(this, initialSceneData, "initial_scene_data");
-		
+
+		//Start the game by populating views with datas
+		updateGame();
 		//pop up the story dialog first and detect if it's dismissed
 		final StoryDialog storyDialog = new StoryDialog(this);
 		storyDialog.show();
@@ -193,17 +195,16 @@ public class MainActivity extends Activity
 					Map<String, String> chosenMap = storyDialog.chosenMap;
 					if(!chosenMap.isEmpty()){
 						if(chosenMap.containsKey("name")){
-							titleTxt.setText(chosenMap.get("name"));
+							titleTxt.setText(chosenMap.get("name").toUpperCase());
+							//remove the uppercase if u want
 						}
 					}
 					//since its translated earlier. animate it back to position
-					enemyLayout.animate().translationX(0).setDuration(Animations.duration*4).start();
-					
-					//Start the game by populating views with datas
-					//and also draw a card.
-					updateGame();
-					drawCard();
-					
+					enemyLayout.animate().translationX(0).setDuration(Animations.duration*4)
+						.withEndAction(new Runnable() { @Override public void run() {
+								drawCard();
+							} })
+						.start();
 				}
 			});
 	}
@@ -519,19 +520,19 @@ public class MainActivity extends Activity
 		//titleTxt.setText(userTurn + "");
 		movesTxt.setText(moves + "");
 
-		playerLivesTxt.setText("❤" + playerLives);
+		playerLivesTxt.setText(playerLives + "");
 		updateEnergy(playerEnergyTxt, playerEnergy, true);
 
-		enemyLivesTxt.setText("❤" + enemyLives);
+		enemyLivesTxt.setText(enemyLives + "");
 		updateEnergy(enemyEnergyTxt, enemyEnergy, true);
 
 		//Detect any differences on datas
 		//do an animation if theres any
 		if (playerLives_old != playerLives){
-			Animations.popAnim(playerLivesTxt);
+			Animations.popAnim(playerLivesLayout);
 		}
 		if (enemyLives_old != enemyLives){
-			Animations.popAnim(enemyLivesTxt);
+			Animations.popAnim(enemyLivesLayout);
 		}
 		if (playerEnergy_old != playerEnergy){
 			Animations.popAnim(playerEnergyTxt);
@@ -662,11 +663,11 @@ public class MainActivity extends Activity
 		//TODO: Some comments
 		if(winner.equals("player")){
 			Animations.slideAnim(enemyLayout, "right");
-			
+
 		}else if (winner.equals("enemy")){
 			Animations.slideAnim(playerLayout, "left");
 		}
-		
+
 		//finish the game
 		isGameFinished = true;
 		//set the winner. either "player" or "enemy".
@@ -680,7 +681,7 @@ public class MainActivity extends Activity
 			//if the winner is player then its target is enemy
 			//Determine how much extra damage has been made way past 0
 			if(enemyLives < 0) gameResult.put("overkill", enemyLives + "");
-			
+
 		}else if (winner.equals("enemy")){
 			//if the winner is enemy then its target is player
 			//Determine how much extra damage has been made way past 0
@@ -692,5 +693,5 @@ public class MainActivity extends Activity
 		debugString = debugString + "overkill: " + gameResult.get("overkill") + " ";
 		debugTxt.setText(debugString);
 	}
-	
+
 }
