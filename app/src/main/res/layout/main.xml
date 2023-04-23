@@ -18,9 +18,36 @@
 			android:layout_width="wrap_content"
 			android:layout_height="0dp"
 			android:layout_weight="1.0"
+			android:alpha="0.2"
 			android:gravity="bottom|center_horizontal"
-			android:text="0"
-			android:textColor="#979797" />
+			android:textColor="#FFFFFF"
+			android:textSize="25sp"
+			android:textStyle="bold"/>
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:gravity="center"
+			android:orientation="horizontal">
+
+			<ImageView
+				android:id="@+id/moves_img"
+				android:layout_width="30dp"
+				android:layout_height="30dp"
+				android:layout_margin="10dp"
+				android:scaleType="fitCenter"
+				android:src="@drawable/sand_clock"/>
+
+			<TextView
+				android:id="@+id/moves_txt"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textColor="#FFFFFF"
+				android:textSize="23sp"
+				android:alpha="0.7"
+				android:text="3"/>
+
+		</LinearLayout>
 
 		<LinearLayout
 			android:layout_width="match_parent"
@@ -45,15 +72,15 @@
 					android:id="@+id/player_lives_txt"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:text="❤00"
+					android:text="❤10"
 					android:textColor="#FFFFFF"
 					android:textSize="25sp"
-					android:textStyle="bold" />
+					android:textStyle="bold"/>
 
 				<ImageView
 					android:layout_width="70dp"
 					android:layout_height="70dp"
-					android:src="@drawable/dude_with_sword" />
+					android:src="@drawable/dude_with_sword"/>
 
 				<TextView
 					android:id="@+id/player_energy_txt"
@@ -62,7 +89,7 @@
 					android:text="⚡■■■■■"
 					android:textColor="#FFFFFF"
 					android:textSize="16sp"
-					android:textStyle="bold" />
+					android:textStyle="bold"/>
 
 			</LinearLayout>
 
@@ -70,7 +97,7 @@
 				android:layout_width="0dp"
 				android:layout_height="0dp"
 				android:layout_weight="4.0"
-				android:orientation="horizontal" />
+				android:orientation="horizontal"/>
 
 			<LinearLayout
 				android:id="@+id/enemy_layout"
@@ -86,15 +113,15 @@
 					android:id="@+id/enemy_lives_txt"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:text="❤00"
+					android:text="❤"
 					android:textColor="#FFFFFF"
 					android:textSize="25sp"
-					android:textStyle="bold" />
+					android:textStyle="bold"/>
 
 				<ImageView
 					android:layout_width="70dp"
 					android:layout_height="70dp"
-					android:src="@drawable/guy_with_sword_too" />
+					android:src="@drawable/guy_with_sword_too"/>
 
 				<TextView
 					android:id="@+id/enemy_energy_txt"
@@ -103,33 +130,9 @@
 					android:text="⚡■■■■■"
 					android:textColor="#FFFFFF"
 					android:textSize="16sp"
-					android:textStyle="bold" />
+					android:textStyle="bold"/>
 
 			</LinearLayout>
-
-		</LinearLayout>
-
-		<LinearLayout
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:gravity="center"
-			android:orientation="horizontal">
-
-			<ImageView
-				android:id="@+id/moves_img"
-				android:layout_width="50dp"
-				android:layout_height="50dp"
-				android:layout_margin="10dp"
-				android:scaleType="fitCenter"
-				android:src="@drawable/sand_clock" />
-
-			<TextView
-				android:id="@+id/moves_txt"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:text="00"
-				android:textColor="#D0D0D0"
-				android:textSize="34sp" />
 
 		</LinearLayout>
 
@@ -137,43 +140,15 @@
 			android:id="@+id/card_name_txt"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:text="MEGA ATTACK"
-			android:textColor="#939393"
-			android:textSize="25sp" />
+			android:textColor="#FFFFFF"
+			android:textSize="25sp"
+			android:alpha="0.5"/>
 
 		<RelativeLayout
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:layout_weight="1.0"
 			android:orientation="horizontal">
-
-			<TextView
-				android:id="@+id/use_indicator_txt"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_alignTop="@id/cardParentLayout"
-				android:layout_alignBottom="@id/cardParentLayout"
-				android:layout_alignParentRight="true"
-				android:gravity="center"
-				android:padding="10dp"
-				android:text="USE"
-				android:textColor="#939393"
-				android:textSize="20sp"
-				android:textStyle="bold" />
-
-			<TextView
-				android:id="@+id/skip_indicator_txt"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_alignTop="@id/cardParentLayout"
-				android:layout_alignBottom="@id/cardParentLayout"
-				android:layout_alignParentLeft="true"
-				android:gravity="center"
-				android:padding="10dp"
-				android:text="SKIP"
-				android:textColor="#939393"
-				android:textSize="20sp"
-				android:textStyle="bold" />
 
 			<LinearLayout
 				android:id="@+id/cardParentLayout"
@@ -203,7 +178,7 @@
 							android:layout_width="30dp"
 							android:layout_height="30dp"
 							android:scaleType="fitCenter"
-							android:src="@drawable/mega_attack_type" />
+							android:src="@drawable/mega_attack_type"/>
 
 						<TextView
 							android:id="@+id/card_cost_txt"
@@ -214,7 +189,7 @@
 							android:text="■■■■■"
 							android:textColor="#FFFFFF"
 							android:textSize="16sp"
-							android:textStyle="bold" />
+							android:textStyle="bold"/>
 
 					</LinearLayout>
 
@@ -230,7 +205,7 @@
 						android:text="🔪5"
 						android:textColor="#696969"
 						android:textSize="20sp"
-						android:textStyle="bold" />
+						android:textStyle="bold"/>
 
 				</LinearLayout>
 
@@ -246,6 +221,37 @@
 				</LinearLayout>
 
 			</LinearLayout>
+
+			<TextView
+				android:id="@+id/use_indicator_txt"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignTop="@id/cardParentLayout"
+				android:layout_alignBottom="@id/cardParentLayout"
+				android:layout_alignParentRight="true"
+				android:gravity="center"
+				android:padding="10dp"
+				android:text="USE"
+				android:textColor="#FFFFFF"
+				android:textSize="20sp"
+				android:textStyle="bold"
+				android:alpha="0.2"/>
+
+			<TextView
+				android:id="@+id/skip_indicator_txt"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignTop="@id/cardParentLayout"
+				android:layout_alignBottom="@id/cardParentLayout"
+				android:layout_alignParentLeft="true"
+				android:gravity="center"
+				android:padding="10dp"
+				android:text="SKIP"
+				android:textColor="#FFFFFF"
+				android:textSize="20sp"
+				android:textStyle="bold"
+				android:alpha="0.2"/>
+
 		</RelativeLayout>
 
 	</LinearLayout>
@@ -256,8 +262,9 @@
 		android:layout_height="wrap_content"
 		android:lines="2"
 		android:text="@string/notice"
-		android:textColor="#939393"
-		android:textSize="12sp" />
+		android:textColor="#FFFFFF"
+		android:textSize="12sp"
+		android:alpha="0.4"/>
 
 	<LinearLayout
 		android:id="@+id/buttons_layout"
@@ -270,14 +277,14 @@
 			android:layout_width="wrap_content"
 			android:layout_height="match_parent"
 			android:layout_weight="1.0"
-			android:text="SKIP" />
+			android:text="SKIP"/>
 
 		<Button
 			android:id="@+id/use_btn"
 			android:layout_width="wrap_content"
 			android:layout_height="match_parent"
 			android:layout_weight="1.0"
-			android:text="USE" />
+			android:text="USE"/>
 
 	</LinearLayout>
 
