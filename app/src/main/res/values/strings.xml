@@ -2,7 +2,7 @@
 <resources>
 	<string name="notice">
 		This project is made by IMOitself. Might be publicly available on Github. Feel free to use and modify.
-		</string>
+	</string>
     <string name="app_name">Card Game Test</string>
 	<string name="you_lose">YOU LOSE!</string>
 	<string name="you_win">YOU WIN!</string>
@@ -14,7 +14,7 @@
 	<string name="one">ONE</string>
 	<string name="text">Text</string>
 	<string name="two">TWO</string>
-	<string name="sample_cardpack">
+	<string name="sample_cardpack_txt">
 		》name=ATTACK
 		》info=attack 🔪2
 		》cost=-2
@@ -58,32 +58,32 @@
 		"
 	</string>
 	<string name="routes_txt">
-        》route_name=Plains
-        》route_desc=flat as heck.
-		》route_level=1
-        》route_length=3
-        》route_enemies=a
-        》route_scenes=a
+        》name=Plains
+        》info=flat as heck.
+		》level=1
+        》length=3
+        》enemies=
+        》scenes=
         ;
-        》route_name=Small Forest
-        》route_desc=has small creatures.
-		》route_level=1
-        》route_length=3
-        》route_enemies=a
-        》route_scenes=a
+        》name=Small Forest
+        》info=has small creatures.
+		》level=1
+        》length=3
+        》enemies=a
+        》scenes=a
         ;
-        》route_name=Rocky Cliffs
-		》route_desc=full of rocks, obviously.
-		》route_level=2
-        》route_length=2
-        》route_enemies=a
-        》route_scenes=a
+        》name=Rocky Cliffs
+		》info=full of rocks, obviously.
+		》level=2
+        》length=2
+        》enemies=a
+        》scenes=a
 		;
-        》route_name=Coast
-        》route_desc=near where the sea at.
-		》route_level=2
-        》route_length=4
-        》route_enemies=a
-        》route_scenes=a
+        》name=Coast
+        》info=near where the sea at.
+		》level=2
+        》length=4
+        》enemies=a
+        》scenes=a
     </string>
 </resources>
