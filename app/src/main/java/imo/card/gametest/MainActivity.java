@@ -49,7 +49,7 @@ public class MainActivity extends Activity
 	public int screenWidth = 0;
 	
 	public ArrayList<Map<String, String>> routeData = new ArrayList<>();
-	public ArrayList<Map<String, String>> sceneData = new ArrayList<>();
+	public ArrayList<Map<String, String>> initialSceneData = new ArrayList<>();
 	
 	public ArrayList<Map<String, String>> cardsData = new ArrayList<>();
 	public Map<String, String> drawnCardMap;
@@ -111,9 +111,7 @@ public class MainActivity extends Activity
 		//buttons are not necessary anymore.
 		buttonsLayout.setVisibility(View.GONE);
 		//to bring them back remove this code above
-
-		onCreateLogic();
-
+		//click listeners are still here if needed.
 		skipBtn.setOnClickListener( new View.OnClickListener(){
 				@Override public void onClick(View v){
 					skipCard();
@@ -124,6 +122,9 @@ public class MainActivity extends Activity
 					useCard();
 				}
 			});
+
+		onCreateLogic();
+
 		cardParentLayout.setOnTouchListener(new View.OnTouchListener() {
 				public boolean onTouch(View v, MotionEvent event) {
 					swipeCardLogic(cardParentLayout, event);
@@ -146,7 +147,6 @@ public class MainActivity extends Activity
 		//set the view size to 1/3 of the screen
 		Tools.setViewSize(playerLayout, screenWidth / 3, screenWidth / 3);
 		Tools.setViewSize(enemyLayout, screenWidth / 3, screenWidth / 3);
-
 		Tools.setViewSize(cardLayout, screenWidth / 3, screenWidth / 3);
 		Tools.setViewSize(cardBackLayout, screenWidth / 3, screenWidth / 3);
 		//card is on its back by default then it will be flipped later when drawn
@@ -157,7 +157,11 @@ public class MainActivity extends Activity
 		Tools.setViewSize(skipIndicatorTxt, screenWidth/3, 0);
 		useIndicatorTxt.setVisibility(View.GONE);
 		Tools.setViewSize(useIndicatorTxt, screenWidth/3, 0);
-
+		
+		//translate the enemyLayout first to 1 and half of its size
+		int enemyLayoutWidth = screenWidth / 3;
+		enemyLayout.setTranslationX(enemyLayoutWidth + enemyLayoutWidth/2);//1.5 width
+		
 		//this void method is used only to minimize the code here
 		setViewsCustomBgDrawable();
 
@@ -165,38 +169,43 @@ public class MainActivity extends Activity
 		//Each Hashmap holds key-value pairs that makes it easier to search for a specific item.
 		//If i search for the key "name" it will retrieve a value of "John" for example.
 		String sample_cardpack_txt = getResources().getString(R.string.sample_cardpack_txt);
-        Tools.importDataToArraylist(cardsData, sample_cardpack_txt, ";", "》");//arraylist, string, splitItemsBy, splitContentsBy
+        Tools.importStringToArraylist(sample_cardpack_txt, cardsData, ";", "》");//arraylist, string, splitItemsBy, splitContentsBy
 		//Stock the lists with cards. Will be use to restock playerCardsCurrent and enemyCardsCurrent
 		//TODO: make a seperate set of cards for the player and enemy
 		playerCardsStock.addAll(cardsData);
 		enemyCardsStock.addAll(cardsData);
 		//TODO: Some comments
 		String route_txt = getResources().getString(R.string.routes_txt);
-        Tools.importDataToArraylist(routeData, route_txt, ";", "》");//arraylist, string, splitItemsBy, splitContentsBy
+        Tools.importStringToArraylist(route_txt, routeData, ";", "》");//arraylist, string, splitItemsBy, splitContentsBy
 		Tools.putArrayListInSharedPrefs(this, routeData, "route_data");
 		
 		String initial_scene_txt = getResources().getString(R.string.initial_scene_txt);
-        Tools.importDataToArraylist(sceneData, initial_scene_txt, ";", "》");//arraylist, string, splitItemsBy, splitContentsBy
-		Tools.putArrayListInSharedPrefs(this, sceneData, "scene_data");
+        Tools.importStringToArraylist(initial_scene_txt, initialSceneData, ";", "》");//arraylist, string, splitItemsBy, splitContentsBy
+		Tools.putArrayListInSharedPrefs(this, initialSceneData, "initial_scene_data");
+		
 		//pop up the story dialog first and detect if it's dismissed
 		final StoryDialog storyDialog = new StoryDialog(this);
+		storyDialog.show();
 		storyDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
 				@Override
 				public void onDismiss(DialogInterface dialogInterface) {
+					//Once dialog is closed
 					Map<String, String> chosenMap = storyDialog.chosenMap;
 					if(!chosenMap.isEmpty()){
 						if(chosenMap.containsKey("name")){
 							titleTxt.setText(chosenMap.get("name"));
 						}
 					}
+					//since its translated earlier. animate it back to position
+					enemyLayout.animate().translationX(0).setDuration(Animations.duration*4).start();
+					
+					//Start the game by populating views with datas
+					//and also draw a card.
+					updateGame();
+					drawCard();
+					
 				}
 			});
-		storyDialog.show();
-		//Start the game by populating views with datas
-		//and also draw a card.
-		updateGame();
-		drawCard();
-		
 	}
 
 
@@ -337,7 +346,7 @@ public class MainActivity extends Activity
 			cardCostTxt.setText(energyString);
 
 			//animate the card as if its doing intro upwards then flipping on its back
-			Animations.cardAnim(cardLayout, cardBackLayout, cardNameTxt, isEnemyTurn, cardParentLayout, skipBtn, useBtn);
+			Animations.flipCardAnim(cardLayout, cardBackLayout, cardNameTxt, isEnemyTurn, cardParentLayout, skipBtn, useBtn);
 
 		}
 	}
@@ -464,7 +473,7 @@ public class MainActivity extends Activity
 			if (moves - 1 > 0){
 				moves--;
 				//rotate the movesImg like a sand or hour glass
-				Animations.rotateAnim(movesImg, userTurn);
+				Animations.sandClockAnim(movesImg, userTurn);
 				if(isEnemyTurn){
 					//if its still enemy turn, do some random decisions 
 					//whether to skip or use a card
@@ -650,16 +659,22 @@ public class MainActivity extends Activity
 
 
 	public void recordGameResult(String winner){
+		//TODO: Some comments
+		if(winner.equals("player")){
+			Animations.slideAnim(enemyLayout, "right");
+			
+		}else if (winner.equals("enemy")){
+			Animations.slideAnim(playerLayout, "left");
+		}
+		
 		//finish the game
 		isGameFinished = true;
-		//set the winner to enemy
+		//set the winner. either "player" or "enemy".
+		//get how many moves the player and enemy has made
 		gameResult.put("winner", winner);
-		//get how many moves the player has been made
 		gameResult.put("player_moves_made", playerMovesMade + "");
-		//get how many moves the enemy has been made
 		gameResult.put("enemy_moves_made", enemyMovesMade + "");
-		//get how much extra damage has been made
-		//if none then stay zero
+		//get how much extra damage has been made. if none then stay zero
 		gameResult.put("overkill", "0");
 		if(winner.equals("player")){
 			//if the winner is player then its target is enemy
