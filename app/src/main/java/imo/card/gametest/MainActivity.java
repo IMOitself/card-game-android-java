@@ -162,19 +162,19 @@ public class MainActivity extends Activity
 		//Transform the string to a Arraylist that holds a hashmap. 
 		//Each Hashmap holds key-value pairs that makes it easier to search for a specific item.
 		//If i search for the key "name" it will retrieve a value of "John" for example.
-		String sample_cardpack = getResources().getString(R.string.sample_cardpack);
-        Tools.importDataToArraylist(cardsData, sample_cardpack, ";", "》");//arraylist, string, splitItemsBy, splitContentsBy
+		String sample_cardpack_txt = getResources().getString(R.string.sample_cardpack_txt);
+        Tools.importDataToArraylist(cardsData, sample_cardpack_txt, ";", "》");//arraylist, string, splitItemsBy, splitContentsBy
 		//Stock the lists with cards. Will be use to restock playerCardsCurrent and enemyCardsCurrent
 		//TODO: make a seperate set of cards for the player and enemy
 		playerCardsStock.addAll(cardsData);
 		enemyCardsStock.addAll(cardsData);
 		//TODO: Some comments
-		String routesFile = getResources().getString(R.string.routes_txt);
-        Tools.importDataToArraylist(routeData, routesFile, ";", "》");//arraylist, string, splitItemsBy, splitContentsBy
+		String route_txt = getResources().getString(R.string.routes_txt);
+        Tools.importDataToArraylist(routeData, route_txt, ";", "》");//arraylist, string, splitItemsBy, splitContentsBy
 		Tools.putArrayListInSharedPrefs(this, routeData, "route_data");
 		
-		String scenesFile = getResources().getString(R.string.initial_scene_txt);
-        Tools.importDataToArraylist(sceneData, scenesFile, ";", "》");//arraylist, string, splitItemsBy, splitContentsBy
+		String initial_scene_txt = getResources().getString(R.string.initial_scene_txt);
+        Tools.importDataToArraylist(sceneData, initial_scene_txt, ";", "》");//arraylist, string, splitItemsBy, splitContentsBy
 		Tools.putArrayListInSharedPrefs(this, sceneData, "scene_data");
 		//pop up the story dialog first
 		StoryDialog storyDialog = new StoryDialog(this);
