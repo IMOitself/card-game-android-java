@@ -42,7 +42,6 @@ public class StoryDialog extends Dialog {
 	
 	public boolean stillDisplaySequence = true;
 	public boolean hasChosen = false;
-	public int forChoice = 0;
 	public Map<String, String> choice1Map = new HashMap<>();
 	public Map<String, String> choice2Map = new HashMap<>();
 	public Map<String, String> chosenMap = new HashMap<>();
@@ -154,7 +153,7 @@ public class StoryDialog extends Dialog {
 		String[] choiceArray = stringSequence.split(",");
 		Map<String, String> outputMap = new HashMap<>();
 		Random random = new Random();
-
+		int forChoice = 0;
 		for(String choiceString : choiceArray){
 			forChoice++;
 			//for picking route by its level
@@ -162,10 +161,10 @@ public class StoryDialog extends Dialog {
 			String routeLevelValue = null;
 
 			if (choiceString.equals("route_level_1")) {
-				routeLevelKey = "route_level";
+				routeLevelKey = "level";
 				routeLevelValue = "1";
 			} else if (choiceString.equals("route_level_2")) {
-				routeLevelKey = "route_level";
+				routeLevelKey = "level";
 				routeLevelValue = "2";
 			}
 			if (routeLevelKey != null||routeLevelValue != null) {//this will run only if its populated
@@ -178,17 +177,17 @@ public class StoryDialog extends Dialog {
 					}
 				}
 				if (!levelMaps.isEmpty()) {
-					//only execute if populated
+					//only execute if there is any map added on levelMaps
 					//randomly pick a map from the levelMaps
 					outputMap = levelMaps.get(random.nextInt(levelMaps.size()));
 				}
 				if (forChoice == 1){
 					choice1Map = outputMap;
-					choiceArray[0] = choice1Map.get("route_name");
+					choiceArray[0] = choice1Map.get("name");
 					
 				}else if (forChoice == 2){
 					choice2Map = outputMap;
-					choiceArray[1] = choice2Map.get("route_name");
+					choiceArray[1] = choice2Map.get("name");
 				}
 			}
 			choice1Txt.setText(choiceArray[0]);
@@ -218,7 +217,14 @@ public class StoryDialog extends Dialog {
 			chosenMap = choice2Map;
 		}
 		if (chosenMap != null) {
-			choicesHintTxt.setText(chosenMap.get("route_name") + ": " + chosenMap.get("route_desc"));
+			String hintString = "";
+			if(chosenMap.containsKey("name")){
+				hintString = hintString + chosenMap.get("name");
+				if(chosenMap.containsKey("info")){
+					hintString = hintString + ": " + chosenMap.get("info");
+				}
+			}
+			choicesHintTxt.setText(hintString);
 		}
 	}
 }
