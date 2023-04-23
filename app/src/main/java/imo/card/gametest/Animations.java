@@ -43,6 +43,21 @@ public class Animations
 		view2.setScaleX(1);
 		view2.setScaleY(1);
 	}
+	public static void slideAnim(final View view, final String direction){
+		int viewWidth = view.getWidth();
+	    int distance = 0;
+		if(direction.equals("left")){
+			distance = -viewWidth + -viewWidth/2;//1.5x width
+		}else if (direction.equals("right")){
+			distance = viewWidth + viewWidth/2;//1.5x width
+		}
+		final int moveBy = distance;
+		view.animate().setDuration(duration*4).withEndAction(new Runnable() { @Override public void run() {
+					view.animate().translationX(moveBy).alpha(0).setDuration(duration*3).start();
+				} })
+			.start();
+	}
+	
 	public static void popAnim(final View view){
 		//scale the view to a certain size then to default size
 		//as if it just pop
@@ -54,9 +69,9 @@ public class Animations
 				} })
 			.start();
 	}
-	public static void cardAnim(
-	final View cardLayout,
-	final View cardBackLayout,
+	public static void flipCardAnim(
+	final View frontLayout,
+	final View backLayout,
 	final View optionalView,
 	final boolean isEnemyTurn,
 	final View cardSwipe,
@@ -69,25 +84,25 @@ public class Animations
 		//If you want to spam using the card nonstop, delete the code above. Be careful tho.
 		
 		//make the card gone to indicate its flipped on its back
-		cardLayout.setVisibility(View.GONE);
-		cardBackLayout.setVisibility(View.VISIBLE);
+		frontLayout.setVisibility(View.GONE);
+		backLayout.setVisibility(View.VISIBLE);
 		//translate the card's back to a certain distance first
 		int translateDistance = 100;
-		cardBackLayout.setTranslationY(translateDistance);
+		backLayout.setTranslationY(translateDistance);
 		//then go back to zero as if its moving upward
-		cardBackLayout.animate().translationY(0).setDuration(duration)
+		backLayout.animate().translationY(0).setDuration(duration)
 			.withEndAction(new Runnable() { @Override public void run() {
 				    //after that scale the card' back to zero until its gone
-					cardBackLayout.animate().scaleX(0).setDuration(duration).withEndAction(new Runnable() { @Override public void run() {
+					backLayout.animate().scaleX(0).setDuration(duration).withEndAction(new Runnable() { @Override public void run() {
 						        //remove the card's back and set it to its default size when its gone
-								cardBackLayout.setVisibility(View.GONE);
-								cardBackLayout.setScaleX(1);
+								backLayout.setVisibility(View.GONE);
+								backLayout.setScaleX(1);
 								//set the scale of the card to zero first
-								cardLayout.setScaleX(0);
+								frontLayout.setScaleX(0);
 								//then make it visible
-								cardLayout.setVisibility(View.VISIBLE);
+								frontLayout.setVisibility(View.VISIBLE);
 								//scale the card back to its default size as if its being flipped
-								cardLayout.animate().scaleX(1).setDuration(duration).withEndAction(new Runnable() { @Override public void run() {
+								frontLayout.animate().scaleX(1).setDuration(duration).withEndAction(new Runnable() { @Override public void run() {
 									        //if its enemy turn still dont make the buttons and swiping action enabled
 											if (isEnemyTurn == false){
 												cardSwipe.setEnabled(true);
@@ -109,7 +124,7 @@ public class Animations
 				optionalView.animate().translationY(0).setDuration(duration).start();
 			}
 	}
-	public static void rotateAnim(final View view, final String userTurn){
+	public static void sandClockAnim(final View view, final String userTurn){
 		//since remainingMovesImg looks like a hourglass
 		//rotate it to whichever the target's direction
 		//then seamlessly flip it back
