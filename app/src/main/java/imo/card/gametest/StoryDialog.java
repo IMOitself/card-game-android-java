@@ -36,7 +36,7 @@ public class StoryDialog extends Dialog {
 	public TextView hintTxt;
 	
 	public ArrayList<Map<String, String>> routeData = new ArrayList<>();
-	public ArrayList<Map<String, String>> sceneData = new ArrayList<>();
+	public ArrayList<Map<String, String>> initialSceneData = new ArrayList<>();
 	public String[] sceneSequencesArray;
 	public int sequenceIndex = 1;
 	
@@ -97,9 +97,9 @@ public class StoryDialog extends Dialog {
 		Tools.setCustomBgWithStroke(choice2Layout, bgColor, cornerRadius, strokeWidth, strokeColor, strokeAlpha);
 		
 		routeData = Tools.getArrayListFromSharedPrefs(context, "route_data");
-		sceneData = Tools.getArrayListFromSharedPrefs(context, "scene_data");
+		initialSceneData = Tools.getArrayListFromSharedPrefs(context, "initial_scene_data");
 		Map<String, String> startingSceneMap =
-		Tools.findMapFromArraylist(sceneData, "scene_id", "initial_scene");
+		Tools.findMapFromArraylist(initialSceneData, "scene_id", "initial_scene");
 		String getSceneSequences = startingSceneMap.get("scene_sequences");
 		getSceneSequences = getSceneSequences.replaceFirst("»", "");
 		sceneSequencesArray = getSceneSequences.split("»");
@@ -139,6 +139,9 @@ public class StoryDialog extends Dialog {
 				sequenceIndex++;
 			}
 		}else{
+			if(!chosenMap.isEmpty()){
+				Tools.putMapInSharedPrefs(context, chosenMap, "from_dialog_chosen_map");
+			}
 			dismiss();//temporary
 		}
 	}
@@ -216,7 +219,7 @@ public class StoryDialog extends Dialog {
 			Tools.setCustomBgWithStroke(choice2Layout, bgColor, cornerRadius, strokeWidth, strokeColor, strokeAlpha);
 			chosenMap = choice2Map;
 		}
-		if (chosenMap != null) {
+		if (chosenMap.isEmpty()) {
 			String hintString = "";
 			if(chosenMap.containsKey("name")){
 				hintString = hintString + chosenMap.get("name");
