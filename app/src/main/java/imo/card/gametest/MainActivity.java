@@ -62,7 +62,6 @@ public class MainActivity extends Activity
 	public int enemyLives = 20;
 	public int enemyEnergy = 5;
 
-	public int moves_old = moves;
 	public int playerLives_old = playerLives;
 	public int playerEnergy_old = playerEnergy;
 	public int enemyLives_old = enemyLives;
@@ -70,7 +69,9 @@ public class MainActivity extends Activity
 
 	public String userTurn = "player";
 	public boolean isEnemyTurn = false;
-
+	
+	public int addMoves;
+	
 	//use for properly ending the game while recording data
 	public int playerMovesMade = 0;
 	public int enemyMovesMade = 0;
@@ -136,7 +137,6 @@ public class MainActivity extends Activity
 				}
 			});
     }
-
 
 
 	public void onCreateLogic(){
@@ -210,7 +210,6 @@ public class MainActivity extends Activity
 	}
 
 
-
 	public void swipeCardLogic(View cardParentLayout, MotionEvent event){
 		//The card's width is set to 1/3 of the screen on onCreateLogic().
 		//Get the view width's center by dividing it to 2.
@@ -234,7 +233,6 @@ public class MainActivity extends Activity
 				float currentX = event.getRawX() - viewWidthCenter;
 				//Set the location of the view to your touch
 				cardParentLayout.setX(currentX);
-
 				//Get how far your touch moved to the center of the screen
 				//then convert it to decimal e.g. 150 / 100 = 1.50
 				//add 0.5f coz why not
@@ -275,7 +273,6 @@ public class MainActivity extends Activity
 				useIndicatorTxt.setVisibility(View.GONE);
 				useIndicatorTxt.setScaleX(1);
 				useIndicatorTxt.setScaleY(1);
-
 				//bring the card to its original position which is the center
 				cardParentLayout.setX(centerX);
 				//get your last touch's position
@@ -294,7 +291,6 @@ public class MainActivity extends Activity
 				break;
 		}
 	}
-
 
 
 	public void drawCard(){
@@ -352,7 +348,6 @@ public class MainActivity extends Activity
 	}
 
 
-
 	public void skipCard(){
 		if(!isGameFinished){
 			//if the game is not finished yet
@@ -370,7 +365,6 @@ public class MainActivity extends Activity
 	}
 
 
-
 	public void useCard(){
 		if(!isGameFinished){
 			//if the game is not finished yet
@@ -382,6 +376,7 @@ public class MainActivity extends Activity
 			//The second value of the array populates how many should be added on target.
 			String cardLives = drawnCardMap.get("lives");
 			String cardEnergy = drawnCardMap.get("energy");
+			String cardMoves = drawnCardMap.get("moves");
 			String cardType = drawnCardMap.get("type");
 
 			int editSelfLives = 0;
@@ -397,6 +392,13 @@ public class MainActivity extends Activity
 				String[] valueArray = cardEnergy.split(",");
 				editSelfEnergy = Integer.parseInt(valueArray[0].trim());
 				editTargetEnergy = Integer.parseInt(valueArray[1].trim());
+			}
+			int editSelfMoves = 0;
+			int editTargetMoves = 0;
+			if (drawnCardMap.containsKey("moves")){
+				String[] valueArray = cardMoves.split(",");
+				editSelfMoves = Integer.parseInt(valueArray[0].trim());
+				editTargetMoves = Integer.parseInt(valueArray[1].trim());
 			}
 			//drawnCardCost is the energy cost of the card.
 			//this int always have negative value.
@@ -425,6 +427,8 @@ public class MainActivity extends Activity
 					playerEnergy = playerEnergy + editSelfEnergy;//overwrites drawnCardCost
 					enemyEnergy = enemyEnergy + editTargetEnergy;
 					
+					addMoves = editSelfMoves;
+					
 					if(cardType.contains("attack")){
 						//contains() method because it will reach any string with "attack"
 						Animations.attackAnim(-5, playerLayout, enemyLayout);
@@ -447,7 +451,9 @@ public class MainActivity extends Activity
 
 					enemyEnergy = enemyEnergy + editSelfEnergy;//overwrites drawnCardCost
 					playerEnergy = playerEnergy + editTargetEnergy;
-
+					
+					addMoves = editSelfMoves;
+					
 					if(cardType.contains("attack")){
 						//contains() method because it will reach any string with "attack"
 						Animations.attackAnim(5, enemyLayout, playerLayout);
@@ -463,7 +469,6 @@ public class MainActivity extends Activity
 	}
 
 
-
 	public void useMoves(){
 		if(!isGameFinished){
 			//if game is not finished yet
@@ -471,36 +476,47 @@ public class MainActivity extends Activity
 			//either by using the card or skipping it.
 			//Once moves int reach zero, move on to the next user
 			if (moves - 1 > 0){
-				moves--;
-				//rotate the movesImg like a sand or hour glass
-				Animations.sandClockAnim(movesImg, userTurn);
-				if(isEnemyTurn){
-					//if its still enemy turn, do some random decisions 
-					//whether to skip or use a card
-					enemyRandomPlay(enemyEnergy);
-				}
+				decrementMoves();
 			}else{
-				if (userTurn.equals("player")){
-					//player turn has ended
-					userTurn = "enemy";
-					Animations.hoverAnim(enemyLayout, playerLayout, Color.parseColor("#696969"));
-					enemyRandomPlay(enemyEnergy);
-					isEnemyTurn = true;
+				//on next turn
+				if(addMoves != 0){
+					decrementMoves();
+				}else{
+					if (userTurn.equals("player")){
+						//player turn has ended
+						userTurn = "enemy";
+						Animations.hoverAnim(enemyLayout, playerLayout, Color.parseColor("#696969"));
+						enemyRandomPlay(enemyEnergy);
+						isEnemyTurn = true;
 
-				}else if (userTurn.equals("enemy")){
-					//enemy turn has ended
-					userTurn = "player";
-					Animations.hoverAnim(playerLayout, enemyLayout, Color.parseColor("#696969"));
-					isEnemyTurn = false;
+					}else if (userTurn.equals("enemy")){
+						//enemy turn has ended
+						userTurn = "player";
+						Animations.hoverAnim(playerLayout, enemyLayout, Color.parseColor("#696969"));
+						isEnemyTurn = false;
+					}
+					moves = 3;
 				}
-				moves = 3;
 			}
 			//record how many moves has been made
 			if(userTurn.equals("player")){ playerMovesMade++;
 			}else if(userTurn.equals("enemy")) enemyMovesMade++;
 		}
 	}
-
+	
+	
+	public void decrementMoves(){
+		//TODO: Some comments
+		moves--;
+		Animations.popAnim(movesTxt);
+		//rotate the movesImg like a sand or hour glass
+		Animations.sandClockAnim(movesImg, userTurn);
+		if(isEnemyTurn){
+			//if its still enemy turn, do some random decisions 
+			//whether to skip or use a card
+			enemyRandomPlay(enemyEnergy);
+		}
+	}
 
 
 	public void updateGame(){
@@ -517,7 +533,21 @@ public class MainActivity extends Activity
 		//Variables are populated on useCard() void method.
 		//Display the current datas on textviews
 		movesTxt.setText(moves + "");
-
+		if(addMoves > 0){
+			//if addMoves is not negative or zero
+			final TextView textview = movesTxt;
+			moves = moves + addMoves;
+			float scaleBy = 1.15f;
+			int duration = Animations.duration;
+			textview.animate().scaleX(scaleBy).scaleY(scaleBy).setDuration(duration)
+				.withEndAction(new Runnable() { @Override public void run() {
+						textview.setScaleX(1);
+						textview.setScaleY(1);
+						textview.setText(moves + "");
+						addMoves = 0;
+					} })
+				.start();
+		}
 		playerLivesTxt.setText(playerLives + "");
 		playerEnergyTxt.setText(makeStringByInt(playerEnergy, 5));
 		
@@ -530,9 +560,7 @@ public class MainActivity extends Activity
 		if (enemyLives_old != enemyLives) Animations.popAnim(enemyLivesLayout);
 		if (playerEnergy_old != playerEnergy) Animations.popAnim(playerEnergyTxt);
 		if (enemyEnergy_old != enemyEnergy) Animations.popAnim(enemyEnergyTxt);
-		if (moves_old != moves) Animations.popAnim(movesTxt);
 		//After showing changes, record the data to be compared later
-		moves_old = moves;
 		playerLives_old = playerLives;
 		playerEnergy_old = playerEnergy;
 		enemyLives_old = enemyLives;
@@ -552,11 +580,10 @@ public class MainActivity extends Activity
 	}
 
 
-
 	public void enemyRandomPlay(final int enemyEnergy){
 		if(!isGameFinished){
 			//if the game is not finished yet
-            //dummy view can be anything that are not gonna be animated by other animattions
+            //dummy view can be anything that are not gonna be animated by other animations
 			//its not gonna be manipulated or animated or whatsoever
 			//its sole purpose is to delay a code
 			View dummy = titleTxt;
@@ -564,15 +591,15 @@ public class MainActivity extends Activity
 				.withEndAction(new Runnable() { @Override public void run() {
 						//This code is delayed because its too fast to run this code again
 						//and also make sure to only run after all of the animations are played
-						//Pick random int between 0 and 1.
+						//Pick random int between 0 and 2.
 						//if 0 then skip the card
-						//if 1 then use the card
+						//if 1 or above then use the card
 						//some decisions is also made on useCard().
 						Random random = new Random();
-						int randomInt = random.nextInt(2);
+						int randomInt = random.nextInt(3);
 						if (randomInt == 0){
 							skipCard();
-						}else if (randomInt == 1){
+						}else if (randomInt >= 1){
 							useCard();
 						}
 					} })
@@ -581,11 +608,13 @@ public class MainActivity extends Activity
 	}
 
 
-
 	public void setImageByCardType(String cardType, ImageView img){
 		//Based on the cardType display specific image corresponding to it.
 		//thats pretty much the explanation:/
 		switch(cardType){
+			default:
+				img.setImageResource(R.drawable.unclassified_type);
+				break;
 			case "attack":
 				img.setImageResource(R.drawable.attack_type);
 				break;
@@ -600,7 +629,6 @@ public class MainActivity extends Activity
 				break;
 		}
 	}
-
 
 
 	public void setViewsCustomBgDrawable(){
@@ -629,11 +657,9 @@ public class MainActivity extends Activity
 	}
 
 	
-	
 	public String makeStringByInt(int energyInt, int maxInt){
 		//TODO:Some comments
 		String energyString = "⚡";
-		
 		for(int i = 0; i < energyInt; i++){
 			energyString = energyString + "■";
 		}
@@ -647,7 +673,6 @@ public class MainActivity extends Activity
 	}
 
 
-
 	public void recordGameResult(String winner){
 		//TODO: Some comments
 		if(winner.equals("player")){
@@ -656,7 +681,6 @@ public class MainActivity extends Activity
 		}else if (winner.equals("enemy")){
 			Animations.slideAnim(playerLayout, "left");
 		}
-
 		//finish the game
 		isGameFinished = true;
 		//set the winner. either "player" or "enemy".
