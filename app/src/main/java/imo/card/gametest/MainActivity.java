@@ -348,7 +348,6 @@ public class MainActivity extends Activity
 
 			//animate the card as if its doing intro upwards then flipping on its back
 			Animations.flipCardAnim(cardLayout, cardBackLayout, cardNameTxt, isEnemyTurn, cardParentLayout, skipBtn, useBtn);
-
 		}
 	}
 
@@ -425,7 +424,7 @@ public class MainActivity extends Activity
 
 					playerEnergy = playerEnergy + editSelfEnergy;//overwrites drawnCardCost
 					enemyEnergy = enemyEnergy + editTargetEnergy;
-
+					
 					if(cardType.contains("attack")){
 						//contains() method because it will reach any string with "attack"
 						Animations.attackAnim(-5, playerLayout, enemyLayout);
@@ -517,7 +516,6 @@ public class MainActivity extends Activity
 		}
 		//Variables are populated on useCard() void method.
 		//Display the current datas on textviews
-		//titleTxt.setText(userTurn + "");
 		movesTxt.setText(moves + "");
 
 		playerLivesTxt.setText(playerLives + "");
@@ -528,19 +526,12 @@ public class MainActivity extends Activity
 
 		//Detect any differences on datas
 		//do an animation if theres any
-		if (playerLives_old != playerLives){
-			Animations.popAnim(playerLivesLayout);
-		}
-		if (enemyLives_old != enemyLives){
-			Animations.popAnim(enemyLivesLayout);
-		}
-		if (playerEnergy_old != playerEnergy){
-			Animations.popAnim(playerEnergyTxt);
-		}
-		if (enemyEnergy_old != enemyEnergy){
-			Animations.popAnim(enemyEnergyTxt);
-		}
-		//Record the data to be compared with later ones
+		if (playerLives_old != playerLives) Animations.popAnim(playerLivesLayout);
+		if (enemyLives_old != enemyLives) Animations.popAnim(enemyLivesLayout);
+		if (playerEnergy_old != playerEnergy) Animations.popAnim(playerEnergyTxt);
+		if (enemyEnergy_old != enemyEnergy) Animations.popAnim(enemyEnergyTxt);
+		if (moves_old != moves) Animations.popAnim(movesTxt);
+		//After showing changes, record the data to be compared later
 		moves_old = moves;
 		playerLives_old = playerLives;
 		playerEnergy_old = playerEnergy;
@@ -643,17 +634,13 @@ public class MainActivity extends Activity
 		//TODO:Some comments
 		String energyString = "⚡";
 		
-		if(energyInt <= 0){
-			energyString = "----";
-		}else{
-			for(int i = 0; i < energyInt; i++){
-				energyString = energyString + "■";
-			}
-			if(energyInt < maxInt){
-				int intLeft = maxInt - energyInt;
-				for(int i = 0; i < intLeft; i++){
-					energyString = energyString + "□";
-				}
+		for(int i = 0; i < energyInt; i++){
+			energyString = energyString + "■";
+		}
+		if(energyInt < maxInt){
+			int intLeft = maxInt - energyInt;
+			for(int i = 0; i < intLeft; i++){
+				energyString = energyString + "□";
 			}
 		}
 		return energyString;
