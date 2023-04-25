@@ -38,7 +38,7 @@ public class Tools
 		view.setBackground(shape);
 	}
 	
-	public static void importStringToArraylist(String string,
+	public static void convertStringToArraylist(String string,
 											   ArrayList<Map<String, String>> arraylist,
 											   String splitItemsBy,
 											   String splitContentsBy){
