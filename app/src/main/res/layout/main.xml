@@ -176,89 +176,17 @@
 			android:layout_marginBottom="10dp"/>
 
 		<RelativeLayout
+			android:id="@+id/cardParentLayout"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:layout_weight="1.0"
-			android:orientation="horizontal">
-
-			<LinearLayout
-				android:id="@+id/cardParentLayout"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_centerHorizontal="true"
-				android:orientation="horizontal">
-
-				<LinearLayout
-					android:id="@+id/card_layout"
-					android:layout_width="130dp"
-					android:layout_height="130dp"
-					android:background="#FFFFFF"
-					android:gravity="center"
-					android:orientation="vertical">
-
-					<LinearLayout
-						android:layout_width="match_parent"
-						android:layout_height="wrap_content"
-						android:layout_weight="0.5"
-						android:background="#696969"
-						android:gravity="center"
-						android:orientation="vertical">
-
-						<ImageView
-							android:id="@+id/card_type_img"
-							android:layout_width="30dp"
-							android:layout_height="30dp"
-							android:scaleType="fitCenter"
-							android:src="@drawable/mega_attack_type"/>
-
-						<TextView
-							android:id="@+id/card_cost_txt"
-							android:layout_width="match_parent"
-							android:layout_height="wrap_content"
-							android:gravity="center"
-							android:lines="1"
-							android:text="■■■■■"
-							android:textColor="#FFFFFF"
-							android:textSize="16sp"
-							android:textStyle="bold"/>
-
-					</LinearLayout>
-
-					<TextView
-						android:id="@+id/card_info_txt"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:layout_marginLeft="10dp"
-						android:layout_marginRight="10dp"
-						android:layout_marginBottom="10dp"
-						android:layout_weight="3"
-						android:gravity="center"
-						android:text="🔪5"
-						android:textColor="#696969"
-						android:textSize="20sp"
-						android:textStyle="bold"/>
-
-				</LinearLayout>
-
-				<LinearLayout
-					android:id="@+id/card_back_layout"
-					android:layout_width="130dp"
-					android:layout_height="130dp"
-					android:background="#696969"
-					android:gravity="center"
-					android:orientation="vertical"
-					android:padding="10dp">
-
-				</LinearLayout>
-
-			</LinearLayout>
+			android:layout_centerHorizontal="true"
+			android:orientation="horizontal"
+			android:layout_weight="1.0">
 
 			<TextView
 				android:id="@+id/use_indicator_txt"
 				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_alignTop="@id/cardParentLayout"
-				android:layout_alignBottom="@id/cardParentLayout"
+				android:layout_height="130dp"
 				android:layout_alignParentRight="true"
 				android:gravity="center"
 				android:padding="10dp"
@@ -271,9 +199,7 @@
 			<TextView
 				android:id="@+id/skip_indicator_txt"
 				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_alignTop="@id/cardParentLayout"
-				android:layout_alignBottom="@id/cardParentLayout"
+				android:layout_height="130dp"
 				android:layout_alignParentLeft="true"
 				android:gravity="center"
 				android:padding="10dp"
@@ -282,6 +208,71 @@
 				android:textSize="20sp"
 				android:textStyle="bold"
 				android:alpha="0.2"/>
+
+			<LinearLayout
+				android:id="@+id/card_back_layout"
+				android:layout_width="130dp"
+				android:layout_height="130dp"
+				android:background="#696969"
+				android:gravity="center"
+				android:orientation="vertical"
+				android:padding="10dp"
+				android:layout_centerHorizontal="true">
+
+			</LinearLayout>
+
+			<LinearLayout
+				android:id="@+id/card_layout"
+				android:layout_width="130dp"
+				android:layout_height="130dp"
+				android:background="#FFFFFF"
+				android:gravity="center"
+				android:orientation="vertical"
+				android:layout_centerHorizontal="true">
+
+				<LinearLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_weight="0.5"
+					android:background="#696969"
+					android:gravity="center"
+					android:orientation="vertical">
+
+					<ImageView
+						android:id="@+id/card_type_img"
+						android:layout_width="30dp"
+						android:layout_height="30dp"
+						android:scaleType="fitCenter"
+						android:src="@drawable/mega_attack_type"/>
+
+					<TextView
+						android:id="@+id/card_cost_txt"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:gravity="center"
+						android:lines="1"
+						android:text="■■■■■"
+						android:textColor="#FFFFFF"
+						android:textSize="16sp"
+						android:textStyle="bold"/>
+
+				</LinearLayout>
+
+				<TextView
+					android:id="@+id/card_info_txt"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_marginLeft="10dp"
+					android:layout_marginRight="10dp"
+					android:layout_marginBottom="10dp"
+					android:layout_weight="3"
+					android:gravity="center"
+					android:text="🔪5"
+					android:textColor="#696969"
+					android:textSize="20sp"
+					android:textStyle="bold"/>
+
+			</LinearLayout>
 
 		</RelativeLayout>
 
