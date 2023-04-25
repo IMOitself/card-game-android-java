@@ -169,18 +169,18 @@ public class MainActivity extends Activity
 		//Each Hashmap holds key-value pairs that makes it easier to search for a specific item.
 		//If i search for the key "name" it will retrieve a value of "John" for example.
 		String sample_cardpack_txt = getResources().getString(R.string.sample_cardpack_txt);
-        Tools.importStringToArraylist(sample_cardpack_txt, cardsData, ";", "》");//arraylist, string, splitItemsBy, splitContentsBy
+        Tools.convertStringToArraylist(sample_cardpack_txt, cardsData, ";", "》");//arraylist, string, splitItemsBy, splitContentsBy
 		//Stock the lists with cards. Will be use to restock playerCardsCurrent and enemyCardsCurrent
 		//TODO: make a seperate set of cards for the player and enemy
 		playerCardsStock.addAll(cardsData);
 		enemyCardsStock.addAll(cardsData);
 		//TODO: Some comments
-		String route_txt = getResources().getString(R.string.routes_txt);
-        Tools.importStringToArraylist(route_txt, routeData, ";", "》");//arraylist, string, splitItemsBy, splitContentsBy
+		String routes_txt = getResources().getString(R.string.routes_txt);
+        Tools.convertStringToArraylist(routes_txt, routeData, ";", "》");//arraylist, string, splitItemsBy, splitContentsBy
 		Tools.putArrayListInSharedPrefs(this, routeData, "route_data");
 
 		String initial_scene_txt = getResources().getString(R.string.initial_scene_txt);
-        Tools.importStringToArraylist(initial_scene_txt, initialSceneData, ";", "》");//arraylist, string, splitItemsBy, splitContentsBy
+        Tools.convertStringToArraylist(initial_scene_txt, initialSceneData, ";", "》");//arraylist, string, splitItemsBy, splitContentsBy
 		Tools.putArrayListInSharedPrefs(this, initialSceneData, "initial_scene_data");
 
 		//Start the game by populating views with datas
@@ -200,7 +200,7 @@ public class MainActivity extends Activity
 						}
 					}
 					//since its translated earlier. animate it back to position
-					enemyLayout.animate().translationX(0).setDuration(Animations.duration*4)
+					enemyLayout.animate().translationX(0).setDuration(Animations.duration*3)
 						.withEndAction(new Runnable() { @Override public void run() {
 								drawCard();
 							} })
@@ -335,15 +335,15 @@ public class MainActivity extends Activity
 			int cardCost = Integer.parseInt(drawnCardMap.get("cost"));
 			//Make it positive
 			cardCost = Math.abs(cardCost);
-			//The code below is like in the updateEnergy() void method 
-			//but the difference is it reach 0 and below. See updateEnergy for info.
+			//TODO: Some comments
 			String energyString = "";
-			energyString = cardCost <= 0 ? energyString + "----" : energyString + "";
-			energyString = cardCost >= 1 ? energyString + "■" : energyString + "";
-			energyString = cardCost >= 2 ? energyString + "■" : energyString + "";
-			energyString = cardCost >= 3 ? energyString + "■" : energyString + "";
-			energyString = cardCost >= 4 ? energyString + "■" : energyString + "";
-			energyString = cardCost >= 5 ? energyString + "■" : energyString + "";
+			if(cardCost <= 0){
+				energyString = "----";
+			}else{
+				for(int i = 0; i < cardCost; i++){
+					energyString = energyString + "■";
+				}
+			}
 			cardCostTxt.setText(energyString);
 
 			//animate the card as if its doing intro upwards then flipping on its back
@@ -521,10 +521,10 @@ public class MainActivity extends Activity
 		movesTxt.setText(moves + "");
 
 		playerLivesTxt.setText(playerLives + "");
-		updateEnergy(playerEnergyTxt, playerEnergy, true);
-
+		playerEnergyTxt.setText(makeStringByInt(playerEnergy, 5));
+		
 		enemyLivesTxt.setText(enemyLives + "");
-		updateEnergy(enemyEnergyTxt, enemyEnergy, true);
+		enemyEnergyTxt.setText(makeStringByInt(enemyEnergy, 5));
 
 		//Detect any differences on datas
 		//do an animation if theres any
@@ -637,24 +637,26 @@ public class MainActivity extends Activity
 		Tools.setCustomBgWithStroke(playerLayout, bgColor, cornerRadius, strokeWidth, strokeColor, strokeAlpha);
 	}
 
-
-
-	public void updateEnergy(final TextView energyTxt, final int energyInt, final boolean showEnergyEmoji){
-		//imagine there's 5 light bulbs
-		//1 light bulb must be on and everything to off to indicate number 1
-		//2 light bulbs must be on to indicate number 2
-		//3 light bulbs must be on to indicate number 3...so on and so forth
-		//anything that the energyInt doesnt reach e.g. 5, it must be off
-		String energyString = "";
-		if (showEnergyEmoji){
-			energyString = "⚡";
+	
+	
+	public String makeStringByInt(int energyInt, int maxInt){
+		//TODO:Some comments
+		String energyString = "⚡";
+		
+		if(energyInt <= 0){
+			energyString = "----";
+		}else{
+			for(int i = 0; i < energyInt; i++){
+				energyString = energyString + "■";
+			}
+			if(energyInt < maxInt){
+				int intLeft = maxInt - energyInt;
+				for(int i = 0; i < intLeft; i++){
+					energyString = energyString + "□";
+				}
+			}
 		}
-		energyString = energyInt >= 1 ? energyString + "■" : energyString + "□";
-		energyString = energyInt >= 2 ? energyString + "■" : energyString + "□";
-		energyString = energyInt >= 3 ? energyString + "■" : energyString + "□";
-		energyString = energyInt >= 4 ? energyString + "■" : energyString + "□";
-		energyString = energyInt >= 5 ? energyString + "■" : energyString + "□";
-		energyTxt.setText(energyString);
+		return energyString;
 	}
 
 
