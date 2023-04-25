@@ -1,5 +1,5 @@
 # :hocho: Card Game Test V6.5
-
+![App Icon](./app/src/main/res/drawable/app_icon.png)
 ----
 
 <p align="center">
