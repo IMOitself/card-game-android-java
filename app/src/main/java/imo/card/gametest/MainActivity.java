@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Context;
+import android.widget.RelativeLayout;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -35,7 +36,7 @@ public class MainActivity extends Activity
 	public TextView enemyLivesTxt;
 	public TextView enemyEnergyTxt;
 	public TextView cardNameTxt;
-	public View cardParentLayout;
+	public RelativeLayout cardParentLayout;
 	public LinearLayout cardLayout;
 	public ImageView cardTypeImg;
 	public TextView cardCostTxt;
@@ -130,9 +131,9 @@ public class MainActivity extends Activity
 
 		onCreateLogic();
 
-		cardParentLayout.setOnTouchListener(new View.OnTouchListener() {
+		cardLayout.setOnTouchListener(new View.OnTouchListener() {
 				public boolean onTouch(View v, MotionEvent event) {
-					swipeCardLogic(cardParentLayout, event);
+					swipeCardLogic(v, event);
 					return true;
 				}
 			});
@@ -210,7 +211,7 @@ public class MainActivity extends Activity
 	}
 
 
-	public void swipeCardLogic(View cardParentLayout, MotionEvent event){
+	public void swipeCardLogic(View cardLayout, MotionEvent event){
 		//The card's width is set to 1/3 of the screen on onCreateLogic().
 		//Get the view width's center by dividing it to 2.
 		//Find the center of the screen by dividing it to 2.
@@ -232,7 +233,7 @@ public class MainActivity extends Activity
 				//Get the current location horizontally of your touch
 				float currentX = event.getRawX() - viewWidthCenter;
 				//Set the location of the view to your touch
-				cardParentLayout.setX(currentX);
+				cardLayout.setX(currentX);
 				//Get how far your touch moved to the center of the screen
 				//then convert it to decimal e.g. 150 / 100 = 1.50
 				//add 0.5f coz why not
@@ -274,7 +275,7 @@ public class MainActivity extends Activity
 				useIndicatorTxt.setScaleX(1);
 				useIndicatorTxt.setScaleY(1);
 				//bring the card to its original position which is the center
-				cardParentLayout.setX(centerX);
+				cardLayout.setX(centerX);
 				//get your last touch's position
 				float finalX = event.getRawX() - viewWidthCenter;
 				//safeArea is a certain distance from the center
