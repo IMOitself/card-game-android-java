@@ -12,7 +12,6 @@
 		android:id="@+id/story_txt"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_weight="1"
 		android:gravity="bottom|center_horizontal"
 		android:paddingLeft="25dp"
 		android:paddingRight="25dp"
@@ -62,15 +61,23 @@
 				android:scaleType="fitCenter"/>
 
 			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="ROUTE"
+				android:textSize="14sp"
+				android:textColor="#FFFFFF"
+				android:alpha="0.6"/>
+
+			<TextView
 				android:id="@+id/choice1_txt"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:gravity="center"
-				android:lines="2"
+				android:gravity="center_horizontal"
 				android:text="@string/one"
-				android:textAppearance="?android:attr/textAppearanceMedium"
 				android:textColor="#D0D0D0"
-				android:textSize="16sp"/>
+				android:textSize="16sp"
+				android:textStyle="bold"
+				android:lines="2"/>
 
 		</LinearLayout>
 
@@ -98,15 +105,23 @@
 				android:scaleType="fitCenter"/>
 
 			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="ROUTE"
+				android:textSize="14sp"
+				android:textColor="#FFFFFF"
+				android:alpha="0.6"/>
+
+			<TextView
 				android:id="@+id/choice2_txt"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:gravity="center"
+				android:gravity="center_horizontal"
 				android:lines="2"
 				android:text="@string/two"
-				android:textAppearance="?android:attr/textAppearanceMedium"
 				android:textColor="#D0D0D0"
-				android:textSize="16sp"/>
+				android:textSize="16sp"
+				android:textStyle="bold"/>
 
 		</LinearLayout>
 
@@ -116,7 +131,6 @@
 		android:id="@+id/hint_txt"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_weight="1.2"
 		android:alpha="0.8"
 		android:gravity="center_horizontal"
 		android:text="@string/hint_tap_anywhere_to_continue"
