@@ -198,18 +198,17 @@ public class MainActivity extends Activity
 				public void onDismiss(DialogInterface dialogInterface) {
 					//Once dialog is closed
 					chosenMap = storyDialog.chosenMap;
-					initializeLogic();
+					dialogOnClosed();
 				}
 			});
 	}
 	
 	
-	public void initializeLogic(){
+	public void dialogOnClosed(){
 		//This will run after the dialog is dismissed
 		if(!chosenMap.isEmpty()){
-			if(chosenMap.containsKey("name")){
+			if(chosenMap.get("label").equals("route_map")){
 				titleTxt.setText(chosenMap.get("name").toUpperCase());
-				//remove the uppercase if u want
 			}
 		}
 		//since its translated earlier. animate it back to position
