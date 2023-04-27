@@ -14,49 +14,7 @@
 	<string name="one">ONE</string>
 	<string name="text">Text</string>
 	<string name="two">TWO</string>
-	<string name="sample_cardpack_txt">
-		》label=card_map
-		》name=ATTACK
-		》info=attack 🔪2
-		》cost=-2
-		》lives=0, -2
-		》type=attack
-		;
-		》label=card_map
-		》name=ATTACK II
-		》info=attack 🔪3
-		》cost=-2
-		》lives=0, -3
-		》type=attack
-		;
-		》label=card_map
-		》name=REST
-		》info=gain energy ⚡+3
-		》cost=0
-		》energy=+3, 0
-		》type=rest
-		;
-		》label=card_map
-		》name=HEAL
-		》info=heal ❤+2
-		》cost=-2
-		》lives=+2, 0
-		》type=heal
-		;
-		》label=card_map
-		》name=REDRAW
-		》info=gain ⏳1
-		》cost=-2
-		》moves=+1, 0
-		》type=
-		;
-		》label=card_map
-		》name=MEGA ATTACK
-		》info=attack 🔪5
-		》cost=-4
-		》lives=0, -5
-		》type=mega_attack
-	</string>
+	
 	<string name="initial_scene_txt">
 		"
 		》label=scene_map
@@ -104,4 +62,53 @@
         》enemies=a
         》scenes=a
     </string>
+	<string name="basic_cardpack_txt">
+		》label=card_map
+		》id=basic_attack
+		》name=Basic Attack
+		》info=attack 🔪2
+		》cost=-2
+		》lives=0, -2
+		》type=attack
+		;
+		》label=card_map
+		》id=basic_attack_2
+		》name=Basic Attack II
+		》info=attack 🔪3
+		》cost=-2
+		》lives=0, -3
+		》type=attack
+		;
+		》label=card_map
+		》id=breathe
+		》name=Breathe
+		》info=energy ⚡+3
+		》cost=0
+		》energy=+3, 0
+		》type=rest
+		;
+		》label=card_map
+		》id=healing
+		》name=Healing
+		》info=heal ❤+2
+		》cost=-2
+		》lives=+2, 0
+		》type=heal
+		;
+		》label=card_map
+		》id=distract
+		》name=Distract
+		》info=gain ⏳1
+		》cost=-2
+		》moves=+1, 0
+		》type=
+		;
+		》label=card_map
+		》id=hard_attack
+		》name=Hard Attack
+		》info=attack 🔪5
+		》cost=-4
+		》lives=0, -5
+		》type=mega_attack
+	</string>
 </resources>
