@@ -35,8 +35,8 @@ public class StoryDialog extends Dialog {
 	public TextView choice2Txt;
 	public TextView hintTxt;
 	
-	public ArrayList<Map<String, String>> routeData = new ArrayList<>();
-	public ArrayList<Map<String, String>> initialSceneData = new ArrayList<>();
+	public ArrayList<Map<String, String>> routeList = new ArrayList<>();
+	public ArrayList<Map<String, String>> initialSceneList = new ArrayList<>();
 	public String[] sceneSequencesArray;
 	public int sequenceIndex = 1;
 	
@@ -49,11 +49,11 @@ public class StoryDialog extends Dialog {
     public StoryDialog(final Context context) {
         super(context);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		setCancelable(false);
         setContentView(R.layout.story);
         //Set the dialog window to match the parent's width and height then set it to transparent
         getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
         getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
 		mainStoryLayout = findViewById(R.id.main_story_layout);
 		storyTxt = findViewById(R.id.story_txt);
 		choicesHintTxt = findViewById(R.id.choices_hint_txt);
@@ -77,13 +77,18 @@ public class StoryDialog extends Dialog {
 		});
 		View.OnClickListener choicesClickListener = new View.OnClickListener(){
 			@Override public void onClick(View view){
-				choicesOnClick(view);
+				choicesOnClick(context, view);
 			}
 		};
 		choice1Layout.setOnClickListener(choicesClickListener);
 		choice2Layout.setOnClickListener(choicesClickListener);
+		
+		choicesParentLayout.setOnClickListener(new View.OnClickListener(){
+				@Override public void onClick(View v){
+					//this is to prevent mainStoryLayout from clicking inside this layout
+				}
+			});
     }
-	
 	
 	
 	public void onDialogCreate(Context context){
@@ -96,17 +101,18 @@ public class StoryDialog extends Dialog {
 		Tools.setCustomBgWithStroke(choice1Layout, bgColor, cornerRadius, strokeWidth, strokeColor, strokeAlpha);
 		Tools.setCustomBgWithStroke(choice2Layout, bgColor, cornerRadius, strokeWidth, strokeColor, strokeAlpha);
 		
-		routeData = Tools.getArrayListFromSharedPrefs(context, "route_data");
-		initialSceneData = Tools.getArrayListFromSharedPrefs(context, "initial_scene_data");
+		Data data = new Data();
+		routeList = data.routeData;
+		initialSceneList = data.initialSceneData;
+		
 		Map<String, String> startingSceneMap =
-		Tools.findMapFromArraylist(initialSceneData, "scene_id", "initial_scene");
+		Tools.findMapFromArraylist(initialSceneList, "scene_id", "initial_scene");
 		String getSceneSequences = startingSceneMap.get("scene_sequences");
 		getSceneSequences = getSceneSequences.replaceFirst("»", "");
 		sceneSequencesArray = getSceneSequences.split("»");
 		String firstSequence = sceneSequencesArray[0];
 		storyTxt.setText(firstSequence.substring(5).trim());
 	}
-	
 	
 	
 	public void mainOnClick(Context context){
@@ -139,13 +145,9 @@ public class StoryDialog extends Dialog {
 				sequenceIndex++;
 			}
 		}else{
-			if(!chosenMap.isEmpty()){
-				Tools.putMapInSharedPrefs(context, chosenMap, "from_dialog_chosen_map");
-			}
-			dismiss();//temporary
+			dismiss();
 		}
 	}
-	
 	
 	
 	public void makeChoicesSelection(String stringSequence, TextView choice1Txt, TextView choice2Txt){
@@ -174,7 +176,7 @@ public class StoryDialog extends Dialog {
 				List<Map<String, String>> levelMaps = new ArrayList<>();
 				//this will search a map with desired key and value from routeData
 				//list maps that has the same key and value
-				for (Map<String, String> map : routeData) {
+				for (Map<String, String> map : routeList) {
 					if (map.get(routeLevelKey).equals(routeLevelValue)) {
 						levelMaps.add(map);
 					}
@@ -197,7 +199,9 @@ public class StoryDialog extends Dialog {
 			choice2Txt.setText(choiceArray[1]);
 		}
 	}
-	public void choicesOnClick(View view){
+	
+	
+	public void choicesOnClick(Context context, View view){
 		stillDisplaySequence = true;
 		hasChosen = true;
 
@@ -219,7 +223,7 @@ public class StoryDialog extends Dialog {
 			Tools.setCustomBgWithStroke(choice2Layout, bgColor, cornerRadius, strokeWidth, strokeColor, strokeAlpha);
 			chosenMap = choice2Map;
 		}
-		if (chosenMap.isEmpty()) {
+		if (!chosenMap.isEmpty()) {
 			String hintString = "";
 			if(chosenMap.containsKey("name")){
 				hintString = hintString + chosenMap.get("name");
@@ -231,3 +235,4 @@ public class StoryDialog extends Dialog {
 		}
 	}
 }
+

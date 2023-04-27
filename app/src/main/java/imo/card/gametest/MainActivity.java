@@ -51,11 +51,10 @@ public class MainActivity extends Activity
 
 	public int screenWidth = 0;
 
-	public ArrayList<Map<String, String>> routeData = new ArrayList<>();
-	public ArrayList<Map<String, String>> initialSceneData = new ArrayList<>();
-
-	public ArrayList<Map<String, String>> cardsData = new ArrayList<>();
+	public ArrayList<Map<String, String>> cardsList = new ArrayList<>();
 	public Map<String, String> drawnCardMap;
+	
+	public Map<String, String> chosenMap;
 
 	public int moves = 3;
 	public int playerLives = 20;
@@ -170,20 +169,25 @@ public class MainActivity extends Activity
 		//Each Hashmap holds key-value pairs that makes it easier to search for a specific item.
 		//If i search for the key "name" it will retrieve a value of "John" for example.
 		String sample_cardpack_txt = getResources().getString(R.string.sample_cardpack_txt);
-        Tools.convertStringToArraylist(sample_cardpack_txt, cardsData, ";", "》");//arraylist, string, splitItemsBy, splitContentsBy
+        Tools.convertStringToArraylist(sample_cardpack_txt, cardsList, ";", "》");//arraylist, string, splitItemsBy, splitContentsBy
 		//Stock the lists with cards. Will be use to restock playerCardsCurrent and enemyCardsCurrent
 		//TODO: make a seperate set of cards for the player and enemy
-		playerCardsStock.addAll(cardsData);
-		enemyCardsStock.addAll(cardsData);
+		playerCardsStock.addAll(cardsList);
+		enemyCardsStock.addAll(cardsList);
+		
 		//TODO: Some comments
+		Data data = new Data();
+		ArrayList<Map<String, String>> routeList = new ArrayList<>();
+	    ArrayList<Map<String, String>> initialSceneList = new ArrayList<>();
+		
 		String routes_txt = getResources().getString(R.string.routes_txt);
-        Tools.convertStringToArraylist(routes_txt, routeData, ";", "》");//arraylist, string, splitItemsBy, splitContentsBy
-		Tools.putArrayListInSharedPrefs(this, routeData, "route_data");
-
+        Tools.convertStringToArraylist(routes_txt, routeList, ";", "》");//arraylist, string, splitItemsBy, splitContentsBy
+		data.routeData = routeList;
+		
 		String initial_scene_txt = getResources().getString(R.string.initial_scene_txt);
-        Tools.convertStringToArraylist(initial_scene_txt, initialSceneData, ";", "》");//arraylist, string, splitItemsBy, splitContentsBy
-		Tools.putArrayListInSharedPrefs(this, initialSceneData, "initial_scene_data");
-
+        Tools.convertStringToArraylist(initial_scene_txt, initialSceneList, ";", "》");//arraylist, string, splitItemsBy, splitContentsBy
+		data.initialSceneData = initialSceneList;
+		
 		//Start the game by populating views with datas
 		updateGame();
 		//pop up the story dialog first and detect if it's dismissed
@@ -193,21 +197,27 @@ public class MainActivity extends Activity
 				@Override
 				public void onDismiss(DialogInterface dialogInterface) {
 					//Once dialog is closed
-					Map<String, String> chosenMap = storyDialog.chosenMap;
-					if(!chosenMap.isEmpty()){
-						if(chosenMap.containsKey("name")){
-							titleTxt.setText(chosenMap.get("name").toUpperCase());
-							//remove the uppercase if u want
-						}
-					}
-					//since its translated earlier. animate it back to position
-					enemyLayout.animate().translationX(0).setDuration(Animations.duration*3)
-						.withEndAction(new Runnable() { @Override public void run() {
-								drawCard();
-							} })
-						.start();
+					chosenMap = storyDialog.chosenMap;
+					initializeLogic();
 				}
 			});
+	}
+	
+	
+	public void initializeLogic(){
+		//This will run after the dialog is dismissed
+		if(!chosenMap.isEmpty()){
+			if(chosenMap.containsKey("name")){
+				titleTxt.setText(chosenMap.get("name").toUpperCase());
+				//remove the uppercase if u want
+			}
+		}
+		//since its translated earlier. animate it back to position
+		enemyLayout.animate().translationX(0).setDuration(Animations.duration*3)
+			.withEndAction(new Runnable() { @Override public void run() {
+					drawCard();
+				} })
+			.start();
 	}
 
 
@@ -509,7 +519,6 @@ public class MainActivity extends Activity
 	public void decrementMoves(){
 		//TODO: Some comments
 		moves--;
-		Animations.popAnim(movesTxt);
 		//rotate the movesImg like a sand or hour glass
 		Animations.sandClockAnim(movesImg, userTurn);
 		if(isEnemyTurn){
@@ -538,9 +547,8 @@ public class MainActivity extends Activity
 			//if addMoves is not negative or zero
 			final TextView textview = movesTxt;
 			moves = moves + addMoves;
-			float scaleBy = 1.15f;
 			int duration = Animations.duration;
-			textview.animate().scaleX(scaleBy).scaleY(scaleBy).setDuration(duration)
+			textview.animate().setDuration(duration)
 				.withEndAction(new Runnable() { @Override public void run() {
 						textview.setScaleX(1);
 						textview.setScaleY(1);
