@@ -22,7 +22,7 @@
         》scene_sequences=
         »text:The great dope wizards called you.
 		»text:They created this sick vessel \nthat allows you to access their world.
-        »text:And with your mad skills and will power,\n they gave you a task to wreck all the golems \nacross the land.
+        »text:And with your mad skills and will power,\nthey gave you a task to wreck all the golems \nacross the land.
 		»text:Choose which path you want to start:
         »pick:route_level_1,route_level_2
 		»text:You're now ready to embark on a new adventure.
@@ -62,6 +62,31 @@
         》enemies=a
         》scenes=a
     </string>
+	<string name="players_txt">
+		》label=player_map
+		》id=player_one
+        》name=Player One
+        》info=idk.
+        》cardpacks=basic[basic_attack, basic_attack_2, breathe, hard_attack, healing]
+    </string>
+	<string name="enemies_txt">
+		》label=enemy_map
+		》id=enemy_one
+        》name=Enemy One
+        》info=idk.
+        》cards=basic[basic_attack, basic_attack, basic_attack_2, breathe, hard_attack, distract]
+		;
+		》label=enemy_map
+		》id=enemy_two
+        》name=Enemy Two
+        》info=idk.
+        》cards=basic[basic_attack, breathe, hard_attack, healing],
+		        common[reckless_attack]
+    </string>
+	<string name="catalog_txt">
+		》basic=basic_cardpack_txt
+		》common=common_cardpack_txt
+	</string>
 	<string name="basic_cardpack_txt">
 		》label=card_map
 		》id=basic_attack
@@ -110,5 +135,22 @@
 		》cost=-4
 		》lives=0, -5
 		》type=mega_attack
+	</string>
+	<string name="common_cardpack_txt">
+		》label=card_map
+		》id=reckless_attack
+		》name=Reckless Attack
+		》info=attack 🔪3, lose ❤-1
+		》cost=-1
+		》lives=-1, -3
+		》type=attack
+		;
+		》label=card_map
+		》id=drain
+		》name=Drain
+		》info=drain  ⚡-2
+		》cost=-2
+		》energy=0, -2
+		》type=
 	</string>
 </resources>
