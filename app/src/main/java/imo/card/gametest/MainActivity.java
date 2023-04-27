@@ -1,24 +1,20 @@
 package imo.card.gametest;
 
-import android.os.Bundle;
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.DialogInterface;
-import android.content.Context;
-import android.widget.RelativeLayout;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.ImageView;
-import android.view.View;
-import android.view.MotionEvent;
-import android.util.DisplayMetrics;
 import android.graphics.Color;
+import android.os.Bundle;
+import android.util.DisplayMetrics;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
-import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -171,22 +167,55 @@ public class MainActivity extends Activity
 		String cardpack_txt = getResources().getString(R.string.basic_cardpack_txt);
         Tools.convertStringToArraylist(cardpack_txt, cardsList, ";", "》");
 		//Stock the lists with cards. Will be use to restock playerCardsCurrent and enemyCardsCurrent
-		//TODO: make a seperate set of cards for the player and enemy
-		playerCardsStock.addAll(cardsList);
-		enemyCardsStock.addAll(cardsList);
+		
+		//TODO: make a separate set of cards for the player and enemy
+		ArrayList<Map<String, String>> playerList = new ArrayList<>();
+		String players_txt = getResources().getString(R.string.players_txt);
+		Tools.convertStringToArraylist(players_txt, playerList, ";", "》");
+
+		Map<String, String> playerMap = Tools.findMapFromArraylist(playerList, "id", "player_one");
+		String cardpacksString = playerMap.get("cards");
+		if(cardpacksString.isEmpty()){
+			String[] cardpacksArray = cardpacksString.split(",");
+			for (String cardpackString : cardpacksArray){
+				String[] nameValue = cardpackString.split("\\[");
+				String cardpackName = nameValue[0];
+				String cardpackValues = nameValue[1];
+				cardpackValues = cardpackValues.replace("\\]").trim();
+				
+				//this code below is just temporary
+				String cardpack = "";
+				if(cardpackName.equals("basic")){
+					cardpack = getResources().getString(R.string.basic_cardpack_txt);
+					
+				}else if(cardpackName.equals("common")){
+					cardpack = getResources().getString(R.string.common_cardpack_txt);
+				}
+				//this code above is just temporary
+				
+				String[] cardpackArray = cardpackValues.split(",");
+				for(String cardString : cardpackArray){
+					cardString = cardString.trim();
+					ArrayList<Map<String, String>> cardList = new ArrayList<>();
+					Tools.convertStringToArraylist(cardpack, cardList, ";", "》");
+					Map<String, String> cardMap = Tools.findMapFromArraylist(playerList, "id", cardString);
+					playerCardsStock.add(cardMap);
+				}
+			}
+		}
+		//playerCardsStock.addAll(cardsList);
 		
 		//TODO: Some comments
-		Data data = new Data();
 		ArrayList<Map<String, String>> routeList = new ArrayList<>();
 	    ArrayList<Map<String, String>> initialSceneList = new ArrayList<>();
 		
 		String routes_txt = getResources().getString(R.string.routes_txt);
         Tools.convertStringToArraylist(routes_txt, routeList, ";", "》");
-		data.routeData = routeList;
+		Data.routeData = routeList;
 		
 		String initial_scene_txt = getResources().getString(R.string.initial_scene_txt);
         Tools.convertStringToArraylist(initial_scene_txt, initialSceneList, ";", "》");
-		data.initialSceneData = initialSceneList;
+		Data.initialSceneData = initialSceneList;
 		
 		//Start the game by populating views with datas
 		updateGame();
@@ -206,17 +235,20 @@ public class MainActivity extends Activity
 	
 	public void dialogOnClosed(){
 		//This will run after the dialog is dismissed
+
+		//since its translated earlier. animate it back to position
+		enemyLayout.animate().translationX(0).setDuration(Animations.duration*3)
+				.withEndAction(new Runnable() { @Override public void run() {
+					drawCard();
+				} })
+				.start();
+
 		if(!chosenMap.isEmpty()){
 			if(chosenMap.get("label").equals("route_map")){
 				titleTxt.setText(chosenMap.get("name").toUpperCase());
 			}
 		}
-		//since its translated earlier. animate it back to position
-		enemyLayout.animate().translationX(0).setDuration(Animations.duration*3)
-			.withEndAction(new Runnable() { @Override public void run() {
-					drawCard();
-				} })
-			.start();
+		enemyCardsStock.addAll(cardsList);
 	}
 
 
@@ -618,7 +650,7 @@ public class MainActivity extends Activity
 
 	public void setImageByCardType(String cardType, ImageView img){
 		//Based on the cardType display specific image corresponding to it.
-		//thats pretty much the explanation:/
+		//that's pretty much the explanation:/
 		switch(cardType){
 			default:
 				img.setImageResource(R.drawable.unclassified_type);
