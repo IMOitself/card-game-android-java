@@ -2,19 +2,17 @@ package imo.card.gametest;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.view.WindowManager;
-import android.view.Window;
-import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.ImageView;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.util.DisplayMetrics;
+import android.view.View;
+import android.view.Window;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
-import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -54,6 +52,7 @@ public class StoryDialog extends Dialog {
         //Set the dialog window to match the parent's width and height then set it to transparent
         getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
         getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
 		mainStoryLayout = findViewById(R.id.main_story_layout);
 		storyTxt = findViewById(R.id.story_txt);
 		choicesHintTxt = findViewById(R.id.choices_hint_txt);
@@ -100,18 +99,19 @@ public class StoryDialog extends Dialog {
 		int bgColor = Color.TRANSPARENT;
 		Tools.setCustomBgWithStroke(choice1Layout, bgColor, cornerRadius, strokeWidth, strokeColor, strokeAlpha);
 		Tools.setCustomBgWithStroke(choice2Layout, bgColor, cornerRadius, strokeWidth, strokeColor, strokeAlpha);
-		
-		Data data = new Data();
-		routeList = data.routeData;
-		initialSceneList = data.initialSceneData;
+
+		routeList = Data.routeData;
+		initialSceneList = Data.initialSceneData;
 		
 		Map<String, String> startingSceneMap =
 		Tools.findMapFromArraylist(initialSceneList, "scene_id", "initial_scene");
 		String getSceneSequences = startingSceneMap.get("scene_sequences");
-		getSceneSequences = getSceneSequences.replaceFirst("»", "");
-		sceneSequencesArray = getSceneSequences.split("»");
-		String firstSequence = sceneSequencesArray[0];
-		storyTxt.setText(firstSequence.substring(5).trim());
+		if (getSceneSequences != null) {
+			getSceneSequences = getSceneSequences.replaceFirst("»", "");
+			sceneSequencesArray = getSceneSequences.split("»");
+			String firstSequence = sceneSequencesArray[0];
+			storyTxt.setText(firstSequence.substring(5).trim());
+		}
 	}
 	
 	
