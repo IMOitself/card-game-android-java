@@ -168,8 +168,8 @@ public class MainActivity extends Activity
 		//Transform the string to a Arraylist that holds a hashmap. 
 		//Each Hashmap holds key-value pairs that makes it easier to search for a specific item.
 		//If i search for the key "name" it will retrieve a value of "John" for example.
-		String sample_cardpack_txt = getResources().getString(R.string.sample_cardpack_txt);
-        Tools.convertStringToArraylist(sample_cardpack_txt, cardsList, ";", "》");//arraylist, string, splitItemsBy, splitContentsBy
+		String cardpack_txt = getResources().getString(R.string.basic_cardpack_txt);
+        Tools.convertStringToArraylist(cardpack_txt, cardsList, ";", "》");
 		//Stock the lists with cards. Will be use to restock playerCardsCurrent and enemyCardsCurrent
 		//TODO: make a seperate set of cards for the player and enemy
 		playerCardsStock.addAll(cardsList);
@@ -181,11 +181,11 @@ public class MainActivity extends Activity
 	    ArrayList<Map<String, String>> initialSceneList = new ArrayList<>();
 		
 		String routes_txt = getResources().getString(R.string.routes_txt);
-        Tools.convertStringToArraylist(routes_txt, routeList, ";", "》");//arraylist, string, splitItemsBy, splitContentsBy
+        Tools.convertStringToArraylist(routes_txt, routeList, ";", "》");
 		data.routeData = routeList;
 		
 		String initial_scene_txt = getResources().getString(R.string.initial_scene_txt);
-        Tools.convertStringToArraylist(initial_scene_txt, initialSceneList, ";", "》");//arraylist, string, splitItemsBy, splitContentsBy
+        Tools.convertStringToArraylist(initial_scene_txt, initialSceneList, ";", "》");
 		data.initialSceneData = initialSceneList;
 		
 		//Start the game by populating views with datas
