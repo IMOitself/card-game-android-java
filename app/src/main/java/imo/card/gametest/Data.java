@@ -6,6 +6,6 @@ import java.util.Map;
 
 public class Data
 {
-	public static ArrayList<Map<String, String>> routeData = new ArrayList<>();
-	public static ArrayList<Map<String, String>> initialSceneData = new ArrayList<>();
+	static ArrayList<Map<String, String>> routeData = new ArrayList<>();
+	static ArrayList<Map<String, String>> initialSceneData = new ArrayList<>();
 }

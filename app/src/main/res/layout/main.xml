@@ -58,14 +58,14 @@
 			android:orientation="horizontal">
 
 			<LinearLayout
-				android:id="@+id/player_layout"
 				android:layout_width="140dp"
 				android:layout_height="140dp"
-				android:layout_margin="10dp"
 				android:background="#696969"
 				android:gravity="center"
 				android:orientation="vertical"
 				android:padding="8dp"
+				android:layout_margin="10dp"
+				android:id="@+id/player_layout"
 				android:scaleX="1.05"
 				android:scaleY="1.05">
 
@@ -77,7 +77,7 @@
 
 					<ImageView
 						android:src="@drawable/heart"
-						android:layout_width="30dp"
+						android:layout_width="25dp"
 						android:layout_height="match_parent"
 						android:scaleType="fitCenter"/>
 
@@ -87,15 +87,16 @@
 						android:layout_height="wrap_content"
 						android:text="10"
 						android:textColor="#FFFFFF"
-						android:textSize="25sp"
+						android:textSize="20sp"
 						android:textStyle="bold"/>
 
 				</LinearLayout>
 
 				<ImageView
-					android:layout_width="70dp"
-					android:layout_height="70dp"
-					android:src="@drawable/dude_with_sword"/>
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:src="@drawable/dude_with_sword"
+					android:layout_weight="1.0"/>
 
 				<TextView
 					android:id="@+id/player_energy_txt"
@@ -115,14 +116,14 @@
 				android:orientation="horizontal"/>
 
 			<LinearLayout
-				android:id="@+id/enemy_layout"
 				android:layout_width="140dp"
 				android:layout_height="140dp"
-				android:layout_margin="10dp"
 				android:background="#696969"
 				android:gravity="center"
 				android:orientation="vertical"
-				android:padding="8dp">
+				android:padding="8dp"
+				android:layout_margin="10dp"
+				android:id="@+id/enemy_layout">
 
 				<LinearLayout
 					android:orientation="horizontal"
@@ -132,7 +133,7 @@
 
 					<ImageView
 						android:src="@drawable/heart"
-						android:layout_width="30dp"
+						android:layout_width="25dp"
 						android:layout_height="match_parent"
 						android:scaleType="fitCenter"/>
 
@@ -142,15 +143,16 @@
 						android:layout_height="wrap_content"
 						android:text="10"
 						android:textColor="#FFFFFF"
-						android:textSize="25sp"
+						android:textSize="20sp"
 						android:textStyle="bold"/>
 
 				</LinearLayout>
 
 				<ImageView
-					android:layout_width="70dp"
+					android:layout_width="match_parent"
 					android:layout_height="70dp"
-					android:src="@drawable/guy_with_sword_too"/>
+					android:src="@drawable/guy_with_sword_too"
+					android:layout_weight="1.0"/>
 
 				<TextView
 					android:id="@+id/enemy_energy_txt"
@@ -185,7 +187,7 @@
 
 			<TextView
 				android:id="@+id/use_indicator_txt"
-				android:layout_width="wrap_content"
+				android:layout_width="130dp"
 				android:layout_height="130dp"
 				android:layout_alignParentRight="true"
 				android:gravity="center"
@@ -198,7 +200,7 @@
 
 			<TextView
 				android:id="@+id/skip_indicator_txt"
-				android:layout_width="wrap_content"
+				android:layout_width="130dp"
 				android:layout_height="130dp"
 				android:layout_alignParentLeft="true"
 				android:gravity="center"
@@ -240,8 +242,8 @@
 
 					<ImageView
 						android:id="@+id/card_type_img"
-						android:layout_width="30dp"
-						android:layout_height="30dp"
+						android:layout_width="25dp"
+						android:layout_height="25dp"
 						android:scaleType="fitCenter"
 						android:src="@drawable/mega_attack_type"/>
 
@@ -269,7 +271,7 @@
 					android:gravity="center"
 					android:text="🔪5"
 					android:textColor="#696969"
-					android:textSize="20sp"
+					android:textSize="18sp"
 					android:textStyle="bold"/>
 
 			</LinearLayout>
@@ -285,7 +287,7 @@
 		android:lines="2"
 		android:text="@string/notice"
 		android:textColor="#FFFFFF"
-		android:textSize="12sp"
+		android:textSize="10sp"
 		android:alpha="0.4"/>
 
 	<LinearLayout
@@ -311,3 +313,4 @@
 	</LinearLayout>
 
 </LinearLayout>
+

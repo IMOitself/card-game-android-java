@@ -32,18 +32,18 @@ public class StoryDialog extends Dialog {
 	public ImageView choice2Img;
 	public TextView choice2Txt;
 	public TextView hintTxt;
-	
+
 	public ArrayList<Map<String, String>> routeList = new ArrayList<>();
 	public ArrayList<Map<String, String>> initialSceneList = new ArrayList<>();
 	public String[] sceneSequencesArray;
 	public int sequenceIndex = 1;
-	
+
 	public boolean stillDisplaySequence = true;
 	public boolean hasChosen = false;
 	public Map<String, String> choice1Map = new HashMap<>();
 	public Map<String, String> choice2Map = new HashMap<>();
 	public Map<String, String> chosenMap = new HashMap<>();
-	
+
     public StoryDialog(final Context context) {
         super(context);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -66,14 +66,14 @@ public class StoryDialog extends Dialog {
 		choice2Img = findViewById(R.id.choice2_img);
 		choice2Txt = findViewById(R.id.choice2_txt);
 		hintTxt = findViewById(R.id.hint_txt);
-		
+
 		onDialogCreate(context);
-		
+
 		mainStoryLayout.setOnClickListener(new View.OnClickListener(){
-			@Override public void onClick(View v){
-				mainOnClick(context);
-			}
-		});
+				@Override public void onClick(View v){
+					mainOnClick(context);
+				}
+			});
 		View.OnClickListener choicesClickListener = new View.OnClickListener(){
 			@Override public void onClick(View view){
 				choicesOnClick(context, view);
@@ -81,15 +81,15 @@ public class StoryDialog extends Dialog {
 		};
 		choice1Layout.setOnClickListener(choicesClickListener);
 		choice2Layout.setOnClickListener(choicesClickListener);
-		
+
 		choicesParentLayout.setOnClickListener(new View.OnClickListener(){
 				@Override public void onClick(View v){
 					//this is to prevent mainStoryLayout from clicking inside this layout
 				}
 			});
     }
-	
-	
+
+
 	public void onDialogCreate(Context context){
 		choicesParentLayout.setVisibility(View.GONE);
 		int strokeColor = Color.WHITE;
@@ -104,20 +104,20 @@ public class StoryDialog extends Dialog {
 		initialSceneList = Data.initialSceneData;
 		
 		Map<String, String> startingSceneMap =
-		Tools.findMapFromArraylist(initialSceneList, "scene_id", "initial_scene");
-		String getSceneSequences = startingSceneMap.get("scene_sequences");
-		if (getSceneSequences != null) {
+			Tools.findMapFromArraylist(initialSceneList, "scene_id", "initial_scene");
+		String getSceneSequences = startingSceneMap.get("scene_sequences").trim();
+		if (getSceneSequences.substring(0, 1).equals("»")) {
 			getSceneSequences = getSceneSequences.replaceFirst("»", "");
-			sceneSequencesArray = getSceneSequences.split("»");
-			String firstSequence = sceneSequencesArray[0];
-			storyTxt.setText(firstSequence.substring(5).trim());
 		}
+		sceneSequencesArray = getSceneSequences.split("»");
+		String firstSequence = sceneSequencesArray[0];
+		storyTxt.setText(firstSequence.substring(5).trim());
 	}
-	
-	
+
+
 	public void mainOnClick(Context context){
 		int sceneSequencesLength = sceneSequencesArray.length - 1;
-		
+
 		if(sequenceIndex <= sceneSequencesLength){
 			if(stillDisplaySequence){
 				if(hasChosen){
@@ -148,8 +148,8 @@ public class StoryDialog extends Dialog {
 			dismiss();
 		}
 	}
-	
-	
+
+
 	public void makeChoicesSelection(String stringSequence, TextView choice1Txt, TextView choice2Txt){
 		//usually stringSequence has "pick:" at the start.
 		//remove it by doing substring(5)
@@ -189,7 +189,7 @@ public class StoryDialog extends Dialog {
 				if (forChoice == 1){
 					choice1Map = outputMap;
 					choiceArray[0] = choice1Map.get("name");
-					
+
 				}else if (forChoice == 2){
 					choice2Map = outputMap;
 					choiceArray[1] = choice2Map.get("name");
@@ -199,12 +199,13 @@ public class StoryDialog extends Dialog {
 			choice2Txt.setText(choiceArray[1]);
 		}
 	}
-	
-	
+
+
 	public void choicesOnClick(Context context, View view){
 		stillDisplaySequence = true;
 		hasChosen = true;
-
+		hintTxt.setVisibility(View.VISIBLE);
+		
 		int strokeColor = Color.WHITE;
 		int strokeWidth = 2;
 		float strokeAlpha = 0.3f;
@@ -235,4 +236,5 @@ public class StoryDialog extends Dialog {
 		}
 	}
 }
+
 

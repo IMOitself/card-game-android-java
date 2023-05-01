@@ -20,65 +20,65 @@ import java.util.Random;
 
 public class MainActivity extends Activity 
 {
-	public TextView titleTxt;
-	public ImageView movesImg;
-	public TextView movesTxt;
-	public LinearLayout playerLayout;
-	public LinearLayout playerLivesLayout;
-	public TextView playerLivesTxt;
-	public TextView playerEnergyTxt;
-	public LinearLayout enemyLayout;
-	public LinearLayout enemyLivesLayout;
-	public TextView enemyLivesTxt;
-	public TextView enemyEnergyTxt;
-	public TextView cardNameTxt;
-	public RelativeLayout cardParentLayout;
-	public LinearLayout cardLayout;
-	public ImageView cardTypeImg;
-	public TextView cardCostTxt;
-	public TextView cardInfoTxt;
-	public LinearLayout cardBackLayout;
-	public TextView useIndicatorTxt;
-	public TextView skipIndicatorTxt;
-	public TextView debugTxt;
-	public LinearLayout buttonsLayout;
-	public Button skipBtn;
-	public Button useBtn;
+	TextView titleTxt;
+	ImageView movesImg;
+	TextView movesTxt;
+	LinearLayout playerLayout;
+	LinearLayout playerLivesLayout;
+	TextView playerLivesTxt;
+	TextView playerEnergyTxt;
+	LinearLayout enemyLayout;
+	LinearLayout enemyLivesLayout;
+    TextView enemyLivesTxt;
+	TextView enemyEnergyTxt;
+	TextView cardNameTxt;
+	RelativeLayout cardParentLayout;
+	LinearLayout cardLayout;
+	ImageView cardTypeImg;
+	TextView cardCostTxt;
+	TextView cardInfoTxt;
+	LinearLayout cardBackLayout;
+	TextView useIndicatorTxt;
+	TextView skipIndicatorTxt;
+	TextView debugTxt;
+	LinearLayout buttonsLayout;
+	Button skipBtn;
+	Button useBtn;
 
-	public int screenWidth = 0;
+	int screenWidth = 0;
+	ArrayList<Map<String, String>> enemiesList = new ArrayList<>();
+	ArrayList<Map<String, String>> cardsList = new ArrayList<>();
+	Map<String, String> drawnCardMap;
 
-	public ArrayList<Map<String, String>> cardsList = new ArrayList<>();
-	public Map<String, String> drawnCardMap;
-	
-	public Map<String, String> chosenMap;
+	Map<String, String> chosenMap;
 
-	public int moves = 3;
-	public int playerLives = 20;
-	public int playerEnergy = 5;
-	public int enemyLives = 20;
-	public int enemyEnergy = 5;
+	int moves = 3;
+	int playerLives = 20;
+	int playerEnergy = 5;
+	int enemyLives = 20;
+	int enemyEnergy = 5;
 
-	public int playerLives_old = playerLives;
-	public int playerEnergy_old = playerEnergy;
-	public int enemyLives_old = enemyLives;
-	public int enemyEnergy_old = enemyEnergy;
+	int playerLives_old = playerLives;
+	int playerEnergy_old = playerEnergy;
+	int enemyLives_old = enemyLives;
+	int enemyEnergy_old = enemyEnergy;
 
-	public String userTurn = "player";
-	public boolean isEnemyTurn = false;
-	
-	public int addMoves;
-	
+	String userTurn = "player";
+	boolean isEnemyTurn = false;
+
+	int addMoves;
+
 	//use for properly ending the game while recording data
-	public int playerMovesMade = 0;
-	public int enemyMovesMade = 0;
-	public boolean isGameFinished = false;
-	public Map<String, String> gameResult = new HashMap<>();
+	int playerMovesMade = 0;
+	int enemyMovesMade = 0;
+	boolean isGameFinished = false;
+	Map<String, String> gameResult = new HashMap<>();
 
-	public ArrayList<Map<String, String>> playerCardsStock = new ArrayList<>();
-	public ArrayList<Map<String, String>> enemyCardsStock = new ArrayList<>();
+	ArrayList<Map<String, String>> playerCardsStock = new ArrayList<>();
+	ArrayList<Map<String, String>> enemyCardsStock = new ArrayList<>();
 
-	public ArrayList<Map<String, String>> playerCardsCurrent = new ArrayList<>();
-	public ArrayList<Map<String, String>> enemyCardsCurrent = new ArrayList<>();
+	ArrayList<Map<String, String>> playerCardsCurrent = new ArrayList<>();
+	ArrayList<Map<String, String>> enemyCardsCurrent = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -164,61 +164,50 @@ public class MainActivity extends Activity
 		//Transform the string to a Arraylist that holds a hashmap. 
 		//Each Hashmap holds key-value pairs that makes it easier to search for a specific item.
 		//If i search for the key "name" it will retrieve a value of "John" for example.
-		String cardpack_txt = getResources().getString(R.string.basic_cardpack_txt);
-        Tools.convertStringToArraylist(cardpack_txt, cardsList, ";", "》");
-		//Stock the lists with cards. Will be use to restock playerCardsCurrent and enemyCardsCurrent
-		
-		//TODO: make a separate set of cards for the player and enemy
-		ArrayList<Map<String, String>> playerList = new ArrayList<>();
-		String players_txt = getResources().getString(R.string.players_txt);
-		Tools.convertStringToArraylist(players_txt, playerList, ";", "》");
-
-		Map<String, String> playerMap = Tools.findMapFromArraylist(playerList, "id", "player_one");
-		String cardpacksString = playerMap.get("cards");
-		if(cardpacksString.isEmpty()){
-			String[] cardpacksArray = cardpacksString.split(",");
-			for (String cardpackString : cardpacksArray){
-				String[] nameValue = cardpackString.split("\\[");
-				String cardpackName = nameValue[0];
-				String cardpackValues = nameValue[1];
-				cardpackValues = cardpackValues.replace("\\]").trim();
-				
-				//this code below is just temporary
-				String cardpack = "";
-				if(cardpackName.equals("basic")){
-					cardpack = getResources().getString(R.string.basic_cardpack_txt);
-					
-				}else if(cardpackName.equals("common")){
-					cardpack = getResources().getString(R.string.common_cardpack_txt);
-				}
-				//this code above is just temporary
-				
-				String[] cardpackArray = cardpackValues.split(",");
-				for(String cardString : cardpackArray){
-					cardString = cardString.trim();
-					ArrayList<Map<String, String>> cardList = new ArrayList<>();
-					Tools.convertStringToArraylist(cardpack, cardList, ";", "》");
-					Map<String, String> cardMap = Tools.findMapFromArraylist(playerList, "id", cardString);
-					playerCardsStock.add(cardMap);
-				}
-			}
-		}
-		//playerCardsStock.addAll(cardsList);
-		
-		//TODO: Some comments
+		//cardsList arraylist is public and will be used on dialogOnClosed method
 		ArrayList<Map<String, String>> routeList = new ArrayList<>();
 	    ArrayList<Map<String, String>> initialSceneList = new ArrayList<>();
-		
+
 		String routes_txt = getResources().getString(R.string.routes_txt);
         Tools.convertStringToArraylist(routes_txt, routeList, ";", "》");
 		Data.routeData = routeList;
-		
+
 		String initial_scene_txt = getResources().getString(R.string.initial_scene_txt);
         Tools.convertStringToArraylist(initial_scene_txt, initialSceneList, ";", "》");
 		Data.initialSceneData = initialSceneList;
 		
-		//Start the game by populating views with datas
-		updateGame();
+		String enemies_txt = getResources().getString(R.string.enemies_txt);
+		Tools.convertStringToArraylist(enemies_txt, enemiesList, ";", "》");
+		
+		String cardpack_txt = getResources().getString(R.string.cardpack_txt);
+        Tools.convertStringToArraylist(cardpack_txt, cardsList, ";", "》");
+		//TODO: Some comments
+		ArrayList<Map<String, String>> playerList = new ArrayList<>();
+		
+		String players_txt = getResources().getString(R.string.players_txt);
+        Tools.convertStringToArraylist(players_txt, playerList, ";", "》");
+		
+		Map<String, String> playerMap = Tools.findMapFromArraylist(playerList, "id", "player_two");
+		if(!playerMap.isEmpty()){
+			playerLives = Integer.parseInt(playerMap.get("lives"));
+			playerEnergy = Integer.parseInt(playerMap.get("energy"));
+			playerLives_old = playerLives;
+			playerEnergy_old = playerEnergy;
+			
+			String cardIdsRaw = playerMap.get("card_ids");
+			String[] cardIds = cardIdsRaw.split(",");
+			for(String cardId : cardIds){
+				cardId = cardId.trim();
+				System.out.println(cardId);
+				Map<String, String> card = Tools.findMapFromArraylist(cardsList, "id", cardId);
+				if(!card.isEmpty()) playerCardsStock.add(card);
+			}
+		}else{
+			//handle if there is no player map found
+			System.out.println(players_txt);
+			//Stock the arraylist with cards. Will be use to restock playerCardsCurrent
+			playerCardsStock.addAll(cardsList);
+		}
 		//pop up the story dialog first and detect if it's dismissed
 		final StoryDialog storyDialog = new StoryDialog(this);
 		storyDialog.show();
@@ -231,24 +220,46 @@ public class MainActivity extends Activity
 				}
 			});
 	}
-	
-	
+
+
 	public void dialogOnClosed(){
 		//This will run after the dialog is dismissed
-
+		
 		//since its translated earlier. animate it back to position
 		enemyLayout.animate().translationX(0).setDuration(Animations.duration*3)
-				.withEndAction(new Runnable() { @Override public void run() {
+			.withEndAction(new Runnable() { @Override public void run() {
 					drawCard();
 				} })
-				.start();
-
+			.start();
 		if(!chosenMap.isEmpty()){
 			if(chosenMap.get("label").equals("route_map")){
 				titleTxt.setText(chosenMap.get("name").toUpperCase());
+				String enemyIdsRaw = chosenMap.get("enemy_ids");
+				String[] enemyIds = enemyIdsRaw.split(",");
+				Random random = new Random();
+				int randomIndex = random.nextInt(enemyIds.length);
+				String enemyId = enemyIds[randomIndex].trim();
+				Map<String, String> enemyMap = Tools.findMapFromArraylist(enemiesList, "id", enemyId);
+				if(!enemyMap.isEmpty()){
+					enemyLives = Integer.parseInt(enemyMap.get("lives"));
+					enemyEnergy = Integer.parseInt(enemyMap.get("energy"));
+					enemyLives_old = enemyLives;
+					enemyEnergy_old = enemyEnergy;
+
+					String cardIdsRaw = enemyMap.get("card_ids");
+					String[] cardIds = cardIdsRaw.split(",");
+					for(String cardId : cardIds){
+						cardId = cardId.trim();
+						Map<String, String> card = Tools.findMapFromArraylist(cardsList, "id", cardId);
+						if(!card.isEmpty()) enemyCardsStock.add(card);
+					}
+				}else{
+					//Stock the arraylist with cards. Will be use to restock playerCardsCurrent
+					enemyCardsStock.addAll(cardsList);
+				}	
 			}
 		}
-		enemyCardsStock.addAll(cardsList);
+		updateGame();
 	}
 
 
@@ -299,11 +310,11 @@ public class MainActivity extends Activity
 						useIndicatorTxt.setScaleY(scaleBy);
 					}
 				}
-				//this code is unnecessary but its here anyway
+				/**this code is unnecessary but its here anyway
 				if(!isGameFinished){
 					debugTxt.setText("event.getRawX(): " + currentX + "   centerX: " + centerX + " recordAddedX: " + recordAddedX + "\n" + "skipIndicatorTxt: " + skipIndicatorTxt.getScaleX() + " useIndicatorTxt: " + useIndicatorTxt.getScaleX());
 				}
-				//remove this code above if its annoying
+				//remove this code above if its annoying**/
 				break;
 
 			case MotionEvent.ACTION_UP:
@@ -387,6 +398,11 @@ public class MainActivity extends Activity
 			//animate the card as if its doing intro upwards then flipping on its back
 			Animations.flipCardAnim(cardLayout, cardBackLayout, cardNameTxt, isEnemyTurn, cardParentLayout, skipBtn, useBtn);
 		}
+		//TODO
+		debugTxt.setText("Player cards: " + playerCardsCurrent.size() + "/" + playerCardsStock.size() + "");
+		debugTxt.setText(debugTxt.getText().toString() + "  Enemy cards: " + enemyCardsCurrent.size() + "/" + enemyCardsStock.size());
+		debugTxt.setText(debugTxt.getText().toString() + "\nTotal cards: " + cardsList.size() + "  Total enemies: " + enemiesList.size());
+		
 	}
 
 
@@ -468,13 +484,11 @@ public class MainActivity extends Activity
 
 					playerEnergy = playerEnergy + editSelfEnergy;//overwrites drawnCardCost
 					enemyEnergy = enemyEnergy + editTargetEnergy;
-					
+
 					addMoves = editSelfMoves;
-					
-					if(cardType.contains("attack")){
-						//contains() method because it will reach any string with "attack"
-						Animations.attackAnim(-5, playerLayout, enemyLayout);
-					}
+
+					if(cardType.contains("attack")) Animations.attackAnim(-5, playerLayout, enemyLayout);
+				    
 					useMoves();
 					drawCard();
 				}
@@ -493,14 +507,11 @@ public class MainActivity extends Activity
 
 					enemyEnergy = enemyEnergy + editSelfEnergy;//overwrites drawnCardCost
 					playerEnergy = playerEnergy + editTargetEnergy;
-					
-					addMoves = editSelfMoves;
-					
-					if(cardType.contains("attack")){
-						//contains() method because it will reach any string with "attack"
-						Animations.attackAnim(5, enemyLayout, playerLayout);
-					}
 
+					addMoves = editSelfMoves;
+
+					if(cardType.contains("attack")) Animations.attackAnim(5, enemyLayout, playerLayout);
+					
 					useMoves();
 					drawCard();
 				}
@@ -545,10 +556,9 @@ public class MainActivity extends Activity
 			}else if(userTurn.equals("enemy")) enemyMovesMade++;
 		}
 	}
-	
-	
+
+
 	public void decrementMoves(){
-		//TODO: Some comments
 		moves--;
 		//rotate the movesImg like a sand or hour glass
 		Animations.sandClockAnim(movesImg, userTurn);
@@ -590,7 +600,7 @@ public class MainActivity extends Activity
 		}
 		playerLivesTxt.setText(playerLives + "");
 		playerEnergyTxt.setText(makeStringByInt(playerEnergy, 5));
-		
+
 		enemyLivesTxt.setText(enemyLives + "");
 		enemyEnergyTxt.setText(makeStringByInt(enemyEnergy, 5));
 
@@ -617,7 +627,7 @@ public class MainActivity extends Activity
 			titleTxt.setText(R.string.you_lose);
 			recordGameResult("enemy");
 		}
-	}
+		}
 
 
 	public void enemyRandomPlay(final int enemyEnergy){
@@ -650,7 +660,7 @@ public class MainActivity extends Activity
 
 	public void setImageByCardType(String cardType, ImageView img){
 		//Based on the cardType display specific image corresponding to it.
-		//that's pretty much the explanation:/
+		//thats pretty much the explanation:/
 		switch(cardType){
 			default:
 				img.setImageResource(R.drawable.unclassified_type);
@@ -696,7 +706,7 @@ public class MainActivity extends Activity
 		Tools.setCustomBgWithStroke(playerLayout, bgColor, cornerRadius, strokeWidth, strokeColor, strokeAlpha);
 	}
 
-	
+
 	public String makeStringByInt(int energyInt, int maxInt){
 		//TODO:Some comments
 		String energyString = "⚡";
@@ -740,10 +750,10 @@ public class MainActivity extends Activity
 			//Determine how much extra damage has been made way past 0
 			if(playerLives < 0) gameResult.put("overkill", playerLives + "");
 		}
-		String debugString = "winner: " + gameResult.get("winner") + " ";
-		debugString = debugString + "player_moves_made: " + gameResult.get("player_moves_made") + " ";
-		debugString = debugString + "enemy_moves_made: " + gameResult.get("enemy_moves_made") + " ";
-		debugString = debugString + "overkill: " + gameResult.get("overkill") + " ";
+		String debugString = "| winner: " + gameResult.get("winner") + " | ";
+		debugString = debugString + "player_moves_made: " + gameResult.get("player_moves_made") + " | ";
+		debugString = debugString + "enemy_moves_made: " + gameResult.get("enemy_moves_made") + " | ";
+		debugString = debugString + "overkill: " + gameResult.get("overkill") + " | ";
 		debugTxt.setText(debugString);
 	}
 

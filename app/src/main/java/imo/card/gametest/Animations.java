@@ -43,7 +43,7 @@ public class Animations
 		view2.setScaleX(1);
 		view2.setScaleY(1);
 	}
-	public static void slideAnim(final View view, final String direction){
+	public static void slideAnim(final View view, String direction){
 		int viewWidth = view.getWidth();
 	    int distance = 0;
 		if(direction.equals("left")){
@@ -52,7 +52,7 @@ public class Animations
 			distance = viewWidth + viewWidth/2;//1.5x width
 		}
 		final int moveBy = distance;
-		view.animate().setDuration(duration*4).withEndAction(new Runnable() { @Override public void run() {
+		view.animate().setDuration(duration*3).withEndAction(new Runnable() { @Override public void run() {
 					view.animate().translationX(moveBy).alpha(0).setDuration(duration*3).start();
 				} })
 			.start();
@@ -124,7 +124,7 @@ public class Animations
 				optionalView.animate().translationY(0).setDuration(duration).start();
 			}
 	}
-	public static void sandClockAnim(final View view, final String userTurn){
+	public static void sandClockAnim(final View view, String userTurn){
 		//since remainingMovesImg looks like a hourglass
 		//rotate it to whichever the target's direction
 		//then seamlessly flip it back
@@ -171,3 +171,4 @@ public class Animations
 			.start();
 	}
 }
+
