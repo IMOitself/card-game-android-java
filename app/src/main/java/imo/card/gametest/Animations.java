@@ -103,7 +103,7 @@ public class Animations
 								frontLayout.setVisibility(View.VISIBLE);
 								//scale the card back to its default size as if its being flipped
 								frontLayout.animate().scaleX(1).setDuration(duration).withEndAction(new Runnable() { @Override public void run() {
-									        //if its enemy turn still dont make the buttons and swiping action enabled
+									        //if its enemy turn still don't make the buttons and swiping action enabled
 											if (isEnemyTurn == false){
 												cardSwipe.setEnabled(true);
 												btn1.setEnabled(true);
@@ -116,7 +116,7 @@ public class Animations
 				} })
 			.start();
 			//optionalView's animation is in sync with the card's so that it also translates upward
-			//the only thing it doesnt do is the flipping animation (i.e. scaleX)
+			//the only thing it doesn't do is the flipping animation (i.e. scaleX)
 			if (optionalView != null){
 				//translate it to a distance first before translating it back
 				//as if it moves upward with the card

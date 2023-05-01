@@ -19,29 +19,30 @@ import java.util.Random;
 //TODO: Explain everything
 
 public class StoryDialog extends Dialog {
-	public LinearLayout mainStoryLayout;
-	public TextView storyTxt;
-	public TextView choicesHintTxt;
-	public LinearLayout choicesParentLayout;
-	public LinearLayout choice1Layout;
-	public int choice1LayoutId;
-	public ImageView choice1Img;
-	public TextView choice1Txt;
-	public LinearLayout choice2Layout;
-	public int choice2LayoutId;
-	public ImageView choice2Img;
-	public TextView choice2Txt;
-	public TextView hintTxt;
+	LinearLayout mainStoryLayout;
+	TextView storyTxt;
+	TextView choicesHintTxt;
+	LinearLayout choicesParentLayout;
+	LinearLayout choice1Layout;
+	int choice1LayoutId;
+	ImageView choice1Img;
+	TextView choice1Txt;
+	LinearLayout choice2Layout;
+	int choice2LayoutId;
+	ImageView choice2Img;
+	TextView choice2Txt;
+	TextView hintTxt;
 
-	public ArrayList<Map<String, String>> routeList = new ArrayList<>();
-	public ArrayList<Map<String, String>> initialSceneList = new ArrayList<>();
-	public String[] sceneSequencesArray;
-	public int sequenceIndex = 1;
+	ArrayList<Map<String, String>> routeList = new ArrayList<>();
+	ArrayList<Map<String, String>> initialSceneList = new ArrayList<>();
+	String[] sceneSequencesArray;
+	int sequenceIndex = 1;
+	int textIndex = 1;
 
-	public boolean stillDisplaySequence = true;
-	public boolean hasChosen = false;
-	public Map<String, String> choice1Map = new HashMap<>();
-	public Map<String, String> choice2Map = new HashMap<>();
+	boolean stillDisplaySequence = true;
+	boolean hasChosen = false;
+	Map<String, String> choice1Map = new HashMap<>();
+	Map<String, String> choice2Map = new HashMap<>();
 	public Map<String, String> chosenMap = new HashMap<>();
 
     public StoryDialog(final Context context) {
@@ -106,7 +107,7 @@ public class StoryDialog extends Dialog {
 		Map<String, String> startingSceneMap =
 			Tools.findMapFromArraylist(initialSceneList, "scene_id", "initial_scene");
 		String getSceneSequences = startingSceneMap.get("scene_sequences").trim();
-		if (getSceneSequences.substring(0, 1).equals("»")) {
+		if (getSceneSequences.charAt(0) == '»') {
 			getSceneSequences = getSceneSequences.replaceFirst("»", "");
 		}
 		sceneSequencesArray = getSceneSequences.split("»");
@@ -127,12 +128,22 @@ public class StoryDialog extends Dialog {
 					storyTxt.setText("");
 					hasChosen = false;
 				}
-				String textviewString = storyTxt.getText().toString().trim();
-				String stringSequence = sceneSequencesArray[sequenceIndex];
+				String stringSequence = sceneSequencesArray[sequenceIndex].trim();
 
 				if(stringSequence.startsWith("text:")){
+					String textviewString = storyTxt.getText().toString().trim();
 					stringSequence = stringSequence.substring(5);
-					storyTxt.setText(textviewString +"\n\n" + stringSequence.trim());
+
+					//this is to only display 4 string at a time
+					if (textIndex % 4 == 0) {
+						// index is a multiple of 3.
+						storyTxt.setText("");
+						storyTxt.setText(stringSequence);
+					} else {
+						// index is not a multiple of 3.
+						storyTxt.setText(textviewString +"\n\n" + stringSequence);
+					}
+					textIndex++;
 
 				}else if (stringSequence.startsWith("pick:")){
 					choicesParentLayout.setVisibility(View.VISIBLE);
@@ -141,6 +152,7 @@ public class StoryDialog extends Dialog {
 					stillDisplaySequence = false;
 					hasChosen = false;
 					makeChoicesSelection(stringSequence, choice1Txt, choice2Txt);
+					textIndex = 1;
 				}
 				sequenceIndex++;
 			}

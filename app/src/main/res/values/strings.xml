@@ -23,7 +23,8 @@
         »text:You discovered that your long lost twin is alive.
 		»text:You've been searching him for a long time.
         »text:Since you haven't met him, \n he could be dangerous for you.
-		»text:So just to make sure, You make your first move. \n Choose which place to start:
+		»text:So just to make sure, You make your first move.
+		»text: Choose which place to start:
         »pick:route_level_1,route_level_2
 		»text:On your way there, you bump to each other.
 		»text:Without hesitation you attack him first hand.

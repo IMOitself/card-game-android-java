@@ -203,8 +203,6 @@ public class MainActivity extends Activity
 				if(!card.isEmpty()) playerCardsStock.add(card);
 			}
 		}else{
-			//handle if there is no player map found
-			System.out.println(players_txt);
 			//Stock the arraylist with cards. Will be use to restock playerCardsCurrent
 			playerCardsStock.addAll(cardsList);
 		}
@@ -637,13 +635,13 @@ public class MainActivity extends Activity
 			//its not gonna be manipulated or animated or whatsoever
 			//its sole purpose is to delay a code
 			View dummy = titleTxt;
-			dummy.animate().setDuration(Animations.duration * 3)
+			dummy.animate().setDuration(Animations.duration * 4)
 				.withEndAction(new Runnable() { @Override public void run() {
 						//This code is delayed because its too fast to run this code again
 						//and also make sure to only run after all of the animations are played
 						//Pick random int between 0 and 2.
-						//if 0 then skip the card
-						//if 1 or above then use the card
+						//if 0 then skip the card if 1 or above then use the card.
+					    //this is to make it use more often.
 						//some decisions is also made on useCard().
 						Random random = new Random();
 						int randomInt = random.nextInt(3);
@@ -660,7 +658,7 @@ public class MainActivity extends Activity
 
 	public void setImageByCardType(String cardType, ImageView img){
 		//Based on the cardType display specific image corresponding to it.
-		//thats pretty much the explanation:/
+		//that's pretty much the explanation:/
 		switch(cardType){
 			default:
 				img.setImageResource(R.drawable.unclassified_type);
