@@ -48,9 +48,13 @@ public class MainActivity extends Activity
 	int screenWidth = 0;
 	ArrayList<Map<String, String>> enemiesList = new ArrayList<>();
 	ArrayList<Map<String, String>> cardsList = new ArrayList<>();
-	Map<String, String> drawnCardMap;
+	
+	Map<String, String> playerMap;
 
 	Map<String, String> chosenMap;
+	Map<String, String> enemyMap;
+	
+	Map<String, String> drawnCardMap;
 	
 	int moves = 3;
 	//These are by default. It will be changed later
@@ -190,7 +194,7 @@ public class MainActivity extends Activity
         Tools.convertStringToArraylist(players_txt, playerList, ";", "》");
 		
 		//since we dont have proper character selection yet. we choose player_two by default
-		Map<String, String> playerMap = Tools.findMapFromArraylist(playerList, "id", "player_two");
+		playerMap = Tools.findMapFromArraylist(playerList, "id", "player_two");
 		if(!playerMap.isEmpty()){
 			//once we got the map start getting datas from it
 			//populate playerLives and playerEnergy to be used later
@@ -249,7 +253,7 @@ public class MainActivity extends Activity
 				String enemyId = enemyIds[randomIndex].trim();
 				
 				//find the card with a specific id on cardsList and add it to player cards.
-				Map<String, String> enemyMap = Tools.findMapFromArraylist(enemiesList, "id", enemyId);
+				enemyMap = Tools.findMapFromArraylist(enemiesList, "id", enemyId);
 				if(!enemyMap.isEmpty()){
 					enemyLives = Integer.parseInt(enemyMap.get("lives"));
 					enemyEnergy = Integer.parseInt(enemyMap.get("energy"));
@@ -259,6 +263,7 @@ public class MainActivity extends Activity
                     //based on playerMap get the corresponding cards and put it on playerCardsStock
 					populateUserCardsStock(enemyMap, enemyCardsStock);
 				}else{
+					//if the enemyMap is empty
 					//Stock the arraylist with cards. Will be use to restock playerCardsCurrent
 					enemyCardsStock.addAll(cardsList);
 				}	
@@ -646,9 +651,10 @@ public class MainActivity extends Activity
 			//if the game is not finished yet
             //dummy view can be anything that are not gonna be animated by other animations
 			//its not gonna be manipulated or animated or whatsoever
-			//its sole purpose is to delay a code
+			//its sole purpose is to delay the code.
 			View dummy = titleTxt;
-			dummy.animate().setDuration(Animations.duration * 4)
+			int duration = Animations.duration * 3;
+			dummy.animate().setDuration(duration)//3x speed
 				.withEndAction(new Runnable() { @Override public void run() {
 						//This code is delayed because its too fast to run this code again
 						//and also make sure to only run after all of the animations are played
@@ -759,7 +765,7 @@ public class MainActivity extends Activity
 		//else vice versa
 		if(winner.equals("player")){
 			Animations.slideAnim(enemyLayout, "right");
-
+			
 		}else if (winner.equals("enemy")){
 			Animations.slideAnim(playerLayout, "left");
 		}
