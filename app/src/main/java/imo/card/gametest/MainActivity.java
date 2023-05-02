@@ -51,8 +51,9 @@ public class MainActivity extends Activity
 	Map<String, String> drawnCardMap;
 
 	Map<String, String> chosenMap;
-
+	
 	int moves = 3;
+	//These are by default. It will be changed later
 	int playerLives = 20;
 	int playerEnergy = 5;
 	int enemyLives = 20;
@@ -135,7 +136,7 @@ public class MainActivity extends Activity
     }
 
 
-	public void onCreateLogic(){
+	void onCreateLogic(){
 		//get the screen width
 		DisplayMetrics displayMetrics = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
@@ -159,7 +160,7 @@ public class MainActivity extends Activity
 		enemyLayout.setTranslationX(enemyLayoutWidth + enemyLayoutWidth/2);//1.5 width
 
 		//this void method is used only to minimize the code here
-		setViewsCustomBgDrawable();
+		setViewsBgDrawable();
 
 		//Transform the string to a Arraylist that holds a hashmap. 
 		//Each Hashmap holds key-value pairs that makes it easier to search for a specific item.
@@ -181,28 +182,28 @@ public class MainActivity extends Activity
 		
 		String cardpack_txt = getResources().getString(R.string.cardpack_txt);
         Tools.convertStringToArraylist(cardpack_txt, cardsList, ";", "》");
-		//TODO: Some comments
+		
+		//Get the playerList from players_txt
 		ArrayList<Map<String, String>> playerList = new ArrayList<>();
 		
 		String players_txt = getResources().getString(R.string.players_txt);
         Tools.convertStringToArraylist(players_txt, playerList, ";", "》");
 		
+		//since we dont have proper character selection yet. we choose player_two by default
 		Map<String, String> playerMap = Tools.findMapFromArraylist(playerList, "id", "player_two");
 		if(!playerMap.isEmpty()){
+			//once we got the map start getting datas from it
+			//populate playerLives and playerEnergy to be used later
 			playerLives = Integer.parseInt(playerMap.get("lives"));
 			playerEnergy = Integer.parseInt(playerMap.get("energy"));
+			//record the playerLives and playerEnergy to be compared with later ones
 			playerLives_old = playerLives;
 			playerEnergy_old = playerEnergy;
 			
-			String cardIdsRaw = playerMap.get("card_ids");
-			String[] cardIds = cardIdsRaw.split(",");
-			for(String cardId : cardIds){
-				cardId = cardId.trim();
-				System.out.println(cardId);
-				Map<String, String> card = Tools.findMapFromArraylist(cardsList, "id", cardId);
-				if(!card.isEmpty()) playerCardsStock.add(card);
-			}
+			//based on playerMap get the corresponding cards and put it on playerCardsStock
+			populateUserCardsStock(playerMap, playerCardsStock);
 		}else{
+			//if player map is empty
 			//Stock the arraylist with cards. Will be use to restock playerCardsCurrent
 			playerCardsStock.addAll(cardsList);
 		}
@@ -220,7 +221,7 @@ public class MainActivity extends Activity
 	}
 
 
-	public void dialogOnClosed(){
+	void dialogOnClosed(){
 		//This will run after the dialog is dismissed
 		
 		//since its translated earlier. animate it back to position
@@ -229,28 +230,34 @@ public class MainActivity extends Activity
 					drawCard();
 				} })
 			.start();
+		//chosenMap is populated from StoryDialog
 		if(!chosenMap.isEmpty()){
+			//if it is route map
 			if(chosenMap.get("label").equals("route_map")){
-				titleTxt.setText(chosenMap.get("name").toUpperCase());
+				//set the title to the route's name
+				String routeName = chosenMap.get("name");
+				titleTxt.setText(routeName.toUpperCase());
+				
+				//get the corresponding enemy_ids on chosenMap
 				String enemyIdsRaw = chosenMap.get("enemy_ids");
+				//typically it has ',' seperating each card ids
 				String[] enemyIds = enemyIdsRaw.split(",");
+				
+				//randomly pick enemyId
 				Random random = new Random();
 				int randomIndex = random.nextInt(enemyIds.length);
 				String enemyId = enemyIds[randomIndex].trim();
+				
+				//find the card with a specific id on cardsList and add it to player cards.
 				Map<String, String> enemyMap = Tools.findMapFromArraylist(enemiesList, "id", enemyId);
 				if(!enemyMap.isEmpty()){
 					enemyLives = Integer.parseInt(enemyMap.get("lives"));
 					enemyEnergy = Integer.parseInt(enemyMap.get("energy"));
 					enemyLives_old = enemyLives;
 					enemyEnergy_old = enemyEnergy;
-
-					String cardIdsRaw = enemyMap.get("card_ids");
-					String[] cardIds = cardIdsRaw.split(",");
-					for(String cardId : cardIds){
-						cardId = cardId.trim();
-						Map<String, String> card = Tools.findMapFromArraylist(cardsList, "id", cardId);
-						if(!card.isEmpty()) enemyCardsStock.add(card);
-					}
+					
+                    //based on playerMap get the corresponding cards and put it on playerCardsStock
+					populateUserCardsStock(enemyMap, enemyCardsStock);
 				}else{
 					//Stock the arraylist with cards. Will be use to restock playerCardsCurrent
 					enemyCardsStock.addAll(cardsList);
@@ -259,9 +266,9 @@ public class MainActivity extends Activity
 		}
 		updateGame();
 	}
-
-
-	public void swipeCardLogic(View cardLayout, MotionEvent event){
+	
+	
+	void swipeCardLogic(View cardLayout, MotionEvent event){
 		//The card's width is set to 1/3 of the screen on onCreateLogic().
 		//Get the view width's center by dividing it to 2.
 		//Find the center of the screen by dividing it to 2.
@@ -308,11 +315,14 @@ public class MainActivity extends Activity
 						useIndicatorTxt.setScaleY(scaleBy);
 					}
 				}
-				/**this code is unnecessary but its here anyway
+				/**
+				//this code is unnecessary but its here anyway
+				//this is for calculating swiping action
 				if(!isGameFinished){
 					debugTxt.setText("event.getRawX(): " + currentX + "   centerX: " + centerX + " recordAddedX: " + recordAddedX + "\n" + "skipIndicatorTxt: " + skipIndicatorTxt.getScaleX() + " useIndicatorTxt: " + useIndicatorTxt.getScaleX());
 				}
-				//remove this code above if its annoying**/
+				//remove this code above if its annoying
+				**/
 				break;
 
 			case MotionEvent.ACTION_UP:
@@ -344,7 +354,7 @@ public class MainActivity extends Activity
 	}
 
 
-	public void drawCard(){
+	void drawCard(){
 		if(!isGameFinished){
 			//if the game is not finished yet
 			Random random = new Random();
@@ -382,29 +392,32 @@ public class MainActivity extends Activity
 			int cardCost = Integer.parseInt(drawnCardMap.get("cost"));
 			//Make it positive
 			cardCost = Math.abs(cardCost);
-			//TODO: Some comments
+			
+			//get the cardCost and display how many it is.
+			//if its 3 then put '■■■'
 			String energyString = "";
-			if(cardCost <= 0){
-				energyString = "----";
-			}else{
+			if(cardCost > 0){
 				for(int i = 0; i < cardCost; i++){
 					energyString = energyString + "■";
 				}
+			}else{
+				//if its zero or negative display this instead
+				energyString = "----";
 			}
 			cardCostTxt.setText(energyString);
 
 			//animate the card as if its doing intro upwards then flipping on its back
 			Animations.flipCardAnim(cardLayout, cardBackLayout, cardNameTxt, isEnemyTurn, cardParentLayout, skipBtn, useBtn);
 		}
-		//TODO
+		//Some debugging
 		debugTxt.setText("Player cards: " + playerCardsCurrent.size() + "/" + playerCardsStock.size() + "");
 		debugTxt.setText(debugTxt.getText().toString() + "  Enemy cards: " + enemyCardsCurrent.size() + "/" + enemyCardsStock.size());
 		debugTxt.setText(debugTxt.getText().toString() + "\nTotal cards: " + cardsList.size() + "  Total enemies: " + enemiesList.size());
-		
+		//remove this if its annoying
 	}
 
 
-	public void skipCard(){
+	void skipCard(){
 		if(!isGameFinished){
 			//if the game is not finished yet
             //skipping a card gives you 1 energy.
@@ -421,7 +434,7 @@ public class MainActivity extends Activity
 	}
 
 
-	public void useCard(){
+	void useCard(){
 		if(!isGameFinished){
 			//if the game is not finished yet
             //The drawnCardMap is a map populated by drawnCard() void method
@@ -520,7 +533,7 @@ public class MainActivity extends Activity
 	}
 
 
-	public void useMoves(){
+	void useMoves(){
 		if(!isGameFinished){
 			//if game is not finished yet
 			//The code below keep count how many moves you make
@@ -556,7 +569,7 @@ public class MainActivity extends Activity
 	}
 
 
-	public void decrementMoves(){
+	void decrementMoves(){
 		moves--;
 		//rotate the movesImg like a sand or hour glass
 		Animations.sandClockAnim(movesImg, userTurn);
@@ -568,7 +581,7 @@ public class MainActivity extends Activity
 	}
 
 
-	public void updateGame(){
+	void updateGame(){
 		//The max energy a player and enemy could have is 5. 
 		//This code prevents going beyond 5.
 		if (playerEnergy > 5){
@@ -628,7 +641,7 @@ public class MainActivity extends Activity
 		}
 
 
-	public void enemyRandomPlay(final int enemyEnergy){
+	void enemyRandomPlay(final int enemyEnergy){
 		if(!isGameFinished){
 			//if the game is not finished yet
             //dummy view can be anything that are not gonna be animated by other animations
@@ -656,7 +669,7 @@ public class MainActivity extends Activity
 	}
 
 
-	public void setImageByCardType(String cardType, ImageView img){
+	void setImageByCardType(String cardType, ImageView img){
 		//Based on the cardType display specific image corresponding to it.
 		//that's pretty much the explanation:/
 		switch(cardType){
@@ -679,7 +692,7 @@ public class MainActivity extends Activity
 	}
 
 
-	public void setViewsCustomBgDrawable(){
+	void setViewsBgDrawable(){
 		//customize the views with custom background drawable
 		//set the values first then configure it based on the view
 		//each view has specific background color that is needed to be kept that way
@@ -705,13 +718,33 @@ public class MainActivity extends Activity
 	}
 
 
-	public String makeStringByInt(int energyInt, int maxInt){
-		//TODO:Some comments
+	void populateUserCardsStock(Map<String, String> userMap, ArrayList<Map<String, String>> userCardsStock){
+		//get the corresponding card_ids on playerMap
+		String cardIdsRaw = userMap.get("card_ids");
+		//typically it has ',' seperating each card ids
+		String[] cardIds = cardIdsRaw.split(",");
+		for(String cardId : cardIds){
+			//for every card ids..
+			cardId = cardId.trim();
+			//find the card with a specific id on cardsList and add it to player cards.
+			Map<String, String> card = Tools.findMapFromArraylist(cardsList, "id", cardId);
+			if(!card.isEmpty()) userCardsStock.add(card);
+		}
+	}
+	
+	
+	String makeStringByInt(int energyInt, int maxInt){
+		//This is for making playerEnergyTxt and enemyEnergyTxt stop using numbers to display energy
+		//but rather visually. e.g. 3 will display '■■■□□'
 		String energyString = "⚡";
 		for(int i = 0; i < energyInt; i++){
+			//display '■' to how many is the energyInt
 			energyString = energyString + "■";
 		}
 		if(energyInt < maxInt){
+			//display '□' to how many is the energy left to the max int.
+			//e.g if maxInt = 5 and energyInt is 3
+			//it will result into 2 or '□□'
 			int intLeft = maxInt - energyInt;
 			for(int i = 0; i < intLeft; i++){
 				energyString = energyString + "□";
@@ -721,8 +754,9 @@ public class MainActivity extends Activity
 	}
 
 
-	public void recordGameResult(String winner){
-		//TODO: Some comments
+	void recordGameResult(String winner){
+		//If the player won, slide the enemy out of frame
+		//else vice versa
 		if(winner.equals("player")){
 			Animations.slideAnim(enemyLayout, "right");
 
