@@ -35,39 +35,30 @@
         》name=Plains
         》info=flat as heck.
 		》level=1
-        》length=3
         》enemy_ids=enemy_one
-        》scenes=
         ;
 		》label=route_map
         》name=Small Forest
         》info=has small creatures.
 		》level=1
-        》length=3
         》enemy_ids=enemy_one
-        》scenes=a
         ;
 		》label=route_map
         》name=Rocky Cliffs
 		》info=full of rocks, obviously.
 		》level=2
-        》length=2
         》enemy_ids=enemy_two, enemy_one
-        》scenes=a
 		;
 		》label=route_map
         》name=Coast
         》info=near where the sea at.
 		》level=2
-        》length=4
         》enemy_ids=enemy_two
-        》scenes=a
     </string>
 	<string name="players_txt">
 		》label=player_map
         》id=player_one
 		》name=Player One
-        》info=too lazy to name this properly.
 		》lives=10
         》energy=5
 		》card_ids=basic_attack, basic_attack, breathe, healing, hard_attack
@@ -75,7 +66,6 @@
 		》label=player_map
         》id=player_two
 		》name=Player Two
-        》info=too lazy to name this properly.
 		》lives=10
         》energy=5
 		》card_ids=basic_attack, breathe, reckless_attack, hard_attack
@@ -84,7 +74,6 @@
 		》label=enemy_map
         》id=enemy_one
 		》name=Enemy One
-        》info=too lazy to name this properly.
 		》lives=10
         》energy=5
 		》card_ids=basic_attack
@@ -92,9 +81,8 @@
 		》label=enemy_map
         》id=enemy_two
 		》name=Enemy Two
-        》info=too lazy to name this properly.
 		》lives=15
-        》energy=5
+        》energy=1
 		》card_ids=hard_attack, breathe
     </string>
 	<string name="cardpack_txt">
@@ -134,7 +122,7 @@
 		》id=distract
 		》name=Distract
 		》info=gain ⏳1
-		》cost=-2
+		》cost=-1
 		》moves=+1, 0
 		》type=
 		;
