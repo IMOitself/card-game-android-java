@@ -1,4 +1,4 @@
-# :hocho: Card Game Test V6.5
+# :hocho: Card Game Android Java
 ![App Icon](./app/src/main/res/drawable/app_icon.png)
 ----
 
