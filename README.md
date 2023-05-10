@@ -1,5 +1,7 @@
 # :hocho: Card Game Android Java
 ![App Icon](./app/src/main/res/drawable/app_icon.png)
+this is my very first public repository:D
+import it on android studio to test it
 ----
 
 <p align="center">
