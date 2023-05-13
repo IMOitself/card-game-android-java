@@ -3,9 +3,7 @@
     <img src="./app/src/main/res/drawable/app_icon.png" alt="Logo" width="110" height="110">
   </div>
   <h3>
-  <p align="center">
-    import it on android studio to test it
-  </p>
+ 
   </h3>
    <h6>
   <p align="center">
