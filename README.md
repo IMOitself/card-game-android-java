@@ -1,3 +1,9 @@
+# disclaimer:D
+<p align="center">
+    hi its me from 2024:D
+    i have fewer braincells back then, so most stuffs here are unpollished piece of shi-
+  </p>
+
 # :hocho: Card Game Android Java
 <div align="center" >
     <img src="./app/src/main/res/drawable/app_icon.png" alt="Logo" width="110" height="110">
