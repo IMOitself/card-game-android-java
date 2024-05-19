@@ -1,7 +1,11 @@
 # disclaimer:D
+hi its me a year later:D
+
+
+i have fewer braincells back then, so most stuffs u see here are beginner level code.
+
 <p align="center">
-    hi its me from 2024:D
-    i have fewer braincells back then, so most stuffs here are unpollished piece of shi-
+    
   </p>
 
 # :hocho: Card Game Android Java
